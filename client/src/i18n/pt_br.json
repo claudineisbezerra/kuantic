@@ -1,0 +1,408 @@
+{
+  "about": {
+    "title": "Estrutura de tecnologias",
+    "lead": "Criado para permitir a comunicação em tempo real entre usuários em grupos por meio de várias salas de bate-papo",
+    "features": "Recursos",
+    "expressjs": "Express.js",
+    "expressjsMsg": " é usado como framework web no lado servidor. Usamos a biblioteca [axios] como suporte para chamadas HTTP",
+    "jwt": "JWT",
+    "jwtMsg": "Implementamos autenticação 'stateless' com",
+    "jwtMsgTokens": "tokens",
+    "jwtMsgAuthenticates": "'Tokenização'",
+    "passport": "passport",
+    "passportMsg": "e autenticação social usando",
+    "bcryptjs": "bcryptjs",
+    "bcryptjsMsg": "Criptografa senhas usando o",
+    "package": "pacote",
+    "socketIo": "Socket IO",
+    "socketIoMsg": "Comunicação em tempo real entre cliente e servidor usando",
+    "mongoDB": "MongoDB",
+    "and": "e",
+    "mongoDBAtlas": "Mongo Atlas",
+    "mongoAtlasMsg": "são o banco de dados e o serviço gerenciado utilizados para armazenar e consultar dados",
+    "loggingMsg": "O log do servidor é feito com",
+    "winston": "Winston",
+    "winstonMsg": "",
+    "morgan": "Morgan",
+    "morganMsg": "",
+    "concurrently": "Concurrently",
+    "concurrentlyMsg": "é usado para executar concomitantemente as aplicações no servidor e no cliente",
+    "crossEnv": "cross-env",
+    "crossEnvMsg": "É a biblioteca ara auxiliar execução de scripts que definem e usam variáveis em diferentes ambientes",
+    "vuejs": "Vue.js",
+    "vuejsMsg": "e seus componentes [Vuex, VueRouter] são usados ​​como 'frontend framework' e reatividade",
+    "vueTypedjs": "Typed-js",
+    "vueTypedjsMsg": "É nossa preferência para integração do Vue.js com a biblioteca Typed.js de animação de digitação",
+    "vueFlagIcon": "Vue-Flag-Icon",
+    "vueFlagIconMsg": "É usado como componente do Vue.js para utilizar a biblioteca flag-icon-css",
+    "i18n": "i18n",
+    "i18nMsg": "É o plugin de internacionalização para o Node.js",
+    "vuexI18n": "vuex-i18n",
+    "vuexI18nMsg": "É o plugin que usamos para implementar internacionalização no lado cliente com o Vue.js",
+    "travisCI": "Travis CI",
+    "travisCIMsg": "é incorporado para integração contínua",
+    "heroku": "Heroku",
+    "herokuMsg": "é usado para instalação e hospedagem em produção",
+    "fontawesome": "Fontawesome",
+    "entypo": "Entypo",
+    "fontelico": "Fontelico",
+    "glyphicons": "Glyphicons",
+    "brandico": "Brandico",
+    "iconsMsg": "Usamos ícones de diversas plataformas incluindo",
+    "iconsMsgOwn": "E também produzimos nossos próprios ícones"
+  },
+  "auth": {
+    "agree": "Eu aceito.",
+    "alreadyJoined": "Já sou cadastrado.",
+    "createAccount": "Criar conta",
+    "createNewAccount": "Criar uma nova conta",
+    "username": "Usuário",
+    "email": "Email",
+    "login": "Entrar",
+    "loginWith": "Acessar com",
+    "password": "Senha",
+    "signUp": "Cadastrar",
+    "termsOfUse": "Termos de uso.",
+    "welcome": "Bem vindo!"
+  },
+  "breadcrumbs": {
+    "home": "Início"
+  },
+  "buttons": {
+    "advanced": "Icones, Grupos, Dropdowns",
+    "button": "BOTÃO",
+    "colors": "Cores",
+    "disabled": "DESABILITADO",
+    "dropdown": "DROPDOWN",
+    "hover": "HOVER",
+    "main": "Primeiro & Segundo Botão",
+    "micro": "MICRO",
+    "pressed": "PRESSIONADO",
+    "small": "PEQUENO"
+  },
+  "cards": {
+    "cards": "Cards",
+    "fixed": "Fixed",
+    "floating": "Floating",
+    "contentText": "The unique stripes of zebras make them one of the animals most familiar to people.",
+    "rowHeight": "Row height",
+    "title": {
+      "dark": "Dark background",
+      "bright": "Very bright card",
+      "titleOnImageNoOverlay": "Title on image, but no overlay",
+      "normal": "Perfectly normal card",
+      "overlayAndTextOnImage": "Card with overlay and text on top of image",
+      "stripeNoImage": "Striped card without image"
+    },
+    "button": {
+      "main": "Main",
+      "cancel": "Cancel"
+    },
+    "link": {
+      "edit": "Edit",
+      "setAsDefault": "Set as default",
+      "delete": "Delete",
+      "traveling": "Traveling",
+      "france": "France",
+      "review": "Review",
+      "feedback": "Leave feedback",
+      "readFull": "Read full article",
+      "secondaryAction": "Secondary action",
+      "action1": "Action 1",
+      "action2": "Action 2"
+    }
+  },
+  "charts": {
+    "horizontalBarChart": "Barra de Gráfico Horizontal",
+    "verticalBarChart": "Barra de Gráfico Vertical",
+    "lineChart": "Gráfico de Linha",
+    "pieChart": "Gráfico Pizza",
+    "donutChart": "Gráfico Rosca",
+    "bubbleChart": "Gráfico Bolhas"
+  },
+  "collapse": {
+    "accordion": "Accordion",
+    "buttons": "Buttons"
+  },
+  "dashboard": {
+    "success": "SUCESSO",
+    "successMessage": "Você leu com sucesso esta mensagem importante de alerta.",
+    "elements": "Elementos",
+    "teamMembers": "Membros da Equipe",
+    "versions": "Versões"
+  },
+  "dropdown": {
+    "default": "Default",
+    "withArrow": "With arrow",
+    "note": "Note",
+    "noteText": "Dropdown will open in the specified direction if there is enough space on the screen, otherwise the direction will automatically change"
+  },
+  "extra": {
+    "tabs": {
+      "title": "Guias",
+      "maps": "Mapas",
+      "overview": "Visão geral",
+      "setupProfile": "Perfil de instalação"
+    },
+    "chat": "Gráficos",
+    "profileCard": "Cartão de perfil"
+  },
+  "fileUpload": {
+    "advancedMediaGallery": "Advanced, Media Gallery",
+    "advancedUploadList": "Advanced, Upload List",
+    "mediaGallery": "Media Gallery",
+    "uploadList": "Upload List",
+    "single": "Single",
+    "dragNdropFiles": "Drag’n’drop files or",
+    "uploadedOn": "Uploaded on",
+    "fileDeleted": "File was successfully deleted",
+    "undo": "Undo",
+    "preview": "Preview",
+    "delete": "Delete",
+    "deleteFile": "Delete file",
+    "uploadFile": "Upload file",
+    "uploadMedia": "Upload media",
+    "addAttachment": "Add attachment",
+    "modalTitle": "File validation",
+    "modalText": "File type is incorrect!"
+  },
+  "forms": {
+    "controls": {
+      "female": "Feminino",
+      "male": "Masculino",
+      "title": "Checkboxes, Radios, Switches",
+      "radioDisabled": "Radio Desabilitado",
+      "radio": "Radio",
+      "subscribe": "Assine a newsletter"
+    },
+    "dateTimePicker": {
+      "title": "Seletores de data e hora",
+      "basic": "Básico",
+      "time": "Hora",
+      "range": "Alcance",
+      "multiple": "Múltiplo",
+      "disabled": "Desabilitado"
+    },
+    "inputs": {
+      "emailValidatedSuccess": "Email (validado com sucesso)",
+      "emailValidated": "Email (validado)",
+      "inputWithIcon": "Entrada com ícone",
+      "inputWithButton": "Entrada com botão",
+      "inputWithClearButton": "Entrada com Botão Claro",
+      "inputWithRoundButton": "Entrada com Botão Redondo",
+      "textInput": "Entrada de Texto",
+      "textInputWithDescription": "Entrada de Texto (com descrição)",
+      "textArea": "Área de Texto",
+      "title": "Entrada",
+      "upload": "UPLOAD"
+    },
+    "mediumEditor": {
+      "title": "Editor Medium"
+    },
+    "selects": {
+      "country": "Selecionar Região",
+      "countryMulti": "Selecionar Multiplas Regiões",
+      "multi": "Selecionar Múltiplos",
+      "simple": "Selecionador Simples",
+      "title": "Selecionadores"
+    },
+    "wizard": {
+      "name": "Nome",
+      "completed": "Wizard completo!",
+      "confirmSelection": "Confirmar seleção",
+      "rich": "Preencher Wizard",
+      "simple": "Wizard Simples",
+      "stepOne": "Etapa 1. Nome",
+      "stepTwo": "Etapa 2. Região",
+      "stepThree": "Etapa 3. Confirme",
+      "verticalRich": "Preencher Wizard Vertical",
+      "verticalSimple": "Wizard Vertical Simples"
+    }
+  },
+  "grid": {
+    "desktop": "Grid Área de Trabalho",
+    "fixed": "Grid Fixo",
+    "offsets": "Offsets",
+    "responsive": "Grid Responssivo"
+  },
+  "icons": {
+    "back": "Retornar aos icones",
+    "none": "Incones não encontrados",
+    "search": "Pesquisar Icone",
+    "title": "Icones",
+    "kuantic": "KUANTIC"
+  },
+  "language": {
+    "brazilian_portuguese": "Português",
+    "english": "English",
+    "spanish": "Spanish"
+  },
+  "menu": {
+    "about": "Sobre",
+    "auth": "Autorização",
+    "buttons": "Botões",
+    "charts": "Gráficos",
+    "colorPickers": "Colhedores de Cor",
+    "dashboard": "Painel principal",
+    "extra": "Extra",
+    "formElements": "Elementos de Formulários",
+    "forms": "Formulários",
+    "formWizards": "Formulários Wizards",
+    "mediumEditor": "Editor Medium",
+    "grid": "Grid",
+    "icons": "Icones",
+    "cards": "Cards",
+    "spinners": "Spinners",
+    "login": "Entrar",
+    "maps": "Mapas",
+    "modals": "Modals",
+    "notifications": "Notificações",
+    "progressBars": "Barra de progresso",
+    "signUp": "Cadastrar-se",
+    "statistics": "Estatística",
+    "tables": "Tabelas",
+    "typography": "Tipografia",
+    "uiElements": "Elementos UI",
+    "treeView": "Árvore de visualização",
+    "dateTimePickers": "Selecionar Data e Hora"
+  },
+  "messages": {
+    "all": "Ver todas as menssagens",
+    "new": "Nova menssagem de {name}"
+  },
+  "modal": {
+    "cancel": "CANCELAR",
+    "close": "FECHAR",
+    "confirm": "CONFIRMAR",
+    "large": "Grande",
+    "largeTitle": "Modal Grande",
+    "medium": "Médio",
+    "mediumTitle": "Modal Médio",
+    "small": "Pequeno",
+    "smallTitle": "Modal Pequeno",
+    "static": "Estático",
+    "staticMessage": "Este é um modal é estático, clicar no pano de fundo não o fechará.",
+    "staticTitle": "Modal Estático",
+    "title": "Modals"
+  },
+  "navbar": {
+    "messageUs": "Enviar uma pergunta ou feedback para"
+  },
+  "notifications": {
+    "all": "Ver todas as notificações",
+    "sentMessage": "{name} enviou uma menssagem",
+    "uploadedZip": "{name} fez uploaded de um novo arquivo Zip com {type}",
+    "startedTopic": "{name} iniciou um novo tópico"
+  },
+  "notificationsPage": {
+    "alerts": {
+      "title": "Alertas",
+      "success": "SUCESSO",
+      "successMessage": "Você leu com sucesso esta mensagem importante de alerta.",
+      "info": "INFORMAÇÃO",
+      "infoMessage": "Esse alerta precisa da sua atenção, mas não é super importante.",
+      "warning": "AVISO",
+      "warningMessage": "Melhor verificar a si mesmo, você não está muito bem.",
+      "danger": "PERÍGO",
+      "dangerMessage": "Mude algumas coisas e tente enviar novamente."
+    },
+    "popovers": {
+      "title": "Dicas de ferramentas & Pop-Ups",
+      "popoverTitleLabel": "Título Popover",
+      "popoverTextLabel": "Texto Popover",
+      "popoverIconLabel": "Icone Popover (fontawesome)",
+      "showPopover": "Mostrar Popover",
+      "topTooltip": "top dicas de ferramentas",
+      "rightTooltip": "sugestão ao lado direito",
+      "leftTooltip": "esquerda",
+      "bottomTooltip": "abaixo"
+    },
+    "toasts": {
+      "title": "Torradas",
+      "textLabel": "Texto",
+      "durationLabel": "Duração (milisegundos)",
+      "iconLabel": "Icone (fontawesome)",
+      "fullWidthLabel": "Largura completa",
+      "launchToast": "Launch toast"
+    }
+  },
+  "profile": {
+    "form": {
+      "title": "Atualize seus dados"
+    },
+    "field": {
+      "company": "Empresa",
+      "email": "Email",
+      "name": "Nome",
+      "surname": "Sobrenome",
+      "address": "Endereço",
+      "country": "País",
+      "state": "Estado",
+      "city": "Cidade",
+      "postalCode": "CEP",
+      "aboutMe": "Sobre mim"
+    },
+    "profileCard": "Perfil"
+  },
+  "progressBars": {
+    "basic": "Básico",
+    "basicVertical": "Básico Vertical",
+    "circle": "Círculo",
+    "colorFulTitle": "Barra Colorida completa",
+    "thin": "Fina",
+    "thinVertical": "Fina Vertical",
+    "thick": "Grosso",
+    "title": "Barra de Progresso"
+  },
+  "spinners": {
+    "title": "Spinners",
+    "poweredBy": "Distribuido por"
+  },
+  "tables": {
+    "basic": "Tabela Básico",
+    "styled": "Cores, Icones, Rótulos",
+    "advanced": "Pesquisar & Paginação",
+    "headings": {
+      "city": "Cidade",
+      "email": "Email",
+      "name": "Nome",
+      "score": "Contagem"
+    },
+    "dataTable": {
+      "noDataAvailable": "No Data Available"
+    }
+  },
+  "tags": {
+    "default": "Default",
+    "removable": "Removable",
+    "colored": "Colored"
+  },
+  "timelines": {
+    "horizontalSimple": "Horizontal Simple",
+    "horizontalCards": "Horizontal Cards",
+    "verticalSimple": "Vertical Simple",
+    "verticalLabel": "Vertical With Label",
+    "verticalCentered": "Vertical Centered",
+    "firstDate": "February 2018",
+    "secondDate": "March 2018",
+    "thirdDate": "April 2018",
+    "cardsSecondInfo": "They occur in a variety of habitats, such as grasslands.",
+    "cardsThirdInfo": "However, various anthropogenic factors have had a severe impact on zebra populations",
+    "verticalSimpleCardsFirstInfo": "The unique stripes of zebras make them one of the animals most familiar to people. They occur in a variety of habitats, such as grasslands, savannas, woodlands, thorny scrublands.",
+    "verticalSimpleCardsSecondInfo": "However, various anthropogenic factors have had a severe impact on zebra populations"
+  },
+  "treeView": {
+    "basic": "Básico",
+    "icons": "Icones",
+    "selectable": "Selecionável",
+    "editable": "Editável",
+    "advanced": "Advançado"
+  },
+  "user": {
+    "language": "Trocar Linguagem",
+    "login": "Entrar",
+    "signup": "Cadastrar-se",
+    "logout": "Sair",
+    "profile": "Meu Perfil"
+  }
+}

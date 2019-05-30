@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+    - '10'
+    - '8'
+
+services:
+    - mongodb
+
+env:
+    - DATABASE_URL=mongodb://localhost:27017/testdb JWT_SECRET=testsecret PORT=5000
+
+install:
+    - npm install
+    - npm install --prefix client
+    - npm install --prefix server
+
+script:
+    - npm run test
+
+cache:
+    directories:
+        - 'node_modules'

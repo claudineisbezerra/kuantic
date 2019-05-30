@@ -1,0 +1,97 @@
+@font-face {
+  font-family: 'Kuantic Icons';
+  font-weight: normal;
+  font-style: normal;
+  src: url('kuantic-theme/kuantic-sass/icons/icon-fonts/kuantic-icons/kuantic-icons.eot');
+  src: url('kuantic-theme/kuantic-sass/icons/icon-fonts/kuantic-icons/kuantic-icons.eot?#iefix') format('eot'),
+  url('kuantic-theme/kuantic-sass/icons/icon-fonts/kuantic-icons/kuantic-icons.woff') format('woff'),
+  url('kuantic-theme/kuantic-sass/icons/icon-fonts/kuantic-icons/kuantic-icons.ttf') format('truetype'),
+  url('kuantic-theme/kuantic-sass/icons/icon-fonts/kuantic-icons/kuantic-icons.svg#kuantic-icons') format('svg');
+
+}
+
+.kuantic-icon {
+  line-height: 1;
+}
+
+.kuantic-icon:before {
+  display: inline-block;
+  font-family: 'Kuantic Icons';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
+
+.kuantic-icon-comments:before {
+  content: '\0041';
+}
+
+.kuantic-icon-components:before {
+  content: '\0042';
+}
+
+.kuantic-icon-dashboard:before {
+  content: '\0043';
+}
+
+.kuantic-icon-extras:before {
+  content: '\0044';
+}
+
+.kuantic-icon-files:before {
+  content: '\0045';
+}
+
+.kuantic-icon-forms:before {
+  content: '\0046';
+}
+
+.kuantic-icon-graph:before {
+  content: '\0047';
+}
+
+.kuantic-icon-auth:before {
+  content: '\0048';
+}
+
+.kuantic-icon-image:before {
+  content: '\0049';
+}
+
+.kuantic-icon-maps:before {
+  content: '\004a';
+}
+
+.kuantic-icon-music:before {
+  content: '\004b';
+}
+
+.kuantic-icon-settings:before {
+  content: '\004c';
+}
+
+.kuantic-icon-statistics:before {
+  content: '\004d';
+}
+
+.kuantic-icon-tables:before {
+  content: '\004e';
+}
+
+.kuantic-icon-time:before {
+  content: '\004f';
+}
+
+.kuantic-icon-ui-elements:before {
+  content: '\0050';
+}
+
+.kuantic-icon-user:before {
+  content: '\0051';
+}
+
+.kuantic-icon-video:before {
+  content: '\0052';
+}
