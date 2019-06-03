@@ -41,7 +41,9 @@ MEVN web application to support e-commerce.
 
 View the application at [https://kuantic.herokuapp.com/](https://kuantic.herokuapp.com/)
 
-View the project management cycle here [kuantic Project Kanban (Trello)](https://trello.com/claudineisbezerra/boards)
+View project management cycle here [kuantic Project Kanban (Trello)](https://trello.com/claudineisbezerra/boards)
+
+Check dependencies update [David DM](https://david-dm.org/claudineisbezerra/kuantic?type=dev)
 
 ### Tech Stack
 
