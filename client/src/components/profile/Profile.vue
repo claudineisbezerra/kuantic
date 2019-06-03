@@ -183,9 +183,10 @@
 </template>
 
 <script>
-import CountriesList from 'data/CountriesList'
-import CitiesList from 'data/CitiesList'
-import StatesList from 'data/StatesList'
+// import CountriesList from 'data/CountriesList'
+import CountriesList from '@/data/CountriesList'
+import CitiesList from '@/data/CitiesList'
+import StatesList from '@/data/StatesList'
 
 export default {
   name: 'profile',
@@ -254,6 +255,9 @@ export default {
     clear (field) {
       this[field] = ''
     },
+  },
+  mounted () {
+    console.log('Profile mounted. Do nor erase this mounted () function.')
   },
   created () {
     this.$nextTick(() => {

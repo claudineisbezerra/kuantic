@@ -1,21 +1,17 @@
 {
   "name": "kuantic-client",
   "version": "1.0.0",
-  "engines": {
-    "node": "10.x",
-    "npm": "6.x"
-  },
+  "private": true,
   "description": "Kuantic Application Client",
   "author": "Claudineis Bezerra <claudineis@kuantic.com.br>",
-  "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "dev": "vue-cli-service serve --open",
     "test": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "inspect": "vue-cli-service inspect > inspect.js"
+    "dev": "vue-cli-service serve --open",
+    "inspect": "vue-cli-service inspect > inspect.js",
+    "test:unit": "vue-cli-service test:unit"
   },
-  "license": "MIT",
   "dependencies": {
     "amcharts3": "^3.21.14",
     "ammap3": "^3.21.14",
@@ -61,9 +57,13 @@
     "@fortawesome/fontawesome-free": "^5.8.2",
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.7.0",
+    "@vue/cli-plugin-unit-jest": "^3.8.0",
     "@vue/cli-service": "^3.7.0",
     "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/test-utils": "1.0.0-beta.29",
     "autoprefixer": "9.1.5",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
     "chalk": "2.4.1",
     "connect-history-api-fallback": "1.5.0",
     "copy-webpack-plugin": "4.5.3",
@@ -86,9 +86,14 @@
     "vue-flatpickr-component": "^8.1.2",
     "vue-template-compiler": "^2.6.10"
   },
+  "engines": {
+    "node": "10.x",
+    "npm": "6.x"
+  },
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
+  "license": "MIT",
   "lint-staged": {
     "*.js": [
       "vue-cli-service lint",
