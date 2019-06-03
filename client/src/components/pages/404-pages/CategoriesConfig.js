@@ -109,6 +109,41 @@ export default [
     ],
   },
   {
+    categoryName: 'Intelligence',
+    items: [
+      {
+        itemName: 'Purchase',
+        itemLink: '/admin/intelligence/purchase',
+      },
+    ],
+  },
+  {
+    categoryName: 'Pricing',
+    items: [
+      {
+        itemName: 'Matrix Pricing',
+        itemLink: '/admin/matrix-pricing/matrixpricing',
+      },
+      {
+        itemName: 'Campaign Pricing',
+        itemLink: '/admin/campaign-pricing/campaignpricing',
+      },
+      {
+        itemName: 'Stock Pricing',
+        itemLink: '/admin/stock-pricing/stockpricing',
+      },
+    ],
+  },
+  {
+    categoryName: 'Reports',
+    items: [
+      {
+        itemName: 'Best Sellers',
+        itemLink: '/admin/best-sellers/bestsellers',
+      },
+    ],
+  },
+  {
     categoryName: 'Statistics',
     items: [
       {

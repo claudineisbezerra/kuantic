@@ -104,6 +104,67 @@ export default new Router({
           default: true,
         },
         {
+          path: 'intelligence',
+          name: 'intelligence',
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'purchase',
+              name: 'purchase',
+              component: lazyLoading('intelligence/purchase/Purchase'),
+              meta: {
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/purchase',
+              },
+            },
+          ],
+        },
+        {
+          path: 'pricing',
+          name: 'pricing',
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'matrix-pricing',
+              name: 'matrix-pricing',
+              component: lazyLoading('pricing/matrix-pricing/MatrixPricing'),
+              meta: {
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/matrix-pricing',
+              },
+            },
+            {
+              path: 'campaign-pricing',
+              name: 'campaign-pricing',
+              component: lazyLoading('pricing/campaign-pricing/CampaignPricing'),
+              meta: {
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/campaign-pricing',
+              },
+            },
+            {
+              path: 'stock-pricing',
+              name: 'stock-pricing',
+              component: lazyLoading('pricing/stock-pricing/StockPricing'),
+              meta: {
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/stock-pricing',
+              },
+            },
+          ],
+        },
+        {
+          path: 'reports',
+          name: 'reports',
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'best-sellers',
+              name: 'best-sellers',
+              component: lazyLoading('reports/best-sellers/BestSellers'),
+              meta: {
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/best-sellers',
+              },
+            },
+          ],
+        },
+        {
           path: 'statistics',
           name: 'statistics',
           component: EmptyParentComponent,

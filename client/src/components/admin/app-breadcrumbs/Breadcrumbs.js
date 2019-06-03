@@ -9,6 +9,47 @@ export const breadcrumbs = {
       displayName: 'menu.dashboard',
     },
     {
+      name: 'intelligence',
+      displayName: 'menu.intelligence',
+      disabled: true,
+      children: [
+        {
+          name: 'purchase',
+          displayName: 'menu.purchase',
+        },
+      ],
+    },
+    {
+      name: 'pricing',
+      displayName: 'menu.pricing',
+      disabled: true,
+      children: [
+        {
+          name: 'matrix-pricing',
+          displayName: 'menu.matrixPricing',
+        },
+        {
+          name: 'campaign-pricing',
+          displayName: 'menu.campaignPricing',
+        },
+        {
+          name: 'stock-pricing',
+          displayName: 'menu.stockPricing',
+        },
+      ],
+    },
+    {
+      name: 'reports',
+      displayName: 'menu.reports',
+      disabled: true,
+      children: [
+        {
+          name: 'best-sellers',
+          displayName: 'menu.bestSellers',
+        },
+      ],
+    },
+    {
       name: 'statistics',
       displayName: 'menu.statistics',
       disabled: true,

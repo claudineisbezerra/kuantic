@@ -13,6 +13,57 @@
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
+          <span>{{ $t('menu.intelligence') }}</span>
+        </span>
+        <sidebar-link
+          :to="{ name: 'purchase' }">
+          <span slot="title">
+            <span>{{ $t('menu.purchase') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+      <sidebar-link-group>
+        <span slot="title">
+          <span
+            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
+          <span>{{ $t('menu.pricing') }}</span>
+        </span>
+        <sidebar-link
+          :to="{ name: 'matrix-pricing' }">
+          <span slot="title">
+            <span>{{ $t('menu.matrixPricing') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'campaign-pricing' }">
+          <span slot="title">
+            <span>{{ $t('menu.campaignPricing') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'stock-pricing' }">
+          <span slot="title">
+            <span>{{ $t('menu.stockPricing') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+      <sidebar-link-group>
+        <span slot="title">
+          <span
+            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
+          <span>{{ $t('menu.reports') }}</span>
+        </span>
+        <sidebar-link
+          :to="{ name: 'best-sellers' }">
+          <span slot="title">
+            <span>{{ $t('menu.bestSellers') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+      <sidebar-link-group>
+        <span slot="title">
+          <span
+            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
           <span>{{ $t('menu.statistics') }}</span>
         </span>
         <sidebar-link
