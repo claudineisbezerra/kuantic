@@ -53,7 +53,7 @@ router.post(
         const room = await Room.findOne({ name: req.body.room_name }).exec();
         if (room) {
             if (room.name === req.body.room_name) {
-                veeErrors.push({ param: 'room_taken', msg: res.$t('room_error_NAMEEXISTS') });
+                errors.push({ param: 'room_taken', msg: res.$t('room_error_NAMEEXISTS') });
             }
             return res.json({ errors: createErrorObject(errors) });
         } else {
@@ -160,7 +160,7 @@ router.post('/update/name', passport.authenticate('jwt', { session: false }), as
 
     let errors = req.validationErrors();
 
-    if (veeErrors.length > 0) {
+    if (errors.length > 0) {
         return res.send({
             errors: createErrorObject(errors)
         });
