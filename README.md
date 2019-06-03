@@ -2,7 +2,7 @@
 
 <p align="center">
     <img width="150"
-        src="/client/assets/img/kuantic_logo.png"
+        src="/client/src/assets/img/kuantic_logo.png"
         alt="kuantic" style="max-width:100%;">
 </p>
 
@@ -41,7 +41,7 @@ MEVN web application to support e-commerce.
 
 View the application at [https://kuantic.herokuapp.com/](https://kuantic.herokuapp.com/)
 
-View the project management cycle here [kuantic Project Kanban (Trello)](https://trello.com/b/RVvgRNIx/kuantic)
+View the project management cycle here [kuantic Project Kanban (Trello)](https://trello.com/claudineisbezerra/boards)
 
 ### Tech Stack
 
