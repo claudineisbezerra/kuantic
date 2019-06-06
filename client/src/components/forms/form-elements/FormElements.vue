@@ -4,7 +4,6 @@
       <div class="flex md12">
         <kuantic-widget :headerText="'forms.inputs.title' | translate">
           <form>
-
             <div class="va-row">
               <div class="flex md4">
                 <fieldset>
@@ -379,7 +378,7 @@
 </template>
 
 <script>
-import CountriesList from 'data/CountriesList'
+import CountriesList from '@/data/location/CountriesList'
 
 export default {
   name: 'form-elements',

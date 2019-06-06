@@ -327,7 +327,7 @@
 </template>
 
 <script>
-import CountriesList from 'data/CountriesList'
+import CountriesList from '@/data/location/CountriesList'
 
 export default {
   name: 'form-wizard',

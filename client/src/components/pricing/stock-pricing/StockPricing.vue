@@ -1,5 +1,5 @@
 <template>
-  <div class="profile">
+  <div class="stockpricing">
     <form>
       <div class="va-row">
       <div class="flex md3">
@@ -183,10 +183,9 @@
 </template>
 
 <script>
-// import CountriesList from 'data/CountriesList'
-import CountriesList from '@/data/CountriesList'
-import CitiesList from '@/data/CitiesList'
-import StatesList from '@/data/StatesList'
+import CountriesList from '@/data/location/CountriesList'
+import CitiesList from '@/data/location/CitiesList'
+import StatesList from '@/data/location/StatesList'
 
 export default {
   name: 'profile',
@@ -257,7 +256,7 @@ export default {
     },
   },
   mounted () {
-    console.log('Profile mounted. Do nor erase this mounted () function.')
+    console.log('Stock Pricing mounted.')
   },
   created () {
     this.$nextTick(() => {

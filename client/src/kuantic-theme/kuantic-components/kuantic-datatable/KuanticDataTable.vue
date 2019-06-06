@@ -35,6 +35,7 @@
       ref="vuetable"
       :apiUrl="apiUrl"
       :apiMode="apiMode"
+      :data="data"
       :httpFetch="httpFetch"
       :httpOptions="httpOptions"
       :fields="tableFields"
@@ -84,6 +85,14 @@ export default {
   props: {
     apiUrl: {
       type: String,
+    },
+    apiMode: {
+      type: Boolean,
+      default: true,
+    },
+    data: {
+      type: Array,
+      default: () => []
     },
     paginationOn: {
       type: Boolean,
@@ -137,10 +146,6 @@ export default {
     onEachSide: {
       type: Number,
       default: 2,
-    },
-    apiMode: {
-      type: Boolean,
-      default: true,
     },
     tableData: {
       type: Object,
@@ -247,6 +252,7 @@ export default {
 
   created () {
     this.perPage = this.defaultPerPageComputed
+    console.log('KuanticDataTable data:', this.data)
   },
 
   mounted () {

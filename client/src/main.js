@@ -77,38 +77,36 @@ Vue.use(VeeValidate, {
   }
 })
 
-router.beforeEach(async (to, from, next) => {
-  await checkUserData(next)
-  if (to.meta.requiresAuth) {
-    if (localStorage.getItem('authToken') === null) {
-      localStorage.clear()
-      next({
-        name: 'login',
-        params: { message: 'You are unauthorized, Please login to access' }
-      })
-    } else {
-      next()
-    }
-  } else if (!_.isEmpty(to.meta) && !to.meta.requiresAuth) {
-    if (localStorage.getItem('authToken')) {
-      next({
-        name: 'profile',
-        params: { handle: store.getters.getUserData.handle }
-      })
-    } else {
-      next()
-    }
-  } else {
-    next()
-  }
+// router.beforeEach(async (to, from, next) => {
+//   await checkUserData(next)
+//   if (to.meta.requiresAuth) {
+//     if (localStorage.getItem('authToken') === null) {
+//       localStorage.clear()
+//       next({
+//         name: 'login',
+//         params: { message: 'You are unauthorized, Please login to access' }
+//       })
+//     } else {
+//       next()
+//     }
+//   } else if (!_.isEmpty(to.meta) && !to.meta.requiresAuth) {
+//     if (localStorage.getItem('authToken')) {
+//       next({
+//         name: 'profile',
+//         params: { handle: store.getters.getUserData.handle }
+//       })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next()
+//   }
+// })
+
+router.beforeEach((to, from, next) => {
   store.commit('app/setLoading', true)
   next()
 })
-
-// router.beforeEach((to, from, next) => {
-//   store.commit('app/setLoading', true)
-//   next()
-// })
 
 router.afterEach((to, from) => {
   store.commit('app/setLoading', false)

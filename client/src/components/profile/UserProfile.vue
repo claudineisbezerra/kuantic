@@ -183,9 +183,9 @@
 </template>
 
 <script>
-import CountriesList from 'data/CountriesList'
-import CitiesList from 'data/CitiesList'
-import StatesList from 'data/StatesList'
+import CountriesList from '@/data/location/CountriesList'
+import CitiesList from '@/data/location/CitiesList'
+import StatesList from '@/data/location/StatesList'
 
 export default {
   name: 'profile',

@@ -352,6 +352,24 @@
     "thick": "Grueso",
     "title": "Barras de Progresso"
   },
+  "purchase": {
+    "filter-title": "¿Qué desea comprar?",
+    "filter-result": "¿Está todo aquí?",
+    "division": "División",
+    "department": "Departamento",
+    "category": "Categoría",
+    "brand": "Marca",
+    "line": "Linea",
+    "color": "Cor",
+    "genre": "Género",
+    "size": "Tamaño",
+    "material": "Material",
+    "sleeve": "Manga",
+    "price-range": "Gamas de precios",
+    "planned-budget": "Presupuesto planificado",
+    "compared-budget": "Presupuesto comparado",
+    "compute": "Calcular"
+  },
   "spinners": {
     "title": "Spinners",
     "poweredBy": "Powered by"

@@ -217,6 +217,7 @@ export default {
 
   &__dropdown-menu {
     padding: 0;
+    min-width: 12.5rem;
 
     .kuantic-scrollbar {
       max-height: $dropdown-item-height * 4;

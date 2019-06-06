@@ -2,10 +2,7 @@
   <div class="charts-page">
     <div class="va-row">
       <div class="flex md6 xs12">
-        <kuantic-widget
-          class="chart-widget"
-          :headerText="$t('charts.verticalBarChart')"
-        >
+        <kuantic-widget class="chart-widget" :headerText="$t('charts.verticalBarChart')">
           <kuantic-chart :data="verticalBarChartData" type="vertical-bar"/>
         </kuantic-widget>
       </div>

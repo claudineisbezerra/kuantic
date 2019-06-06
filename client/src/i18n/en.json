@@ -382,6 +382,24 @@
     "thick": "Thick",
     "title": "Progress Bars"
   },
+  "purchase": {
+    "filter-title": "What do you want to buy?",
+    "filter-result": "Is everything here?",
+    "division": "Division",
+    "department": "Department",
+    "category": "Category",
+    "brand": "Brand",
+    "line": "Line",
+    "color": "Cor",
+    "genre": "Genre",
+    "size": "Size",
+    "material": "Material",
+    "sleeve": "Sleeve",
+    "price-range": "Price Ranges",
+    "planned-budget": "Planned Budget",
+    "compared-budget": "Actual Budget",
+    "compute": "Compute"
+  },
   "spinners": {
     "title": "Spinners",
     "poweredBy": "Powered by"
