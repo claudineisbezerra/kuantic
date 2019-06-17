@@ -368,7 +368,11 @@
     "price-range": "Gamas de precios",
     "planned-budget": "Presupuesto planificado",
     "compared-budget": "Presupuesto comparado",
-    "compute": "Calcular"
+    "compute": "Calcular",
+    "start": "De",
+    "end": "Hasta",
+    "beyond": "Por acima de",
+    "all-prices": "Todos los precios"
   },
   "spinners": {
     "title": "Spinners",

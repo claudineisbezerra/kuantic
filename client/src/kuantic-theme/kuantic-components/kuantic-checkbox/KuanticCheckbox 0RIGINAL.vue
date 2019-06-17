@@ -1,34 +1,38 @@
 <template>
-  <div class="kuantic-checkbox" :class="computedClass">
-    <div class="kuantic-checkbox__square"
-         @click="toggleSelection(),
-         focused = false"
-         @mousedown="focused = true"
-         :class="{'active': checkedProxy}"
+  <div
+    class="kuantic-checkbox"
+    :class="computedClass"
+  >
+    <div
+      class="kuantic-checkbox__square"
+      @click="toggleSelection(), focused = false"
+      @mousedown="focused = true"
+      :class="{'active': value}"
     >
-
-      <input :id="id"
-             readonly
-             @focus="focused = true"
-             @mouseout="focused = false"
-             @blur="focused = false"
-             @keypress="toggleSelection()"
-             class="kuantic-checkbox__input"
-             :disabled="disabled"
-             />
-             <!-- v-model="checkedItems" -->
+      <input
+        :id="id"
+        readonly
+        @focus="focused = true"
+        @mouseout="focused = false"
+        @blur="focused = false"
+        @keypress="toggleSelection()"
+        class="kuantic-checkbox__input"
+        :disabled="disabled"
+      />
       <i class="ion ion-md-checkmark kuantic-checkbox__icon-selected" aria-hidden="true"/>
     </div>
-    <div class="kuantic-checkbox__label-text"
-         @click="toggleSelection">
+    <div
+      class="kuantic-checkbox__label-text" @click="toggleSelection">
       <slot name="label">
         {{ label }}
       </slot>
     </div>
     <div class="kuantic-checkbox__error-message-container" v-if="showError">
-        <span class="kuantic-checkbox__error-message"
-              v-for="(error, index) in computedErrorMessages"
-              :key="index">
+        <span
+          class="kuantic-checkbox__error-message"
+          v-for="(error, index) in computedErrorMessages"
+          :key="index"
+        >
             {{ error }}
         </span>
     </div>
@@ -41,11 +45,8 @@ export default {
   props: {
     label: String,
     value: {
-      type: [Boolean, String, Array],
+      type: Boolean,
       required: true
-    },
-    val: {
-      type: String
     },
     id: {
       type: String
@@ -74,31 +75,13 @@ export default {
   },
   data () {
     return {
-      isFocused: false,
-      checkedProxy: false
-    }
-  },
-  created () {
-    // set the checked proxy if we start with this value included.
-    if (this.value.includes(this.val)) {
-      this.checkedProxy = true
+      isFocused: false
     }
   },
   computed: {
-    checkedItems: {
-      get () {
-        return this.value
-      },
-      set (val) {
-        this.checkedProxy = val
-        if (!this.readonly && !this.disabled) {
-          this.checkedProxy = val
-        }
-      }
-    },
     computedClass () {
       return {
-        'kuantic-checkbox--selected': this.checkedProxy,
+        'kuantic-checkbox--selected': this.valueProxy,
         'kuantic-checkbox--readonly': this.readonly,
         'kuantic-checkbox--disabled': this.disabled,
         'kuantic-checkbox--error': this.showError,
@@ -124,7 +107,18 @@ export default {
         return this.isFocused
       }
     },
+    valueProxy: {
+      set (valueProxy) {
+        if (!this.readonly && !this.disabled) {
+          this.$emit('input', valueProxy)
+        }
+      },
+      get () {
+        return this.value
+      }
+    },
     showError () {
+      // We make error active, if the error-message is not empty and checkbox is not disabled
       if (!this.disabled) {
         if (!(this.errorMessages.length === 0) || this.error) {
           return true
@@ -136,17 +130,10 @@ export default {
   methods: {
     toggleSelection () {
       if (!this.disabled) {
-        this.checkedProxy = !this.checkedProxy
-        let value = [].concat(this.value) // copy so we dont mutate property directly
-        if (!this.checkedProxy && value.includes(this.val)) {
-          value.splice(value.indexOf(this.val), 1)
-        } else {
-          value.push(this.val)
-        }
-        this.$emit('input', value) // emit the new value.
+        this.valueProxy = !this.valueProxy
       }
     },
-  }
+  },
 }
 </script>
 
@@ -185,7 +172,6 @@ export default {
           }
         }
       }
-
       .kuantic-checkbox--error#{&} {
         border-color: $theme-red;
       }

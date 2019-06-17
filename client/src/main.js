@@ -12,11 +12,21 @@ import store from './store'
 import axios from 'axios'
 import io from 'socket.io-client'
 import setAuthToken from '../utils/authToken'
-import KuanticPlugin from '@/kuantic-theme/kuantic-plugin'
+import appConstants from 'utils/appConstants'
 import './i18n'
+import KuanticPlugin from '@/kuantic-theme/kuantic-plugin'
 import YmapPlugin from 'vue-yandex-maps'
-import { checkUserData } from './helpers/user'
-import _ from 'lodash'
+// import { checkUserData } from './helpers/user'
+// import _ from 'lodash'
+import VMoney from 'v-money'
+Vue.use(VMoney,
+  {
+    decimal: ',',
+    thousands: '.',
+    prefix: 'R$ ',
+    precision: 2,
+    masked: false
+  })
 
 Vue.use(KuanticPlugin)
 Vue.use(YmapPlugin)
@@ -77,6 +87,14 @@ Vue.use(VeeValidate, {
   }
 })
 
+let mixin = {
+  data: function () {
+    return {
+      CONSTANT: appConstants
+    }
+  }
+}
+
 // router.beforeEach(async (to, from, next) => {
 //   await checkUserData(next)
 //   if (to.meta.requiresAuth) {
@@ -116,6 +134,7 @@ router.afterEach((to, from) => {
 
 new Vue({
   el: '#app',
+  mixins: [mixin],
   router,
   store,
   render: h => h(App),

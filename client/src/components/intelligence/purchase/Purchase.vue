@@ -10,8 +10,13 @@
                   <kuantic-simple-select
                     :label="'purchase.division' | translate"
                     v-model="chosenDivision"
-                    option-key="description"
+                    option-key="title"
                     v-bind:options="division"
+                  />
+                  <kuantic-simple-select
+                    :label="'purchase.category' | translate"
+                    v-model="chosenCategory"
+                    v-bind:options="category"
                   />
                 </fieldset>
               </div>
@@ -20,56 +25,14 @@
                   <div class="form-group" :class="{'has-error': veeErrors.has('price-range')}">
                     <div class="input-group">
                       <kuantic-checkbox
-                        label="Todas os preços"
-                        v-model="checkbox.all"
-                      />
-                      <kuantic-checkbox
-                        label="De 0,00 até 50,00"
-                        v-model="checkbox.range1"
-                      />
-                      <kuantic-checkbox
-                        label="De 51,00 até 100,00"
-                        v-model="checkbox.range2"
-                      />
-                      <kuantic-checkbox
-                        label="De 101,00 até 150,00"
-                        v-model="checkbox.range3"
-                      />
-                      <kuantic-checkbox
-                        label="Acima de 150,00"
-                        v-model="checkbox.range4"
+                        v-for="(priceRange, id) in priceRanges"
+                        :key="id"
+                        :label="setPriceRangeLabel(priceRange)"
+                        :val="setPriceRangeValue(priceRange)"
+                        v-model="checkedPriceRanges"
                       />
                     </div>
                   </div>
-                  <!-- <kuantic-checkbox
-                    :label="$t('forms.controls.unselected')"
-                    v-model="checkbox.unselected"
-                  />
-                  <kuantic-checkbox
-                    :label="$t('forms.controls.selected')"
-                    v-model="checkbox.selected"
-                  />
-                  <kuantic-checkbox
-                    :label="$t('forms.controls.readonly')"
-                    v-model="checkbox.readonly"
-                    :readonly="true"
-                  />
-                  <kuantic-checkbox
-                    :label="$t('forms.controls.disabled')"
-                    :disabled="true"
-                    v-model="checkbox.disabled"
-                  />
-                  <kuantic-checkbox
-                    :label="$t('forms.controls.error')"
-                    error
-                    v-model="checkbox.error"
-                  />
-                  <kuantic-checkbox
-                    :label="$t('forms.controls.errorMessage')"
-                    :error-messages="errorMessages"
-                    :errorCount="2"
-                    v-model="checkbox.errorMessages"
-                  /> -->
                 </fieldset>
               </div>
               <div class="flex md2.5">
@@ -80,6 +43,7 @@
                         id="planned-budget"
                         name="planned-budget"
                         v-model="plannedBudget"
+                        v-money="money"
                         v-validate="'required'"
                         />
                       <label class="control-label" for="planned-budget">
@@ -102,6 +66,7 @@
                         name="compared-budget"
                         v-model="comparedBudget"
                         v-validate="'required'"
+                        v-money="money"
                         />
                       <label class="control-label" for="compared-budget">
                         {{'purchase.compared-budget' | translate}}
@@ -135,7 +100,7 @@
           <kuantic-data-table
             :apiUrl="apiUrl"
             :apiMode="apiMode"
-            :data="data"
+            :data="purchase.purchase_list"
             :tableFields="tableFields"
             :itemsPerPage="itemsPerPage"
             :defaultPerPage="defaultTablePerPage"
@@ -195,10 +160,12 @@
 
 <script>
 import Division from '@/data/store/Division'
+import Category from '@/data/store/ProductType'
+import PriceRanges from '@/data/store/PriceRanges'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
-import MyData from '@/data/table/my-data'
+import PurchaseData from '@/data/table/purchase-data-output'
 import TenisMasculinoVerticalBarChartData from '@/data/table/charts/TenisMasculinoVerticalBarChartData'
 import BotaMasculinoVerticalBarChartData from '@/data/table/charts/BotaMasculinoVerticalBarChartData'
 import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/CamisetaMasculinoVerticalBarChartData'
@@ -206,13 +173,15 @@ import MoletonMasculinoVerticalBarChartData from '@/data/table/charts/MoletonMas
 import CompraSugeridaDonutChartData from '@/data/table/charts/CompraSugeridaDonutChartData'
 import CompraRealizarDonutChartData from '@/data/table/charts/CompraRealizarDonutChartData'
 import { SpringSpinner } from 'epic-spinners'
-console.log('Purchase MyData:', MyData)
-console.log('Purchase MyData.data:', MyData.data)
+import { VMoney } from 'v-money'
 
 export default {
   name: 'profile',
   components: {
-    SpringSpinner,
+    SpringSpinner
+  },
+  directives: {
+    money: VMoney
   },
   computed: {
     datePickerDisabled: () => [date => !(date.getDate() % 5)],
@@ -227,20 +196,23 @@ export default {
   data () {
     return {
       division: Division,
-      chosenDivision: '',
-      plannedBudget: '',
-      comparedBudget: '',
-      priceRange: '',
-      checkbox: {
-        all: false,
-        range1: true,
-        range2: true,
-        range3: false,
-        range4: false
+      category: Category,
+      priceRanges: PriceRanges,
+      chosenDivision: {
+        id: null,
+        title: null
       },
+      chosenCategory: null,
+      plannedBudget: null,
+      comparedBudget: null,
+      chosenPriceStartAt: null,
+      chosenPriceEndAt: null,
+      checkedPriceRanges: [],
+      money: {},
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
-      data: MyData.data,
+      purchase: PurchaseData.purchase,
+
       tableFields: FieldsDef.tableFields,
       itemsPerPage: ItemsPerPageDef.itemsPerPage,
       sortFunctions: FieldsDef.sortFunctions,
@@ -259,11 +231,54 @@ export default {
     clear (field) {
       this[field] = ''
     },
+    setPriceRangeLabel (priceRange) {
+      if (!priceRange) return
+
+      let startAt = priceRange.start_at
+      let endAt = priceRange.end_at
+      let label = ''
+      if (startAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
+        label = this.$t('purchase.all-prices')
+      }
+      if (startAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
+        label = this.$t('purchase.start') + ' ' + startAt + ' ' + this.$t('purchase.end') + ' ' + endAt
+      }
+      if (startAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
+        label = this.$t('purchase.beyond') + ' ' + startAt
+      }
+      return label
+    },
+    setPriceRangeValue (priceRange) {
+      if (!priceRange) return
+      let startAt
+      if (priceRange.start_at === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
+        startAt = this.$root.CONSTANT.PRICE.MAX_RANGE.VALUE
+      } else {
+        startAt = priceRange.start_at
+      }
+      let endAt
+      if (priceRange.end_at === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
+        endAt = this.$root.CONSTANT.PRICE.MAX_RANGE.VALUE
+      } else {
+        endAt = priceRange.end_at
+      }
+      let val = startAt + '|' + endAt
+
+      return val
+    },
     handleSubmit () {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
           console.log('Form fields are valid.')
+
+          console.log('Field chosenDivision:', this.chosenDivision)
+          console.log('Field chosenCategory:', this.chosenCategory)
+          console.log('Field checkedPriceRanges:', this.checkedPriceRanges)
+          console.log('Field plannedBudget:', this.plannedBudget)
+          console.log('Field comparedBudget:', this.comparedBudget)
+          console.log('Field chosenPriceStartAt:', this.chosenPriceStartAt)
+          console.log('Field chosenPriceEndAt:', this.chosenPriceEndAt)
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)

@@ -1,14 +1,14 @@
 export default [
   {
-    id: 1,
-    description: 'Masculino',
+    id: 434521,
+    title: 'Masculino',
   },
   {
-    id: 2,
-    description: 'Feminino',
+    id: 434522,
+    title: 'Feminino',
   },
   {
-    id: 3,
-    description: 'Juvenil',
+    id: 434523,
+    title: 'Juvenil',
   },
 ]

@@ -1,6 +1,9 @@
 const path = require('path')
 
 module.exports = {
+  chainWebpack: (config) => {
+    config.plugins.delete('named-chunks')
+  },
   lintOnSave: false,
   pages: {
     index: {
@@ -23,7 +26,7 @@ module.exports = {
       alias: {
         'vue$': 'vue/dist/vue.esm.js',
         '@': path.resolve('src'),
-        'src': path.resolve('src'),
+        'utils': path.resolve('utils'),
         'assets': path.resolve('src/assets'),
         'components': path.resolve('src/components'),
         'services': path.resolve('src/services'),

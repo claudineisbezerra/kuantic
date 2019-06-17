@@ -19,8 +19,8 @@ export default {
   name: 'notFound',
   props: [],
   components: {},
-  mounted() {}
-};
+  mounted () {}
+}
 </script>
 
 <style lang="scss" scoped>

@@ -398,7 +398,11 @@
     "price-range": "Price Ranges",
     "planned-budget": "Planned Budget",
     "compared-budget": "Actual Budget",
-    "compute": "Compute"
+    "compute": "Compute",
+    "start": "From",
+    "end": "To",
+    "beyond": "Beyond",
+    "all-prices": "All prices"
   },
   "spinners": {
     "title": "Spinners",
