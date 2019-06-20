@@ -60,12 +60,12 @@
 </template>
 
 <script>
-import { getLineChartData } from '../../../data/charts/LineChartData'
-import BubbleChartData from '../../../data/charts/BubbleChartData'
-import PieChartData from '../../../data/charts/PieChartData'
-import DonutChartData from '../../../data/charts/DonutChartData'
-import VerticalBarChartData from '../../../data/charts/VerticalBarChartData'
-import HorizontalBarChartData from '../../../data/charts/HorizontalBarChartData'
+import { getLineChartData } from '../../../data/charts/line-chart-data'
+import BubbleChartData from '../../../data/charts/bubble-chart-data'
+import PieChartData from '../../../data/charts/pie-chart-data'
+import DonutChartData from '../../../data/charts/donut-chart-data'
+import VerticalBarChartData from '../../../data/charts/vertical-bar-chart-data'
+import HorizontalBarChartData from '../../../data/charts/horizontal-bar-chart-data'
 import SidebarLink from '../../admin/app-sidebar/components/SidebarLink'
 
 export default {

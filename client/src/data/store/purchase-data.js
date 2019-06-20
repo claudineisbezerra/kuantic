@@ -3,7 +3,7 @@ export default {
     purchase_id: 20190531,
     purchase_title: 'Recompra de tênis em 31 de maio de 2019',
     purchase_params: {
-      collection_id: [
+      collection: [
         {
           collection_id: 434521,
           collection_title: 'Masculino'
@@ -14,10 +14,16 @@ export default {
         },
       ],
       product_type: ['Tênis', 'Pochete'],
-      price_range: {
-        from: 0,
-        to: 100
-      },
+      price_range: [
+        {
+          from: 0,
+          to: 50
+        },
+        {
+          from: 151,
+          to: 10000
+        },
+      ],
       planned_budget: 100,
       compared_budget: 100
     },

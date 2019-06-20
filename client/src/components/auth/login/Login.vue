@@ -28,7 +28,6 @@
           </small>
         </div>
       </div>
-
       <div class="form-group" with-icon-right>
         <div class="input-group">
           <input name="password"
@@ -47,10 +46,8 @@
           </small>
         </div>
       </div>
-
-    <error :errorMessage="errorMessage" />
-    <error :errors="errors" />
-
+      <error :errorMessage="errorMessage" />
+      <error :errors="errors" />
       <div class="d-flex align--center justify--space-between">
         <button class="btn btn-primary" type="submit">
           {{'auth.login' | translate}}
@@ -92,12 +89,10 @@ export default {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          axios
-            .post(
-              '/api/auth/login',
-              { email: this.email, password: this.password }
+          axios.post('/api/auth/login',
+            { email: this.email, password: this.password }
             // { params: { lang: this.$i18n.locale } }
-            )
+          )
             .then((res) => {
               if (res.data.errors) {
                 for (const error of res.data.errors) {
@@ -124,12 +119,12 @@ export default {
             })
         }
       })
-      setTimeout(() => { this.errors = [] }, 1500)
+      setTimeout(() => { this.errors = [] }, 3000)
     }
   },
   mounted () {
     if (this.errorMessage) {
-      setTimeout(() => { this.errorMessage = '' }, 1500)
+      setTimeout(() => { this.errorMessage = '' }, 3000)
     }
   }
 }

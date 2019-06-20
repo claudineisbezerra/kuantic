@@ -252,7 +252,6 @@ export default {
 
   created () {
     this.perPage = this.defaultPerPageComputed
-    console.log('KuanticDataTable data:', this.data)
   },
 
   mounted () {

@@ -8,16 +8,24 @@
               <div class="flex md2.5">
                 <fieldset>
                   <kuantic-simple-select
+                    name="division"
                     :label="'purchase.division' | translate"
                     v-model="chosenDivision"
                     option-key="title"
                     v-bind:options="division"
                   />
+                  <small v-show="veeErrors.has('division')" class="help text-danger">
+                    {{ veeErrors.first('division') }}
+                  </small>
                   <kuantic-simple-select
+                     name="category"
                     :label="'purchase.category' | translate"
                     v-model="chosenCategory"
                     v-bind:options="category"
                   />
+                  <small v-show="veeErrors.has('category')" class="help text-danger">
+                    {{ veeErrors.first('category') }}
+                  </small>
                 </fieldset>
               </div>
               <div class="flex md2.5">
@@ -44,7 +52,7 @@
                         name="planned-budget"
                         v-model="plannedBudget"
                         v-money="money"
-                        v-validate="'required'"
+                        v-validate="'positive_number'"
                         />
                       <label class="control-label" for="planned-budget">
                         {{'purchase.planned-budget' | translate}}
@@ -65,16 +73,12 @@
                         id="compared-budget"
                         name="compared-budget"
                         v-model="comparedBudget"
-                        v-validate="'required'"
                         v-money="money"
                         />
                       <label class="control-label" for="compared-budget">
                         {{'purchase.compared-budget' | translate}}
                       </label>
                       <i class="bar"></i>
-                      <small v-show="veeErrors.has('compared-budget')" class="help text-danger">
-                        {{ veeErrors.first('compared-budget') }}
-                      </small>
                     </div>
                   </div>
                 </fieldset>
@@ -159,21 +163,27 @@
 </template>
 
 <script>
-import Division from '@/data/store/Division'
-import Category from '@/data/store/ProductType'
-import PriceRanges from '@/data/store/PriceRanges'
+import Division from '@/data/store/division'
+import Category from '@/data/store/product-type'
+import PriceRanges from '@/data/store/price-ranges'
+import PurchaseData from '@/data/store/purchase-data'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
-import PurchaseData from '@/data/table/purchase-data-output'
-import TenisMasculinoVerticalBarChartData from '@/data/table/charts/TenisMasculinoVerticalBarChartData'
-import BotaMasculinoVerticalBarChartData from '@/data/table/charts/BotaMasculinoVerticalBarChartData'
-import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/CamisetaMasculinoVerticalBarChartData'
-import MoletonMasculinoVerticalBarChartData from '@/data/table/charts/MoletonMasculinoVerticalBarChartData'
-import CompraSugeridaDonutChartData from '@/data/table/charts/CompraSugeridaDonutChartData'
-import CompraRealizarDonutChartData from '@/data/table/charts/CompraRealizarDonutChartData'
+
+import TenisMasculinoVerticalBarChartData from '@/data/table/charts/tenis-masculino-vertical-bar-chart-data'
+import BotaMasculinoVerticalBarChartData from '@/data/table/charts/bota-masculino-vertical-bar-chart-data'
+import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/camiseta-masculino-vertical-bar-chart-data'
+import MoletonMasculinoVerticalBarChartData from '@/data/table/charts/moleton-masculino-vertical-bar-chart-data'
+import CompraSugeridaDonutChartData from '@/data/table/charts/compra-sugerida-donut-chart-data'
+import CompraRealizarDonutChartData from '@/data/table/charts/compra-realizar-donut-chart-data'
 import { SpringSpinner } from 'epic-spinners'
 import { VMoney } from 'v-money'
+
+import axios from 'axios'
+import _ from 'lodash'
+import { mapActions } from 'vuex'
+import setAuthToken from 'utils/authToken'
 
 export default {
   name: 'profile',
@@ -212,6 +222,7 @@ export default {
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
       purchase: PurchaseData.purchase,
+      // purchaseParams: {},
 
       tableFields: FieldsDef.tableFields,
       itemsPerPage: ItemsPerPageDef.itemsPerPage,
@@ -228,6 +239,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['app/toggleAuthState']),
+
     clear (field) {
       this[field] = ''
     },
@@ -266,19 +279,108 @@ export default {
 
       return val
     },
+    setPurchaseParams () {
+      let purchaseParams = {
+        collection: [],
+        product_type: [],
+        price_range: [],
+        planned_budget: null,
+        compared_budget: null,
+      }
+
+      if (this.chosenDivision && this.chosenDivision.id) {
+        purchaseParams.collection.push(this.chosenDivision)
+      } else {
+        purchaseParams.collection = []
+      }
+
+      if (this.chosenCategory) {
+        purchaseParams.product_type.push(this.chosenCategory)
+      } else {
+        purchaseParams.product_type = []
+      }
+
+      if (this.checkedPriceRanges) {
+        let priceRanges = []
+        for (let i = 0; i < this.checkedPriceRanges.length; i++) {
+          let priceRange = { from: null, to: null }
+          let itemsArray = _.split(this.checkedPriceRanges[i], '|', 2)
+          if (itemsArray.length > 1) {
+            let from = itemsArray[0]
+            let to = itemsArray[1]
+            priceRange.from = from
+            priceRange.to = to
+            priceRanges.push(priceRange)
+          }
+        }
+        purchaseParams.price_range = priceRanges
+      } else {
+        purchaseParams.price_range = []
+      }
+
+      if (this.plannedBudget) {
+        let unmaskedPlannedBudget = this.removeCurrencyMask(this.plannedBudget)
+        if (parseInt(unmaskedPlannedBudget) > 0) {
+          purchaseParams.planned_budget = unmaskedPlannedBudget
+        } else {
+          purchaseParams.planned_budget = null
+        }
+      } else {
+        purchaseParams.planned_budget = null
+      }
+
+      if (this.comparedBudget) {
+        let unmaskedComparedBudget = this.removeCurrencyMask(this.comparedBudget)
+        if (parseInt(unmaskedComparedBudget) > 0) {
+          purchaseParams.compared_budget = unmaskedComparedBudget
+        } else {
+          purchaseParams.compared_budget = null
+        }
+      } else {
+        purchaseParams.compared_budget = null
+      }
+      return purchaseParams
+    },
+    removeCurrencyMask (el) {
+      // Removes all currency symbols and decimal sign ',' and thousands sign '.'
+      // eslint-disable-next-line no-useless-escape
+      let unmasked = el.replace(/[^\d\.\,\s]+/g, '').replace('.', '').replace(',', '.')
+      return unmasked
+    },
     handleSubmit () {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          console.log('Form fields are valid.')
+          let purchaseParams = this.setPurchaseParams()
+          console.log('Purchase purchaseParams: ', purchaseParams)
+          axios.get('/api/admin/intelligence/purchase',
+            { params: purchaseParams }
+          )
+            .then((res) => {
+              console.log('Purchase res:', res)
+              if (res.data.errors) {
+                for (const error of res.data.errors) {
+                  const [key] = Object.keys(error)
+                  const [value] = Object.values(error)
+                  this.errors.push({ key, value })
+                }
+              } else {
+                console.log('res.data.token:', res.data.token)
+                console.log('res.data.user:', res.data.user)
+                console.log('res.data.user.handle:', res.data.user.handle)
 
-          console.log('Field chosenDivision:', this.chosenDivision)
-          console.log('Field chosenCategory:', this.chosenCategory)
-          console.log('Field checkedPriceRanges:', this.checkedPriceRanges)
-          console.log('Field plannedBudget:', this.plannedBudget)
-          console.log('Field comparedBudget:', this.comparedBudget)
-          console.log('Field chosenPriceStartAt:', this.chosenPriceStartAt)
-          console.log('Field chosenPriceEndAt:', this.chosenPriceEndAt)
+                localStorage.setItem('authToken', res.data.token)
+                this.$store.dispatch('app/toggleAuthState', true)
+                // this.$store.dispatch('app/saveUserData', res.data.user)
+
+                setAuthToken(res.data.token)
+
+              // this.$router.push({
+              //   name: 'profile',
+              //   params: { handle: res.data.user.handle }
+              // })
+              }
+            })
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
@@ -289,6 +391,16 @@ export default {
   },
   created () {
     this.$nextTick(() => {
+      // Custom VeeValidate rules
+      this.$validator.extend('positive_number', {
+        getMessage: (field) => this.$t('validate.positive_number'),
+        validate: (value) => new Promise(resolve => {
+          resolve({
+            valid: value && (parseFloat(this.removeCurrencyMask(value)) > 0)
+          })
+        })
+      })
+
       // this.$validator.validateAll()
     })
   },

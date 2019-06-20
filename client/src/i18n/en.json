@@ -63,7 +63,8 @@
     "password": "Password",
     "signUp": "Sign Up",
     "termsOfUse": "Terms of Use.",
-    "welcome": "Welcome!"
+    "welcome": "Welcome!",
+    "401_ErrorMessage": "Session has expired, please login again"
   },
   "breadcrumbs": {
     "home": "Home"
@@ -454,5 +455,8 @@
     "signup": "Sign Up",
     "logout": "Logout",
     "profile": "My Profile"
+  },
+  "validate": {
+    "positive_number": "Must be grater than zeros"
   }
 }

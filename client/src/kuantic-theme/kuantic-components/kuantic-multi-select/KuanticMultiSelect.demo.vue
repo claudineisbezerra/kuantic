@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import CountriesList from '@/data/location/CountriesList'
+import CountriesList from '@/data/location/countries-list'
 import KuanticMultiSelect from './KuanticMultiSelect'
 
 export default {

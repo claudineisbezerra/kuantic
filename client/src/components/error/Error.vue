@@ -9,7 +9,7 @@
     </div>
     <div v-else v-show="errorMessage" class="mb-6 form__error">
       <transition name="fade" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut" mode="out-in">
-        <small class="help text-danger">
+        <small class="help">
           {{ errorMessage }}
         </small>
       </transition>

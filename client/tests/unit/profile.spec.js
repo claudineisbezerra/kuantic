@@ -1,3 +1,4 @@
+import { shallowMount } from '@vue/test-utils'
 import Profile from '@/components/profile/Profile.vue'
 
 describe('Profile.vue', () => {

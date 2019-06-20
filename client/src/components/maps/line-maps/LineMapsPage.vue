@@ -15,7 +15,7 @@
 
 <script>
 import LineMap from './LineMap'
-import LineMapData from 'data/maps/LineMapData'
+import LineMapData from 'data/maps/line-map-data'
 
 export default {
   name: 'line-maps-page',

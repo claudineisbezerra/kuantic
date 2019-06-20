@@ -23,6 +23,7 @@ const {
  * @access public
  */
 router.post('/signup', [checkRegistrationFields], (req, res) => {
+    console.log('Signup req:', req);
     let errors = [];
 
     User.findOne({ email: req.body.email }).then(user => {

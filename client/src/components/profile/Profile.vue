@@ -92,7 +92,7 @@
                 </fieldset>
               </div>
 
-              <div class="flex xs2">
+              <div class="flex xs4">
                 <fieldset>
                   <div class="form-group with-icon-right">
                     <div class="input-group">
@@ -110,7 +110,7 @@
                   </div>
                 </fieldset>
               </div>
-              <div class="flex xs10">
+              <div class="flex xs8">
                 <fieldset>
                   <div class="form-group with-icon-right">
                     <div class="input-group">
@@ -183,9 +183,9 @@
 </template>
 
 <script>
-import CountriesList from '@/data/location/CountriesList'
-import CitiesList from '@/data/location/CitiesList'
-import StatesList from '@/data/location/StatesList'
+import CountriesList from '@/data/location/countries-list'
+import CitiesList from '@/data/location/cities-list'
+import StatesList from '@/data/location/states-list'
 
 export default {
   name: 'profile',
@@ -256,7 +256,7 @@ export default {
     },
   },
   mounted () {
-    console.log('Profile mounted. Do nor erase this mounted () function.')
+    console.log('Profile mounted. Do not erase this mounted () function.')
   },
   created () {
     this.$nextTick(() => {

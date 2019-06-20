@@ -183,10 +183,10 @@
 </template>
 
 <script>
-// import CountriesList from 'data/location/CountriesList'
-import CountriesList from '@/data/location/CountriesList'
-import CitiesList from '@/data/location/CitiesList'
-import StatesList from '@/data/location/StatesList'
+// import CountriesList from 'data/location/countries-list'
+import CountriesList from '@/data/location/countries-list'
+import CitiesList from '@/data/location/cities-list'
+import StatesList from '@/data/location/states-list'
 
 export default {
   name: 'profile',

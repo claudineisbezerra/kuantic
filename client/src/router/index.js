@@ -35,7 +35,7 @@ export default new Router({
     ...demoRoutes,
     {
       path: '*',
-      redirect: { name: 'dashboard' },
+      redirect: { name: 'dashboard' }
     },
     {
       path: '/auth',
@@ -102,6 +102,9 @@ export default new Router({
           name: 'dashboard',
           component: lazyLoading('dashboard/Dashboard'),
           default: true,
+          meta: {
+            requiresAuth: false
+          }
         },
         {
           path: 'intelligence',
@@ -113,6 +116,7 @@ export default new Router({
               name: 'purchase',
               component: lazyLoading('intelligence/purchase/Purchase'),
               meta: {
+                requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/purchase',
               },
             },
@@ -128,6 +132,7 @@ export default new Router({
               name: 'matrix-pricing',
               component: lazyLoading('pricing/matrix-pricing/MatrixPricing'),
               meta: {
+                requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/matrix-pricing',
               },
             },
@@ -136,6 +141,7 @@ export default new Router({
               name: 'campaign-pricing',
               component: lazyLoading('pricing/campaign-pricing/CampaignPricing'),
               meta: {
+                requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/campaign-pricing',
               },
             },
@@ -144,6 +150,7 @@ export default new Router({
               name: 'stock-pricing',
               component: lazyLoading('pricing/stock-pricing/StockPricing'),
               meta: {
+                requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/stock-pricing',
               },
             },
@@ -159,6 +166,7 @@ export default new Router({
               name: 'best-sellers',
               component: lazyLoading('reports/best-sellers/BestSellers'),
               meta: {
+                requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/best-sellers',
               },
             },
@@ -432,7 +440,7 @@ export default new Router({
           name: 'profile',
           component: lazyLoading('profile/Profile'),
           meta: {
-            requiresAuth: true,
+            requiresAuth: false,
             transitionName: 'router-anim',
             enterActive: 'animated fadeIn'
           }
@@ -443,7 +451,7 @@ export default new Router({
           component: lazyLoading('profile/UserProfile'),
           props: true,
           meta: {
-            requiresAuth: true,
+            requiresAuth: false,
             transitionName: 'router-anim',
             enterActive: 'animated fadeIn'
           }
@@ -454,7 +462,7 @@ export default new Router({
           component: lazyLoading('profile/EditUserProfile'),
           props: true,
           meta: {
-            requiresAuth: true,
+            requiresAuth: false,
             transitionName: 'router-anim',
             enterActive: 'animated fadeIn'
           }

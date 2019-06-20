@@ -63,7 +63,8 @@
     "password": "Senha",
     "signUp": "Cadastrar",
     "termsOfUse": "Termos de uso.",
-    "welcome": "Bem vindo!"
+    "welcome": "Bem vindo!",
+    "401_ErrorMessage": "A sessão expirou, por favor, faça o login novamente"
   },
   "breadcrumbs": {
     "home": "Início"
@@ -434,5 +435,8 @@
     "signup": "Cadastrar-se",
     "logout": "Sair",
     "profile": "Meu Perfil"
+  },
+  "validate": {
+    "positive_number": "Deve ser maior que zeros"
   }
 }

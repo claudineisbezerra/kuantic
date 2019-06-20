@@ -15,6 +15,7 @@
 	"found": "found",
 	"will_redirect": "You will now be redirected",
 	"notfound": "not found",
+	"purchases_error_NOTFOUND": "No Purchases Found",
 	"rooms_error_NOTFOUND": "No Rooms Found",
 	"room_error_NOTFOUND": "No Room Found",
 	"room_error_REQUIRED": "Room name is required",

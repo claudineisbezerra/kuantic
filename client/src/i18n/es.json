@@ -63,7 +63,8 @@
     "password": "Contraseña",
     "signUp": "Registrar",
     "termsOfUse": "Los terminos de uso",
-    "welcome": "Bienvenido!"
+    "welcome": "Bienvenido!",
+    "401_ErrorMessage": "La sesión ha expirado, por favor vuelva a iniciar sesión"
   },
   "breadcrumbs": {
     "home": "Home"
@@ -424,5 +425,8 @@
     "signup": "Sign Up",
     "profile": "Mi Perfil",
     "logout": "Cerrar Sesión"
+  },
+  "validate": {
+    "positive_number": "Debe ser mayor que ceros"
   }
 }

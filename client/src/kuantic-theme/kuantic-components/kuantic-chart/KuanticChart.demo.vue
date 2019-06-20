@@ -16,7 +16,7 @@
 import KuanticChart from './KuanticChart.vue'
 import KuanticSimpleSelect from '../kuantic-simple-select/KuanticSimpleSelect'
 import { chartTypes } from './KuanticChartConfigs'
-import { getLineChartData } from '../../../data/charts/LineChartData'
+import { getLineChartData } from '../../../data/charts/line-chart-data'
 
 export default {
   data () {

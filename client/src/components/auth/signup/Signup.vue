@@ -124,17 +124,17 @@ export default {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          axios
-            .post(
-              '/api/auth/signup',
-              {
-                handle: slugify(this.username.toLowerCase()),
-                username: this.username,
-                email: this.email,
-                password: this.password
-              },
-              // { params: { lang: this.$i18n.locale } }
-            )
+          console.log('Signup validateAll:', result)
+          axios.post(
+            '/api/auth/signup',
+            {
+              handle: slugify(this.username.toLowerCase()),
+              username: this.username,
+              email: this.email,
+              password: this.password
+            },
+            // { params: { lang: this.$i18n.locale } }
+          )
             .then((res) => {
               console.log('Signup handleSubmit res:', res)
               console.log('Signup handleSubmit res.data.errors:', res.data.errors)

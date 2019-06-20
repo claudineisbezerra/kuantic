@@ -378,7 +378,7 @@
 </template>
 
 <script>
-import CountriesList from '@/data/location/CountriesList'
+import CountriesList from '@/data/location/countries-list'
 
 export default {
   name: 'form-elements',

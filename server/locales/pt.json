@@ -15,6 +15,7 @@
 	"found": "encontrada",
 	"will_redirect": "Você será redirecionado",
 	"notfound": "não encontrada",
+	"purchases_error_NOTFOUND": "Nenhuma compra encontrada",
 	"rooms_error_NOTFOUND": "Nenhuma sala encontrada",
 	"room_error_NOTFOUND": "Sala não encontrada",
 	"room_error_REQUIRED": "Nome da sala é obrigatório",

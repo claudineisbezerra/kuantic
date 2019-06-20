@@ -16,7 +16,6 @@
              class="kuantic-checkbox__input"
              :disabled="disabled"
              />
-             <!-- v-model="checkedItems" -->
       <i class="ion ion-md-checkmark kuantic-checkbox__icon-selected" aria-hidden="true"/>
     </div>
     <div class="kuantic-checkbox__label-text"

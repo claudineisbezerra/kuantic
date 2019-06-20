@@ -157,7 +157,6 @@ export default {
     unselectOption () {
       this.selectedValue = ''
       this.$emit('input', this.selectedValue)
-      console.log('unselectOption option:', this.selectedValue)
     },
     showDropdown () {
       this.displayValue = ''
@@ -178,7 +177,6 @@ export default {
       }
       this.selectedValue = option
       this.$emit('input', option)
-      console.log('selectOption option:', option)
     },
     validate () {
       this.validated = true

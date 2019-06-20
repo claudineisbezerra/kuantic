@@ -54,6 +54,7 @@ const userRoutes = require('./routes/user');
 const profileRoutes = require('./routes/profile');
 const roomRoutes = require('./routes/room');
 const messageRoutes = require('./routes/messages');
+const intelligenceRoutes = require('./routes/intelligence');
 
 /** Middlewares */
 app.use(
@@ -87,6 +88,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/room', roomRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/admin/intelligence', intelligenceRoutes);
 
 /** Logs environment not equal production */
 if (process.env.NODE_ENV !== 'production') {
