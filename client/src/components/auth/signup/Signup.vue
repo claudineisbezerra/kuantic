@@ -124,7 +124,6 @@ export default {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          console.log('Signup validateAll:', result)
           axios.post(
             '/api/auth/signup',
             {
@@ -136,8 +135,6 @@ export default {
             // { params: { lang: this.$i18n.locale } }
           )
             .then((res) => {
-              console.log('Signup handleSubmit res:', res)
-              console.log('Signup handleSubmit res.data.errors:', res.data.errors)
               if (res.data.errors) {
                 for (const error of res.data.errors) {
                   const [key] = Object.keys(error)

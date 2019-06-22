@@ -163,9 +163,9 @@
 </template>
 
 <script>
-import Division from '@/data/store/division'
+import Division from '@/data/store/collection'
 import Category from '@/data/store/product-type'
-import PriceRanges from '@/data/store/price-ranges'
+import PriceRanges from '@/data/store/price-range'
 import PurchaseData from '@/data/store/purchase-data'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
@@ -357,7 +357,7 @@ export default {
             { params: purchaseParams }
           )
             .then((res) => {
-              console.log('Purchase res:', res)
+              // console.log('Purchase res:', res)
               if (res.data.errors) {
                 for (const error of res.data.errors) {
                   const [key] = Object.keys(error)
@@ -365,9 +365,9 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                console.log('res.data.token:', res.data.token)
-                console.log('res.data.user:', res.data.user)
-                console.log('res.data.user.handle:', res.data.user.handle)
+                // console.log('res.data.token:', res.data.token)
+                // console.log('res.data.user:', res.data.user)
+                // console.log('res.data.user.handle:', res.data.user.handle)
 
                 localStorage.setItem('authToken', res.data.token)
                 this.$store.dispatch('app/toggleAuthState', true)

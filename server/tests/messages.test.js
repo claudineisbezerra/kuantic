@@ -23,7 +23,7 @@ describe('GET /api/messages', () => {
         response = await request.get(`/api/messages/${room_id}`).set('Authorization', token);
 
         expect(response.status).toEqual(200);
-        expect(response.body[0].content).toEqual('Test Message 11');
+        expect(response.body[0].content).toEqual('Test Message 1');
         expect(response.body[0].room).toEqual(room_id);
         expect(response.body.length).toBeGreaterThan(0);
     });

@@ -1,72 +1,72 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VariantSchema = new Schema(
+const CustomerSchema = new Schema(
     {
         id: {
             type: Number,
             required: true,
             trim: true
         },
-        product_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_item_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_quantity: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sku: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        title: {
+        first_name: {
             type: String,
             required: true,
             trim: true
         },
-        name: {
+        last_name: {
             type: String,
             required: true,
             trim: true
         },
-        weight: {
+        email: {
             type: String,
-            trim: true,
-            default: null
+            required: true,
+            trim: true
         },
-        weight_unit: {
+        phone: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        default_address: {
+            type: Object,
+            required: true,
+            trim: true
+        },
+        addresses: {
+            type: Schema.Types.Mixed,
+            required: true,
+            trim: true
+        },
+        last_order_id: {
             type: Number,
             required: true,
             trim: true
         },
-        grams: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        vendor: {
+        last_order_name: {
             type: String,
-            trim: true,
-            default: null
+            required: true,
+            trim: true
+        },
+        orders_count: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        note: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        currency: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        total_spent: {
+            type: Number,
+            required: true,
+            trim: true
         }
     },
     {
@@ -77,8 +77,8 @@ const VariantSchema = new Schema(
     }
 );
 
-VariantSchema.set('collection', 'variants');
+CustomerSchema.set('collection', 'customers');
 
-const Variant = mongoose.model('Variant', VariantSchema);
+const Customer = mongoose.model('Customer', CustomerSchema);
 
-module.exports = { Variant };
+module.exports = { Customer };

@@ -35,7 +35,7 @@ describe('POST /api/room', () => {
     it('should verify a private room password', async () => {
         const response = await request
             .post('/api/room/verify')
-            .send({ room_name: 'Private Room', password: 'private' })
+            .send({ room_name: 'Private Room #1', password: 'just4now' })
             .set('Authorization', token);
 
         expect(response.status).toEqual(200);

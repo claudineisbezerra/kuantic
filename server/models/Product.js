@@ -1,69 +1,69 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VariantSchema = new Schema(
+const ProductSchema = new Schema(
     {
         id: {
             type: Number,
             required: true,
             trim: true
         },
-        product_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_item_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_quantity: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sku: {
-            type: String,
-            trim: true,
-            default: null
-        },
         title: {
             type: String,
             required: true,
             trim: true
         },
-        name: {
+        handle: {
             type: String,
             required: true,
             trim: true
         },
-        weight: {
+        product_type: {
             type: String,
+            required: true,
+            trim: true
+        },
+        variants: {
+            type: Array,
+            required: true,
+            trim: true
+        },
+        images: {
+            type: Array,
             trim: true,
             default: null
         },
-        weight_unit: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        grams: {
-            type: Number,
+        options: {
+            type: Array,
             trim: true,
             default: null
         },
         vendor: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        published_at: {
+            type: Date,
+            required: true,
+            trim: true
+        },
+        published_scope: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        published_at_min: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        published_at_max: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        published_status: {
             type: String,
             trim: true,
             default: null
@@ -77,8 +77,8 @@ const VariantSchema = new Schema(
     }
 );
 
-VariantSchema.set('collection', 'variants');
+ProductSchema.set('collection', 'products');
 
-const Variant = mongoose.model('Variant', VariantSchema);
+const Product = mongoose.model('Product', ProductSchema);
 
-module.exports = { Variant };
+module.exports = { Product };

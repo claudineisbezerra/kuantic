@@ -101,10 +101,6 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                console.log('res.data.token:', res.data.token)
-                console.log('res.data.user:', res.data.user)
-                console.log('res.data.user.handle:', res.data.user.handle)
-
                 localStorage.setItem('authToken', res.data.token)
                 this.$store.dispatch('app/toggleAuthState', true)
                 this.$store.dispatch('app/saveUserData', res.data.user)

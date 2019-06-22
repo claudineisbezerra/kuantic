@@ -1,45 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VariantSchema = new Schema(
+const LineItemSchema = new Schema(
     {
         id: {
             type: Number,
             required: true,
             trim: true
         },
-        product_id: {
+        order_id: {
             type: Number,
             required: true,
             trim: true
         },
-        inventory_item_id: {
+        variant_id: {
             type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_quantity: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sku: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        title: {
-            type: String,
             required: true,
             trim: true
         },
@@ -48,25 +23,45 @@ const VariantSchema = new Schema(
             required: true,
             trim: true
         },
-        weight: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        weight_unit: {
+        price: {
             type: Number,
             required: true,
             trim: true
         },
-        grams: {
+        price_set: {
+            type: Object,
+            required: true,
+            trim: true
+        },
+        properties: {
+            type: Schema.Types.Mixed,
+            required: true,
+            trim: true
+        },
+        quantity: {
             type: Number,
-            trim: true,
-            default: null
+            required: true,
+            trim: true
+        },
+        sku: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        title: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        variant_title: {
+            type: String,
+            required: true,
+            trim: true
         },
         vendor: {
             type: String,
-            trim: true,
-            default: null
+            required: true,
+            trim: true
         }
     },
     {
@@ -77,8 +72,8 @@ const VariantSchema = new Schema(
     }
 );
 
-VariantSchema.set('collection', 'variants');
+LineItemSchema.set('collection', 'lineItems');
 
-const Variant = mongoose.model('Variant', VariantSchema);
+const LineItem = mongoose.model('LineItem', LineItemSchema);
 
-module.exports = { Variant };
+module.exports = { LineItem };

@@ -10,8 +10,6 @@ const { createErrorObject, checkCreateRoomFields } = require('../middleware/auth
  * @description GET /api/admin/intelligence/purchase
  */
 router.get('/purchase', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    // console.log('/purchase REACHED ...');
-    // console.log('intelligence.js req.query', req.query);
     let collection = req.query.collection ? req.query.collection : null;
     let product_type = req.query.product_type ? req.query.product_type : null;
     let price_range = req.query.price_range ? req.query.price_range : null;
@@ -23,12 +21,6 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         req.query.planned_budget && parseInt(req.query.planned_budget) > 0
             ? req.query.planned_budget
             : null;
-
-    console.log('intelligence.js collection', collection);
-    console.log('intelligence.js product_type', product_type);
-    console.log('intelligence.js price_range', price_range);
-    console.log('intelligence.js compared_budget', compared_budget);
-    console.log('intelligence.js planned_budget', planned_budget);
 
     return false;
 

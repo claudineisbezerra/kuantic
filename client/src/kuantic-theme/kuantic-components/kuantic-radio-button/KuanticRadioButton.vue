@@ -34,8 +34,8 @@
 export default {
   name: 'kuantic-radio-button',
   props: {
-    value: ,
-    option: ,
+    value: '',
+    option: '',
     disabled: {
       type: Boolean,
       default: false,

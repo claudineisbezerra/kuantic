@@ -3,6 +3,6 @@ module.exports = {
     globals: {
         NODE_ENV: 'test'
     },
-    globalSetup: './tests/setup.js',
+    globalSetup: './tests/data-setup.js',
     testEnvironment: 'node'
 };

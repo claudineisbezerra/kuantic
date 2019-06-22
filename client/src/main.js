@@ -13,7 +13,7 @@ import './i18n'
 import axios from 'axios'
 import io from 'socket.io-client'
 import setAuthToken from '../utils/authToken'
-import appConstants from 'utils/appConstants'
+import clientConstants from 'utils/clientConstants'
 
 import KuanticPlugin from '@/kuantic-theme/kuantic-plugin'
 import YmapPlugin from 'vue-yandex-maps'
@@ -60,7 +60,7 @@ Vue.use(VeeValidate, {
 let mixin = {
   data: function () {
     return {
-      CONSTANT: appConstants
+      CONSTANT: clientConstants
     }
   }
 }
