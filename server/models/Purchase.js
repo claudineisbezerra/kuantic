@@ -1,22 +1,25 @@
 const mongoose = require('mongoose');
 // const bcrypt = require('bcryptjs');
 // const i18n = require('../plugins/i18n.js');
+const uidGenerator = require('node-unique-id-generator');
 const Schema = mongoose.Schema;
 
 const PurchaseSchema = new Schema(
     {
-        purchase_id: {
-            type: String,
-            required: true,
-            trim: true,
-            unique: true
-        },
-        purchase_title: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        purchase_params: {
+        param: {
+            purchase_id: {
+                type: String,
+                required: true,
+                trim: true,
+                default: function() {
+                    return uidGenerator.generateUniqueId();
+                }
+            },
+            purchase_title: {
+                type: String,
+                trim: true,
+                default: null
+            },
             collection: [
                 {
                     collection_id: {
@@ -33,16 +36,6 @@ const PurchaseSchema = new Schema(
                 }
             ],
             product_type: [],
-            price_range: {
-                from: {
-                    type: String,
-                    default: null
-                },
-                to: {
-                    type: String,
-                    default: null
-                }
-            },
             price_range: [
                 {
                     from: {
@@ -64,7 +57,7 @@ const PurchaseSchema = new Schema(
                 default: null
             }
         },
-        purchase_list: [
+        purchases: [
             {
                 product_id: {
                     type: String,
@@ -180,9 +173,9 @@ const PurchaseSchema = new Schema(
     }
 );
 
-// PurchaseSchema.methods.isValidPassword = function(password) {
-//     return bcrypt.compare(password, this.password);
-// };
+PurchaseSchema.methods.getPurchaseId = function() {
+    return uidGenerator.generateUniqueId();
+};
 
 // Before Saving hash the password with bcrypt, using the default 10 rounds for salt
 // PurchaseSchema.pre('save', function(next) {
@@ -199,5 +192,4 @@ const PurchaseSchema = new Schema(
 // });
 
 const Purchase = mongoose.model('Purchase', PurchaseSchema);
-
 module.exports = { Purchase };

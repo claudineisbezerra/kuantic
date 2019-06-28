@@ -1,40 +1,88 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-
 const { Purchase } = require('../models/Purchase');
-
+const { VariantIndicator } = require('../models/VariantIndicator');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
 
 /**
  * @description GET /api/admin/intelligence/purchase
  */
 router.get('/purchase', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    let collection = req.query.collection ? req.query.collection : null;
-    let product_type = req.query.product_type ? req.query.product_type : null;
-    let price_range = req.query.price_range ? req.query.price_range : null;
-    let compared_budget =
+    let filterJsonStr = '{ ';
+    let collections = req.query.collections ? JSON.parse(req.query.collections) : null;
+    let collectionIDs = [];
+    let collectionTitles = [];
+    if (collections) {
+        for (let i = 0; i < collections.length; i++) {
+            let collection = collections[i];
+            collectionIDs.push(collection.id);
+            collectionTitles.push(collection.title);
+        }
+    }
+    if (collectionIDs && collectionIDs.length > 0) {
+        filterJsonStr = filterJsonStr + `"collection_id": { "$in": ${collectionIDs} }`;
+        filterJsonStr = filterJsonStr + ', ';
+    }
+
+    let productTypes = req.query.product_types ? JSON.parse(req.query.product_types) : null;
+    if (productTypes && productTypes.length > 0) {
+        filterJsonStr = filterJsonStr + `"product_type": { "$in": ${productTypes} }`;
+        filterJsonStr = filterJsonStr + ', ';
+    }
+
+    let priceRanges = req.query.price_ranges ? JSON.parse(req.query.price_ranges) : null;
+    let priceRangesParams = '';
+    if (priceRanges && priceRanges.length > 0) {
+        priceRangesParams = priceRangesParams + '"$or": [';
+        for (let i = 0; i < priceRanges.length; i++) {
+            let priceRange = priceRanges[i];
+            priceRangesParams =
+                priceRangesParams +
+                `{ "$and": [ { "price": { "$gte": ${priceRange.from} } }, { "price": { "$lte": ${priceRange.to} } } ] }`;
+            if (i < priceRanges.length) {
+                priceRangesParams = priceRangesParams + ', ';
+            }
+        }
+        priceRangesParams = priceRangesParams + ']';
+    }
+    if (priceRangesParams && priceRangesParams.length > 0) {
+        filterJsonStr = filterJsonStr + priceRangesParams;
+    }
+    // Add closing parenthesis and Remove last comma separator
+    filterJsonStr = filterJsonStr + ' }';
+    filterJsonStr = filterJsonStr.replace(/,([^,]*)$/, ' $1');
+    let filterObj = JSON.parse(filterJsonStr);
+
+    let comparedBudget =
         req.query.compared_budget && parseInt(req.query.compared_budge) > 0
             ? req.query.compared_budget
             : null;
-    let planned_budget =
+
+    let plannedBudget =
         req.query.planned_budget && parseInt(req.query.planned_budget) > 0
             ? req.query.planned_budget
             : null;
 
-    return false;
+    let purchaseID = req.query.purchase_id ? req.query.purchase_id : null;
+    let purchaseTitle = req.query.purchase_title ? req.query.purchase_title : null;
 
-    // const purchases = await Purchase.find({})
-    //     .populate('user', ['username'])
-    //     .populate('users.lookup', ['username'])
-    //     .select('-password')
-    //     .exec();
+    let param = {
+        purchase_title: purchaseTitle,
+        collection: collections,
+        product_type: productTypes,
+        price_range: priceRanges,
+        planned_budget: plannedBudget,
+        compared_budget: comparedBudget
+    };
 
-    // if (purchases) {
-    //     return res.status(200).json(purchases);
-    // } else {
-    //     return res.status(404).json({ error: res.$t('purchases_error_NOTFOUND') });
-    // }
+    const variantIndicators = await VariantIndicator.findByFilter(filterObj);
+    if (param && variantIndicators) {
+        const purchase = prototypePurchase(param, variantIndicators);
+        return res.status(200).json(purchase);
+    } else {
+        return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
+    }
 });
 
 /**
@@ -224,5 +272,47 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 //         }
 //     }
 // );
+
+/**
+ * Prototype new object with parameter properties
+ * @param param Parameters used to filter data for purchase
+ * @param variantIndicators List of object as of search result
+ * @returns {Purchase} Purchase object model
+ */
+function prototypePurchase(param, variantIndicators) {
+    let purchase = {};
+    if (!param && !variantIndicators) return purchase;
+    let newPurchases = [];
+    for (let key in variantIndicators) {
+        let variantIndicator = variantIndicators[key];
+        let newPurchase = {};
+        newPurchase.product_id = variantIndicator.product_id;
+        newPurchase.variant_id = variantIndicator.variant_id;
+        newPurchase.title = variantIndicator.title;
+        newPurchase.handle = variantIndicator.handle;
+        newPurchase.product_type = variantIndicator.product_type;
+        newPurchase.collection_title = variantIndicator.collection_title;
+        newPurchase.image_src = variantIndicator.image_src;
+        newPurchase.sku = variantIndicator.sku;
+        newPurchase.price = variantIndicator.price;
+        newPurchase.size = variantIndicator.size;
+        newPurchase.color = variantIndicator.color;
+        newPurchase.material = variantIndicator.material;
+        newPurchase.vendor = variantIndicator.vendor;
+        newPurchase.inventory_quantity = variantIndicator.inventory_quantity;
+        newPurchase.inventory_cost = variantIndicator.inventory_cost;
+        newPurchase.inventory_optimal = variantIndicator.inventory_optimal;
+        newPurchase.purchase_quantity_to_buy = 95;
+        newPurchase.purchase_quantity_to_buy_modified = 95;
+        newPurchase.purchase_cost = 950;
+        newPurchase.purchase_cost_modified = 950;
+        newPurchases.push(newPurchase);
+    }
+    purchase = new Purchase({
+        param: param,
+        purchases: newPurchases
+    });
+    return purchase;
+}
 
 module.exports = router;

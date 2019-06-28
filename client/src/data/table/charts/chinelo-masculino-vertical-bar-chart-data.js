@@ -6,10 +6,10 @@ export default {
   labels: ['Estoque inicial', 'Estoque ideal', 'Compra sugerida', 'Compra a realizar'],
   datasets: [
     {
-      label: 'Bota',
+      label: 'Chinelo',
       backgroundColor: palette.success,
       borderColor: palette.transparent,
-      data: [5, 100, 95, 50],
+      data: [5, 100, 95, 80],
     },
   ],
 }

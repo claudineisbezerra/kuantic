@@ -9,7 +9,7 @@ export default {
       label: 'Tênis',
       backgroundColor: palette.info,
       borderColor: palette.transparent,
-      data: [5, 100, 95, 50],
+      data: [5, 100, 95, 80],
     },
   ],
 }

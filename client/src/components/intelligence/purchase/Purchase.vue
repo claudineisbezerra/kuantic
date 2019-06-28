@@ -104,7 +104,7 @@
           <kuantic-data-table
             :apiUrl="apiUrl"
             :apiMode="apiMode"
-            :data="purchase.purchase_list"
+            :data="purchase.purchases"
             :tableFields="tableFields"
             :itemsPerPage="itemsPerPage"
             :defaultPerPage="defaultTablePerPage"
@@ -130,7 +130,7 @@
         </kuantic-widget>
       </div>
       <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Compra por categoria: BOTAS::MASCULINO">
+        <kuantic-widget class="chart-widget" headerText="Compra por categoria: CHINELO::MASCULINO">
           <kuantic-chart :data="botaMasculinoVerticalBarChartData" type="vertical-bar"/>
         </kuantic-widget>
       </div>
@@ -140,8 +140,8 @@
         </kuantic-widget>
       </div> -->
       <!-- <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Moletons: Masculino">
-          <kuantic-chart :data="moletonMasculinoVerticalBarChartData" type="vertical-bar"/>
+        <kuantic-widget class="chart-widget" headerText="Moletoms: Masculino">
+          <kuantic-chart :data="moletomMasculinoVerticalBarChartData" type="vertical-bar"/>
         </kuantic-widget>
       </div> -->
     </div>
@@ -166,15 +166,15 @@
 import Division from '@/data/store/collection'
 import Category from '@/data/store/product-type'
 import PriceRanges from '@/data/store/price-range'
-import PurchaseData from '@/data/store/purchase-data'
+// import PurchaseData from '@/data/store/purchase-data'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
 
 import TenisMasculinoVerticalBarChartData from '@/data/table/charts/tenis-masculino-vertical-bar-chart-data'
-import BotaMasculinoVerticalBarChartData from '@/data/table/charts/bota-masculino-vertical-bar-chart-data'
+import ChineloMasculinoVerticalBarChartData from '@/data/table/charts/chinelo-masculino-vertical-bar-chart-data'
 import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/camiseta-masculino-vertical-bar-chart-data'
-import MoletonMasculinoVerticalBarChartData from '@/data/table/charts/moleton-masculino-vertical-bar-chart-data'
+import MoletomMasculinoVerticalBarChartData from '@/data/table/charts/moletom-masculino-vertical-bar-chart-data'
 import CompraSugeridaDonutChartData from '@/data/table/charts/compra-sugerida-donut-chart-data'
 import CompraRealizarDonutChartData from '@/data/table/charts/compra-realizar-donut-chart-data'
 import { SpringSpinner } from 'epic-spinners'
@@ -208,22 +208,16 @@ export default {
       division: Division,
       category: Category,
       priceRanges: PriceRanges,
-      chosenDivision: {
-        id: null,
-        title: null
-      },
+      chosenDivision:{},
       chosenCategory: null,
       plannedBudget: null,
       comparedBudget: null,
-      chosenPriceStartAt: null,
-      chosenPriceEndAt: null,
       checkedPriceRanges: [],
       money: {},
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
-      purchase: PurchaseData.purchase,
-      // purchaseParams: {},
-
+      // purchase: PurchaseData.purchase,
+      purchase: {},
       tableFields: FieldsDef.tableFields,
       itemsPerPage: ItemsPerPageDef.itemsPerPage,
       sortFunctions: FieldsDef.sortFunctions,
@@ -231,9 +225,9 @@ export default {
       defaultTablePerPage: 6,
       queryParams: QueryParams,
       camisetaMasculinoVerticalBarChartData: CamisetaMasculinoVerticalBarChartData,
-      moletonMasculinoVerticalBarChartData: MoletonMasculinoVerticalBarChartData,
+      moletomMasculinoVerticalBarChartData: MoletomMasculinoVerticalBarChartData,
       tenisMasculinoVerticalBarChartData: TenisMasculinoVerticalBarChartData,
-      botaMasculinoVerticalBarChartData: BotaMasculinoVerticalBarChartData,
+      botaMasculinoVerticalBarChartData: ChineloMasculinoVerticalBarChartData,
       compraSugeridaDonutChartData: CompraSugeridaDonutChartData,
       compraRealizarDonutChartData: CompraRealizarDonutChartData,
     }
@@ -280,27 +274,37 @@ export default {
       return val
     },
     setPurchaseParams () {
-      let purchaseParams = {
-        collection: [],
-        product_type: [],
-        price_range: [],
+      let param = {
+        purchase_id: null, // Sera gerado automáticamente no SERVER
+        purchase_title: 'Default title', // Definido manuamente - por enquanto
+        collections: [],
+        product_types: [],
+        price_ranges: [],
         planned_budget: null,
         compared_budget: null,
       }
 
-      if (this.chosenDivision && this.chosenDivision.id) {
-        purchaseParams.collection.push(this.chosenDivision)
-      } else {
-        purchaseParams.collection = []
+      if (this.chosenDivision && Object.keys(this.chosenDivision).length > 0) {
+        let collections = []
+        let collection = {}
+        Object.entries(this.chosenDivision).forEach(entry => {
+          let key = entry[0];
+          let value = entry[1];
+          collection[key] = value
+        });
+        collections.push(collection)
+        param.collections = collections
       }
 
       if (this.chosenCategory) {
-        purchaseParams.product_type.push(this.chosenCategory)
+        let chosenCategoryStr = `"${this.chosenCategory}"`
+        param.product_types.push(chosenCategoryStr)
+
       } else {
-        purchaseParams.product_type = []
+        param.product_types = []
       }
 
-      if (this.checkedPriceRanges) {
+      if (this.checkedPriceRanges && this.checkedPriceRanges.length > 0) {
         let priceRanges = []
         for (let i = 0; i < this.checkedPriceRanges.length; i++) {
           let priceRange = { from: null, to: null }
@@ -313,51 +317,57 @@ export default {
             priceRanges.push(priceRange)
           }
         }
-        purchaseParams.price_range = priceRanges
-      } else {
-        purchaseParams.price_range = []
+        param.price_ranges = priceRanges
       }
 
       if (this.plannedBudget) {
         let unmaskedPlannedBudget = this.removeCurrencyMask(this.plannedBudget)
         if (parseInt(unmaskedPlannedBudget) > 0) {
-          purchaseParams.planned_budget = unmaskedPlannedBudget
+          param.planned_budget = unmaskedPlannedBudget
         } else {
-          purchaseParams.planned_budget = null
+          param.planned_budget = null
         }
       } else {
-        purchaseParams.planned_budget = null
+        param.planned_budget = null
       }
 
       if (this.comparedBudget) {
         let unmaskedComparedBudget = this.removeCurrencyMask(this.comparedBudget)
         if (parseInt(unmaskedComparedBudget) > 0) {
-          purchaseParams.compared_budget = unmaskedComparedBudget
+          param.compared_budget = unmaskedComparedBudget
         } else {
-          purchaseParams.compared_budget = null
+          param.compared_budget = null
         }
       } else {
-        purchaseParams.compared_budget = null
+        param.compared_budget = null
       }
-      return purchaseParams
+      return param
     },
     removeCurrencyMask (el) {
       // Removes all currency symbols and decimal sign ',' and thousands sign '.'
       // eslint-disable-next-line no-useless-escape
-      let unmasked = el.replace(/[^\d\.\,\s]+/g, '').replace('.', '').replace(',', '.')
+      let unmasked = el.replace(/[^\d\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
       return unmasked
     },
     handleSubmit () {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          let purchaseParams = this.setPurchaseParams()
-          console.log('Purchase purchaseParams: ', purchaseParams)
+          let param = this.setPurchaseParams()
           axios.get('/api/admin/intelligence/purchase',
-            { params: purchaseParams }
+            { params: {
+                purchase_id: param.purchase_id,
+                purchase_title: param.purchase_title,
+                collections: JSON.stringify(param.collections),
+                collections: JSON.stringify(param.collections),
+                product_types: JSON.stringify(param.product_types),
+                price_ranges: JSON.stringify(param.price_ranges),
+                planned_budget: param.planned_budget,
+                compared_budget: param.compared_budget
+              }
+            }
           )
             .then((res) => {
-              // console.log('Purchase res:', res)
               if (res.data.errors) {
                 for (const error of res.data.errors) {
                   const [key] = Object.keys(error)
@@ -365,15 +375,16 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                // console.log('res.data.token:', res.data.token)
+                console.log('Purchase res.data:', res.data)
+                this.purchase = res.data
                 // console.log('res.data.user:', res.data.user)
                 // console.log('res.data.user.handle:', res.data.user.handle)
 
-                localStorage.setItem('authToken', res.data.token)
-                this.$store.dispatch('app/toggleAuthState', true)
+                // localStorage.setItem('authToken', res.data.token)
+                // this.$store.dispatch('app/toggleAuthState', true)
                 // this.$store.dispatch('app/saveUserData', res.data.user)
 
-                setAuthToken(res.data.token)
+                // setAuthToken(res.data.token)
 
               // this.$router.push({
               //   name: 'profile',

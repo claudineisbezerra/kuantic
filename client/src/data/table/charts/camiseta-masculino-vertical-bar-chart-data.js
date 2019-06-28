@@ -9,7 +9,7 @@ export default {
       label: 'Camisetas',
       backgroundColor: palette.primary,
       borderColor: palette.transparent,
-      data: [5, 100, 95, 50],
+      data: [5, 100, 95, 80],
     },
   ],
 }
