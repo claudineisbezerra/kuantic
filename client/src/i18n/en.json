@@ -384,8 +384,8 @@
     "title": "Progress Bars"
   },
   "purchase": {
-    "filter-title": "What do you want to buy?",
-    "filter-result": "Is everything here?",
+    "filter_title": "What do you want to buy?",
+    "filter_result": "Is everything here?",
     "division": "Division",
     "department": "Department",
     "category": "Category",
@@ -396,14 +396,19 @@
     "size": "Size",
     "material": "Material",
     "sleeve": "Sleeve",
-    "price-range": "Price Ranges",
-    "planned-budget": "Planned Budget",
-    "compared-budget": "Actual Budget",
+    "price_range": "Price Ranges",
+    "planned_budget": "Planned Budget",
+    "compared_budget": "Actual Budget",
     "compute": "Compute",
     "start": "From",
     "end": "To",
     "beyond": "Beyond",
-    "all-prices": "All prices"
+    "all_prices": "All prices",
+    "header": "Purchase by category",
+    "initial_stock": "Initial Stock",
+    "ideal_stock": "Ideal Stock",
+    "purchase_suggested": "Suggested purchase",
+    "purchase_todo": "Buy-in"
   },
   "spinners": {
     "title": "Spinners",

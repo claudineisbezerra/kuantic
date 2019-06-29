@@ -354,8 +354,8 @@
     "title": "Barras de Progresso"
   },
   "purchase": {
-    "filter-title": "¿Qué desea comprar?",
-    "filter-result": "¿Está todo aquí?",
+    "filter_title": "¿Qué desea comprar?",
+    "filter_result": "¿Está todo aquí?",
     "division": "División",
     "department": "Departamento",
     "category": "Categoría",
@@ -366,14 +366,19 @@
     "size": "Tamaño",
     "material": "Material",
     "sleeve": "Manga",
-    "price-range": "Gamas de precios",
-    "planned-budget": "Presupuesto planificado",
-    "compared-budget": "Presupuesto comparado",
+    "price_range": "Gamas de precios",
+    "planned_budget": "Presupuesto planificado",
+    "compared_budget": "Presupuesto comparado",
     "compute": "Calcular",
     "start": "De",
     "end": "Hasta",
     "beyond": "Por acima de",
-    "all-prices": "Todos los precios"
+    "all_prices": "Todos los precios",
+    "header": "Compra por categoría",
+    "initial_stock": "Stock inicial",
+    "ideal_stock": "Stock ideal",
+    "purchase_suggested": "Compra sugerida",
+    "purchase_todo": "Compra a realizar"
   },
   "spinners": {
     "title": "Spinners",

@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const _ = require('lodash');
+// const i18n = require('i18n');
+const i18n = require('../plugins/i18n.js');
 const { Purchase } = require('../models/Purchase');
 const { VariantIndicator } = require('../models/VariantIndicator');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
@@ -79,7 +82,24 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     const variantIndicators = await VariantIndicator.findByFilter(filterObj);
     if (param && variantIndicators) {
         const purchase = prototypePurchase(param, variantIndicators);
-        return res.status(200).json(purchase);
+
+        const groupByProperties = ['collection_title', 'product_type'];
+        const sumByProperties = [
+            'inventory_quantity',
+            'inventory_optimal',
+            'purchase_quantity_to_buy',
+            'purchase_quantity_to_buy_modified'
+        ];
+        const purchaseGroupedByDivisionCategory = groupBySumDivisionCategory({
+            group: purchase.purchases,
+            by: groupByProperties,
+            sum: sumByProperties
+        });
+
+        let results = {};
+        results.purchase = purchase;
+        results.purchaseGroupedByDivisionCategory = purchaseGroupedByDivisionCategory;
+        return res.status(200).json(results);
     } else {
         return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
     }
@@ -312,7 +332,72 @@ function prototypePurchase(param, variantIndicators) {
         param: param,
         purchases: newPurchases
     });
+
     return purchase;
 }
+
+/**
+ * GroupBy and Sum
+ * @param data Array of objects to be grouped by
+ * @param groupByProperties Array of properties to group of
+ * @returns [groupBySumDivisionResult] Array of objects grouped and summed
+ */
+const groupBySumDivisionCategory = ({
+    group: data,
+    by: groupByProperties,
+    sum: sumByProperties
+}) => {
+    getGroupedItems = item => {
+        returnArray = [];
+        let i;
+        for (i = 0; i < groupByProperties.length; i++) {
+            returnArray.push(item[groupByProperties[i]]);
+        }
+        return returnArray;
+    };
+
+    getReducedDataRecord = item => {
+        let concatProperties = _.concat(groupByProperties, sumByProperties);
+        return _.pick(item, concatProperties);
+    };
+
+    let groupResult = {};
+    for (let i = 0; i < data.length; i++) {
+        const fullDataRecord = data[i];
+        const group = JSON.stringify(getGroupedItems(fullDataRecord));
+        groupResult[group] = groupResult[group] || [];
+
+        const reducedDataRecord = getReducedDataRecord(fullDataRecord);
+        groupResult[group].push(reducedDataRecord);
+    }
+
+    result = [];
+    for (let i in groupResult) {
+        let groupArray = groupResult[i];
+        groupArray.forEach(function(item) {
+            if (!this[item.collection_title] && !this[item.product_type]) {
+                this[item.collection_title] = {
+                    header: i18n.__('purchase.header'),
+                    collection_title: item.collection_title,
+                    product_type: item.product_type,
+                    inventory_quantity: 0,
+                    inventory_optimal: 0,
+                    purchase_quantity_to_buy: 0,
+                    purchase_quantity_to_buy_modified: 0
+                };
+                result.push(this[item.collection_title]);
+            }
+            this[item.collection_title].inventory_quantity += parseFloat(item.inventory_quantity);
+            this[item.collection_title].inventory_optimal += parseFloat(item.inventory_optimal);
+            this[item.collection_title].purchase_quantity_to_buy += parseFloat(
+                item.purchase_quantity_to_buy
+            );
+            this[item.collection_title].purchase_quantity_to_buy_modified += parseFloat(
+                item.purchase_quantity_to_buy_modified
+            );
+        }, Object.create(null));
+    }
+    return result;
+};
 
 module.exports = router;

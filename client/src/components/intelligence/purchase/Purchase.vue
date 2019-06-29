@@ -2,7 +2,7 @@
   <div class="purchase">
     <div class="va-row">
       <div class="flex md12">
-        <kuantic-widget :headerText="'purchase.filter-title' | translate">
+        <kuantic-widget :headerText="'purchase.filter_title' | translate">
           <form @submit.prevent="handleSubmit" name="purchase">
             <div class="va-row">
               <div class="flex md2.5">
@@ -55,7 +55,7 @@
                         v-validate="'positive_number'"
                         />
                       <label class="control-label" for="planned-budget">
-                        {{'purchase.planned-budget' | translate}}
+                        {{'purchase.planned_budget' | translate}}
                       </label>
                       <i class="bar"></i>
                       <small v-show="veeErrors.has('planned-budget')" class="help text-danger">
@@ -76,7 +76,7 @@
                         v-money="money"
                         />
                       <label class="control-label" for="compared-budget">
-                        {{'purchase.compared-budget' | translate}}
+                        {{'purchase.compared_budget' | translate}}
                       </label>
                       <i class="bar"></i>
                     </div>
@@ -100,7 +100,7 @@
 
     <div class="va-row">
       <div class="flex md12 xs12">
-        <kuantic-widget :headerText="$t('purchase.filter-result')">
+        <kuantic-widget :headerText="$t('purchase.filter_result')">
           <kuantic-data-table
             :apiUrl="apiUrl"
             :apiMode="apiMode"
@@ -124,16 +124,24 @@
     </div>
 
     <div class="va-row">
-      <div class="flex md6 xs12">
+      <template v-for="(divisionCategory, id) in purchaseGroupedByDivisionCategory">
+        <div :key="id" class="flex md6 xs12">
+          <kuantic-widget class="chart-widget" :headerText="divisionCategory.header+': '+divisionCategory.product_type+'::'+divisionCategory.collection_title">
+            <kuantic-chart :data="setByDivisionCategoryChartData(divisionCategory)" type="vertical-bar"/>
+          </kuantic-widget>
+        </div>
+      </template>
+
+      <!-- <div class="flex md6 xs12">
         <kuantic-widget class="chart-widget" headerText="Compra por categoria: TÊNIS::MASCULINO">
           <kuantic-chart :data="tenisMasculinoVerticalBarChartData" type="vertical-bar"/>
         </kuantic-widget>
-      </div>
-      <div class="flex md6 xs12">
+      </div> -->
+      <!-- <div class="flex md6 xs12">
         <kuantic-widget class="chart-widget" headerText="Compra por categoria: CHINELO::MASCULINO">
           <kuantic-chart :data="botaMasculinoVerticalBarChartData" type="vertical-bar"/>
         </kuantic-widget>
-      </div>
+      </div> -->
       <!-- <div class="flex md6 xs12">
         <kuantic-widget class="chart-widget" headerText="Camisetas: Masculino">
           <kuantic-chart :data="camisetaMasculinoVerticalBarChartData" type="vertical-bar"/>
@@ -171,10 +179,10 @@ import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
 
-import TenisMasculinoVerticalBarChartData from '@/data/table/charts/tenis-masculino-vertical-bar-chart-data'
-import ChineloMasculinoVerticalBarChartData from '@/data/table/charts/chinelo-masculino-vertical-bar-chart-data'
-import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/camiseta-masculino-vertical-bar-chart-data'
-import MoletomMasculinoVerticalBarChartData from '@/data/table/charts/moletom-masculino-vertical-bar-chart-data'
+// import TenisMasculinoVerticalBarChartData from '@/data/table/charts/tenis-masculino-vertical-bar-chart-data'
+// import ChineloMasculinoVerticalBarChartData from '@/data/table/charts/chinelo-masculino-vertical-bar-chart-data'
+// import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/camiseta-masculino-vertical-bar-chart-data'
+// import MoletomMasculinoVerticalBarChartData from '@/data/table/charts/moletom-masculino-vertical-bar-chart-data'
 import CompraSugeridaDonutChartData from '@/data/table/charts/compra-sugerida-donut-chart-data'
 import CompraRealizarDonutChartData from '@/data/table/charts/compra-realizar-donut-chart-data'
 import { SpringSpinner } from 'epic-spinners'
@@ -182,6 +190,7 @@ import { VMoney } from 'v-money'
 
 import axios from 'axios'
 import _ from 'lodash'
+import store from 'vuex-store'
 import { mapActions } from 'vuex'
 import setAuthToken from 'utils/authToken'
 
@@ -224,12 +233,13 @@ export default {
       paginationPath: '',
       defaultTablePerPage: 6,
       queryParams: QueryParams,
-      camisetaMasculinoVerticalBarChartData: CamisetaMasculinoVerticalBarChartData,
-      moletomMasculinoVerticalBarChartData: MoletomMasculinoVerticalBarChartData,
-      tenisMasculinoVerticalBarChartData: TenisMasculinoVerticalBarChartData,
-      botaMasculinoVerticalBarChartData: ChineloMasculinoVerticalBarChartData,
+      // camisetaMasculinoVerticalBarChartData: CamisetaMasculinoVerticalBarChartData,
+      // moletomMasculinoVerticalBarChartData: MoletomMasculinoVerticalBarChartData,
+      // tenisMasculinoVerticalBarChartData: TenisMasculinoVerticalBarChartData,
+      // botaMasculinoVerticalBarChartData: ChineloMasculinoVerticalBarChartData,
       compraSugeridaDonutChartData: CompraSugeridaDonutChartData,
       compraRealizarDonutChartData: CompraRealizarDonutChartData,
+      purchaseGroupedByDivisionCategory: [],
     }
   },
   methods: {
@@ -245,7 +255,7 @@ export default {
       let endAt = priceRange.end_at
       let label = ''
       if (startAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
-        label = this.$t('purchase.all-prices')
+        label = this.$t('purchase.all_prices')
       }
       if (startAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
         label = this.$t('purchase.start') + ' ' + startAt + ' ' + this.$t('purchase.end') + ' ' + endAt
@@ -375,8 +385,9 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                console.log('Purchase res.data:', res.data)
-                this.purchase = res.data
+                // console.log('Purchase res.data:', res.data)
+                this.purchase = res.data.purchase
+                this.purchaseGroupedByDivisionCategory = res.data.purchaseGroupedByDivisionCategory
                 // console.log('res.data.user:', res.data.user)
                 // console.log('res.data.user.handle:', res.data.user.handle)
 
@@ -395,7 +406,40 @@ export default {
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
-    }
+    },
+    setByDivisionCategoryChartData (purchaseByDivisionCategory) {
+      if (!purchaseByDivisionCategory || !purchaseByDivisionCategory.length <= 0) return
+
+      // Define ramdom background color
+      let palette = store.getters.palette
+      let backgroundColor = _.sample(_.omit(palette, ['transparent','success','white']));
+
+      let labels = []
+      labels.push(this.$t('purchase.initial_stock'))
+      labels.push(this.$t('purchase.ideal_stock'))
+      labels.push(this.$t('purchase.purchase_suggested'))
+      labels.push(this.$t('purchase.purchase_todo'))
+
+      let data = []
+      data.push(purchaseByDivisionCategory.inventory_quantity)
+      data.push(purchaseByDivisionCategory.inventory_optimal)
+      data.push(purchaseByDivisionCategory.purchase_quantity_to_buy)
+      data.push(purchaseByDivisionCategory.purchase_quantity_to_buy_modified)
+
+      let chartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: purchaseByDivisionCategory.product_type,
+            backgroundColor: backgroundColor,
+            borderColor: palette.transparent,
+            data: data,
+          },
+        ],
+      }
+
+      return chartData
+    },
   },
   mounted () {
     console.log('Purchase mounted.')
