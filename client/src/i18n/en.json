@@ -462,6 +462,7 @@
     "profile": "My Profile"
   },
   "validate": {
-    "positive_number": "Must be grater than zeros"
+    "ge_zeros": "Value must be grater or equal zeros",
+    "positive_number": "Value must be grater than zeros"
   }
 }

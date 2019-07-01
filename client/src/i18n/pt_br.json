@@ -442,6 +442,7 @@
     "profile": "Meu Perfil"
   },
   "validate": {
-    "positive_number": "Deve ser maior que zeros"
+    "ge_zeros": "O valor deve ser maior ou igual a zeros",
+    "positive_number": "O valor deve ser maior que zeros"
   }
 }

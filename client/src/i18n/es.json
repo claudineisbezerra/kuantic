@@ -432,6 +432,7 @@
     "logout": "Cerrar Sesión"
   },
   "validate": {
-    "positive_number": "Debe ser mayor que ceros"
+    "ge_zeros": "Valor debe ser igual o mayor que ceros",
+    "positive_number": "Valor debe ser mayor que ceros"
   }
 }

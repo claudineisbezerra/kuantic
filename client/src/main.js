@@ -32,19 +32,6 @@ Vue.use(VMoney,
 Vue.use(KuanticPlugin)
 Vue.use(YmapPlugin)
 
-// Custom rules for VeeValidate
-// VeeValidate.Validator.extend('verify_coupon', {
-//   // Custom validation message
-//   getMessage: (field) => `The ${field} is not a valid coupon.`,
-//   // Custom validation rule
-//   validate: (value) => new Promise(resolve => {
-//     const validCoupons = ['SUMMER2017', 'WINTER2017', 'FALL2017'];
-//     resolve({
-//         valid: value && (validCoupons.indexOf(value.toUpperCase()) > -1)
-//       });
-//   })
-// });
-
 // NOTE: workaround for VeeValidate (fieldsBagName) + vuetable-2
 // NOTE: workaround for VeeValidate (errorBagName) + server error return treatment
 Vue.use(VeeValidate, {
@@ -62,7 +49,29 @@ let mixin = {
     return {
       CONSTANT: clientConstants
     }
-  }
+  },
+  created () {
+    // Custom VeeValidate rules
+    this.$validator.extend('positive_number', {
+      getMessage: (field) => this.$t('validate.positive_number'),
+      validate: (value) => new Promise(resolve => {
+        let unmaskedValue = value.replace(/[^\d^\-\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
+        resolve({
+          valid: value && (parseFloat(unmaskedValue) > 0)
+        })
+      })
+    })
+
+    this.$validator.extend('ge_zeros', {
+      getMessage: (field) => this.$t('validate.ge_zeros'),
+      validate: (value) => new Promise(resolve => {
+        let unmaskedValue = value.replace(/[^\d^\-\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
+        resolve({
+          valid: value && (parseFloat(unmaskedValue) >= 0)
+        })
+      })
+    })
+  },
 }
 
 /** Socket IO Client - Store in Vuex State for use in components */

@@ -45,21 +45,21 @@
               </div>
               <div class="flex md2.5">
                 <fieldset>
-                  <div class="form-group" :class="{'has-error': veeErrors.has('planned-budget')}">
+                  <div class="form-group" :class="{'has-error': veeErrors.has('planned_budget')}">
                     <div class="input-group">
                       <input
-                        id="planned-budget"
-                        name="planned-budget"
+                        id="planned_budget"
+                        name="planned_budget"
                         v-model="plannedBudget"
-                        v-money="money"
+                        v-money="money_plannedBudget"
                         v-validate="'positive_number'"
                         />
-                      <label class="control-label" for="planned-budget">
+                      <label class="control-label" for="planned_budget">
                         {{'purchase.planned_budget' | translate}}
                       </label>
                       <i class="bar"></i>
-                      <small v-show="veeErrors.has('planned-budget')" class="help text-danger">
-                        {{ veeErrors.first('planned-budget') }}
+                      <small v-show="veeErrors.has('planned_budget')" class="help text-danger">
+                        {{ veeErrors.first('planned_budget') }}
                       </small>
                     </div>
                   </div>
@@ -67,18 +67,22 @@
               </div>
               <div class="flex md2.5">
                 <fieldset>
-                  <div class="form-group" :class="{'has-error': veeErrors.has('compared-budget')}">
+                  <div class="form-group" :class="{'has-error': veeErrors.has('compared_budget')}">
                     <div class="input-group">
                       <input
-                        id="compared-budget"
-                        name="compared-budget"
+                        id="compared_budget"
+                        name="compared_budget"
                         v-model="comparedBudget"
-                        v-money="money"
+                        v-money="money_comparedBudget"
+                        v-validate="'ge_zeros'"
                         />
-                      <label class="control-label" for="compared-budget">
+                      <label class="control-label" for="compared_budget">
                         {{'purchase.compared_budget' | translate}}
                       </label>
                       <i class="bar"></i>
+                      <small v-show="veeErrors.has('compared_budget')" class="help text-danger">
+                        {{ veeErrors.first('compared_budget') }}
+                      </small>
                     </div>
                   </div>
                 </fieldset>
@@ -222,7 +226,14 @@ export default {
       plannedBudget: null,
       comparedBudget: null,
       checkedPriceRanges: [],
-      money: {},
+      money_plannedBudget: {
+        min: Number.MIN_SAFE_INTEGER,
+        max: Number.MAX_SAFE_INTEGER
+      },
+      money_comparedBudget: {
+        min: Number.MIN_SAFE_INTEGER,
+        max: Number.MAX_SAFE_INTEGER
+      },
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
       // purchase: PurchaseData.purchase,
@@ -332,7 +343,7 @@ export default {
 
       if (this.plannedBudget) {
         let unmaskedPlannedBudget = this.removeCurrencyMask(this.plannedBudget)
-        if (parseInt(unmaskedPlannedBudget) > 0) {
+        if (parseInt(unmaskedPlannedBudget) >= 0) {
           param.planned_budget = unmaskedPlannedBudget
         } else {
           param.planned_budget = null
@@ -343,7 +354,7 @@ export default {
 
       if (this.comparedBudget) {
         let unmaskedComparedBudget = this.removeCurrencyMask(this.comparedBudget)
-        if (parseInt(unmaskedComparedBudget) > 0) {
+        if (parseInt(unmaskedComparedBudget) >= 0) {
           param.compared_budget = unmaskedComparedBudget
         } else {
           param.compared_budget = null
@@ -353,10 +364,10 @@ export default {
       }
       return param
     },
-    removeCurrencyMask (el) {
+    removeCurrencyMask (value) {
       // Removes all currency symbols and decimal sign ',' and thousands sign '.'
       // eslint-disable-next-line no-useless-escape
-      let unmasked = el.replace(/[^\d\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
+      let unmasked = value.replace(/[^\d^\-\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
       return unmasked
     },
     handleSubmit () {
@@ -446,16 +457,6 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      // Custom VeeValidate rules
-      this.$validator.extend('positive_number', {
-        getMessage: (field) => this.$t('validate.positive_number'),
-        validate: (value) => new Promise(resolve => {
-          resolve({
-            valid: value && (parseFloat(this.removeCurrencyMask(value)) > 0)
-          })
-        })
-      })
-
       // this.$validator.validateAll()
     })
   },
