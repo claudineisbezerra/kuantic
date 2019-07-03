@@ -378,7 +378,12 @@
     "initial_stock": "Stock inicial",
     "ideal_stock": "Stock ideal",
     "purchase_suggested": "Compra sugerida",
-    "purchase_todo": "Compra a realizar"
+    "purchase_todo": "Compra a realizar",
+    "header_by_category": "Compra por categoría",
+     "header_by_category_summary_suggested": "COMPRAS SUGERIDAS por categoría",
+     "header_by_category_summary_todo": "COMPRAS A REALIZAR por categoría",
+     "header_by_division_category": "Compra por división y categoría",
+     "header_by_division_category_summary": "Resumen por división y categoría"
   },
   "spinners": {
     "title": "Spinners",

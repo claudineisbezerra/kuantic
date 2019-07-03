@@ -24,5 +24,8 @@
 	"username_error_EXISTS": "Nome de usuário já utilizado",
 	"variantIndicators_error_NOTFOUND": "VariantIndicator não encontrado",
 	"will_redirect": "Você será redirecionado",
-	"purchase.header": "Compra por categoria"
+	"purchase_header_by_category": "Compra por categoria",
+	"purchase_header_by_category_summary": "Resumo por categoria",
+	"purchase_header_by_division_category": "Compra por divisão e categoria",
+	"purchase_header_by_division_category_summary": "Resumo por divisão e categoria"
 }

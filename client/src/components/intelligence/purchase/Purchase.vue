@@ -128,49 +128,30 @@
     </div>
 
     <div class="va-row">
-      <template v-for="(divisionCategory, id) in purchaseGroupedByDivisionCategory">
+      <template v-for="(divisionCategory, id) in purchasePlannedBudgetGroupedByDivisionCategory">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="divisionCategory.header+': '+divisionCategory.product_type+'::'+divisionCategory.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="divisionCategory.product_type+'::'+divisionCategory.collection_title">
             <kuantic-chart :data="setByDivisionCategoryChartData(divisionCategory)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
       </template>
-
-      <!-- <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Compra por categoria: TÊNIS::MASCULINO">
-          <kuantic-chart :data="tenisMasculinoVerticalBarChartData" type="vertical-bar"/>
-        </kuantic-widget>
-      </div> -->
-      <!-- <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Compra por categoria: CHINELO::MASCULINO">
-          <kuantic-chart :data="botaMasculinoVerticalBarChartData" type="vertical-bar"/>
-        </kuantic-widget>
-      </div> -->
-      <!-- <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Camisetas: Masculino">
-          <kuantic-chart :data="camisetaMasculinoVerticalBarChartData" type="vertical-bar"/>
-        </kuantic-widget>
-      </div> -->
-      <!-- <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Moletoms: Masculino">
-          <kuantic-chart :data="moletomMasculinoVerticalBarChartData" type="vertical-bar"/>
-        </kuantic-widget>
-      </div> -->
     </div>
 
     <div class="va-row">
-      <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Resumo de COMPRAS SUGERIDAS">
-          <kuantic-chart :data="compraSugeridaDonutChartData" type="donut"/>
+      <div class="flex md6 xs12"
+           v-if="purchasePlannedBudgetGroupedByCategory && Object.keys(purchasePlannedBudgetGroupedByCategory).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_category_summary_suggested')">
+          <kuantic-chart :data="setByPlannedCategoryChartData(purchasePlannedBudgetGroupedByCategory)" type="donut"/>
         </kuantic-widget>
       </div>
-      <div class="flex md6 xs12">
-        <kuantic-widget class="chart-widget" headerText="Resumo de COMPRAS A REALIZAR">
-          <kuantic-chart :data="compraRealizarDonutChartData" type="donut"/>
+
+      <div class="flex md6 xs12"
+           v-if="purchaseComparedBudgetGroupedByCategory  && Object.keys(purchaseComparedBudgetGroupedByCategory).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_category_summary_todo')">
+          <kuantic-chart :data="setByComparedCategoryChartData(purchaseComparedBudgetGroupedByCategory)" type="donut"/>
         </kuantic-widget>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -178,17 +159,10 @@
 import Division from '@/data/store/collection'
 import Category from '@/data/store/product-type'
 import PriceRanges from '@/data/store/price-range'
-// import PurchaseData from '@/data/store/purchase-data'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
 
-// import TenisMasculinoVerticalBarChartData from '@/data/table/charts/tenis-masculino-vertical-bar-chart-data'
-// import ChineloMasculinoVerticalBarChartData from '@/data/table/charts/chinelo-masculino-vertical-bar-chart-data'
-// import CamisetaMasculinoVerticalBarChartData from '@/data/table/charts/camiseta-masculino-vertical-bar-chart-data'
-// import MoletomMasculinoVerticalBarChartData from '@/data/table/charts/moletom-masculino-vertical-bar-chart-data'
-import CompraSugeridaDonutChartData from '@/data/table/charts/compra-sugerida-donut-chart-data'
-import CompraRealizarDonutChartData from '@/data/table/charts/compra-realizar-donut-chart-data'
 import { SpringSpinner } from 'epic-spinners'
 import { VMoney } from 'v-money'
 
@@ -236,7 +210,6 @@ export default {
       },
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
-      // purchase: PurchaseData.purchase,
       purchase: {},
       tableFields: FieldsDef.tableFields,
       itemsPerPage: ItemsPerPageDef.itemsPerPage,
@@ -244,13 +217,10 @@ export default {
       paginationPath: '',
       defaultTablePerPage: 6,
       queryParams: QueryParams,
-      // camisetaMasculinoVerticalBarChartData: CamisetaMasculinoVerticalBarChartData,
-      // moletomMasculinoVerticalBarChartData: MoletomMasculinoVerticalBarChartData,
-      // tenisMasculinoVerticalBarChartData: TenisMasculinoVerticalBarChartData,
-      // botaMasculinoVerticalBarChartData: ChineloMasculinoVerticalBarChartData,
-      compraSugeridaDonutChartData: CompraSugeridaDonutChartData,
-      compraRealizarDonutChartData: CompraRealizarDonutChartData,
-      purchaseGroupedByDivisionCategory: [],
+      purchasePlannedBudgetGroupedByDivisionCategory: [],
+      purchaseComparedBudgetGroupedByDivisionCategory: [],
+      purchasePlannedBudgetGroupedByCategory: [],
+      purchaseComparedBudgetGroupedByCategory: [],
     }
   },
   methods: {
@@ -396,9 +366,12 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                // console.log('Purchase res.data:', res.data)
                 this.purchase = res.data.purchase
-                this.purchaseGroupedByDivisionCategory = res.data.purchaseGroupedByDivisionCategory
+                this.purchasePlannedBudgetGroupedByDivisionCategory = res.data.purchasePlannedBudgetGroupedByDivisionCategory
+                this.purchaseComparedBudgetGroupedByDivisionCategory = res.data.purchaseComparedBudgetGroupedByDivisionCategory
+                this.purchasePlannedBudgetGroupedByCategory = res.data.purchasePlannedBudgetGroupedByCategory
+                this.purchaseComparedBudgetGroupedByCategory = res.data.purchaseComparedBudgetGroupedByCategory
+
                 // console.log('res.data.user:', res.data.user)
                 // console.log('res.data.user.handle:', res.data.user.handle)
 
@@ -418,8 +391,74 @@ export default {
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
+    setByPlannedCategoryChartData (purchaseByCategory) {
+      if (!purchaseByCategory) return
+      if (purchaseByCategory.length <= 0) return
+
+      // Define ramdom background color
+      let palette = store.getters.palette
+      let backgroundColor = [palette.info, palette.success, palette.primary, palette.warning]
+
+      let labels = []
+      let data = []
+      for (let i in purchaseByCategory) {
+        let item = purchaseByCategory[i]
+        let label = item.product_type
+        labels.push(label)
+
+        let qty = item.purchase_quantity_to_buy
+        data.push(qty)
+
+      }
+      let chartData = {
+        labels: labels,
+        datasets: [
+          {
+            backgroundColor: backgroundColor,
+            borderColor: palette.transparent,
+            data: data,
+          },
+        ],
+      }
+
+      return chartData
+    },
+    setByComparedCategoryChartData (purchaseByCategory) {
+      if (!purchaseByCategory) return
+      if (purchaseByCategory.length <= 0) return
+
+      // Define ramdom background color
+      let palette = store.getters.palette
+      let backgroundColor = [palette.info, palette.success, palette.primary, palette.warning]
+
+      let labels = []
+      let data = []
+      for (let i in purchaseByCategory) {
+        let item = purchaseByCategory[i]
+        let label = item.product_type
+        labels.push(label)
+
+        let qty = item.purchase_quantity_to_buy_modified
+        data.push(qty)
+
+      }
+
+      let chartData = {
+        labels: labels,
+        datasets: [
+          {
+            backgroundColor: backgroundColor,
+            borderColor: palette.transparent,
+            data: data,
+          },
+        ],
+      }
+
+      return chartData
+    },
     setByDivisionCategoryChartData (purchaseByDivisionCategory) {
-      if (!purchaseByDivisionCategory || !purchaseByDivisionCategory.length <= 0) return
+      if (!purchaseByDivisionCategory) return
+      if (purchaseByDivisionCategory.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette

@@ -57,14 +57,14 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     filterJsonStr = filterJsonStr.replace(/,([^,]*)$/, ' $1');
     let filterObj = JSON.parse(filterJsonStr);
 
-    let comparedBudget =
-        req.query.compared_budget && parseInt(req.query.compared_budge) > 0
-            ? req.query.compared_budget
-            : null;
-
     let plannedBudget =
         req.query.planned_budget && parseInt(req.query.planned_budget) > 0
             ? req.query.planned_budget
+            : null;
+
+    let comparedBudget =
+        req.query.compared_budget && parseInt(req.query.compared_budget) > 0
+            ? req.query.compared_budget
             : null;
 
     let purchaseID = req.query.purchase_id ? req.query.purchase_id : null;
@@ -79,26 +79,78 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         compared_budget: comparedBudget
     };
 
-    const variantIndicators = await VariantIndicator.findByFilter(filterObj);
+    let variantIndicators = await VariantIndicator.findByFilter(filterObj);
     if (param && variantIndicators) {
-        const purchase = prototypePurchase(param, variantIndicators);
+        let purchase = prototypePurchase(param, variantIndicators);
 
-        const groupByProperties = ['collection_title', 'product_type'];
-        const sumByProperties = [
-            'inventory_quantity',
-            'inventory_optimal',
-            'purchase_quantity_to_buy',
-            'purchase_quantity_to_buy_modified'
-        ];
-        const purchaseGroupedByDivisionCategory = groupBySumDivisionCategory({
-            group: purchase.purchases,
-            by: groupByProperties,
-            sum: sumByProperties
-        });
+        let purchasePlannedBudgetGroupedByDivisionCategory = [];
+        if (plannedBudget && parseInt(plannedBudget) > 0) {
+            let groupByPlannedBudget = ['collection_title', 'product_type'];
+            let sumByPlannedBudget = [
+                'inventory_quantity',
+                'inventory_optimal',
+                'purchase_quantity_to_buy',
+                'purchase_quantity_to_buy_modified'
+            ];
+            purchasePlannedBudgetGroupedByDivisionCategory = groupBySumDivisionCategory({
+                group: purchase.purchases,
+                by: groupByPlannedBudget,
+                sum: sumByPlannedBudget
+            });
+        }
+        let purchaseComparedBudgetGroupedByDivisionCategory = [];
+        if (comparedBudget && parseInt(comparedBudget) > 0) {
+            let groupByComparedBudget = ['collection_title', 'product_type'];
+            let sumByComparedBudget = [
+                'inventory_quantity',
+                'inventory_optimal',
+                'purchase_quantity_to_buy',
+                'purchase_quantity_to_buy_modified'
+            ];
+            purchaseComparedBudgetGroupedByDivisionCategory = groupBySumDivisionCategory({
+                group: purchase.purchases,
+                by: groupByComparedBudget,
+                sum: sumByComparedBudget
+            });
+        }
+
+        let purchasePlannedBudgetGroupedByCategory = [];
+        if (plannedBudget && parseInt(plannedBudget) > 0) {
+            let groupByPlannedBudget = ['product_type'];
+            let sumByPlannedBudget = [
+                'inventory_quantity',
+                'inventory_optimal',
+                'purchase_quantity_to_buy',
+                'purchase_quantity_to_buy_modified'
+            ];
+            purchasePlannedBudgetGroupedByCategory = groupBySumCategory({
+                group: purchase.purchases,
+                by: groupByPlannedBudget,
+                sum: sumByPlannedBudget
+            });
+        }
+        let purchaseComparedBudgetGroupedByCategory = [];
+        if (comparedBudget && parseInt(comparedBudget) > 0) {
+            let groupByComparedBudget = ['product_type'];
+            let sumByComparedBudget = [
+                'inventory_quantity',
+                'inventory_optimal',
+                'purchase_quantity_to_buy',
+                'purchase_quantity_to_buy_modified'
+            ];
+            purchaseComparedBudgetGroupedByCategory = groupBySumCategory({
+                group: purchase.purchases,
+                by: groupByComparedBudget,
+                sum: sumByComparedBudget
+            });
+        }
 
         let results = {};
         results.purchase = purchase;
-        results.purchaseGroupedByDivisionCategory = purchaseGroupedByDivisionCategory;
+        results.purchasePlannedBudgetGroupedByDivisionCategory = purchasePlannedBudgetGroupedByDivisionCategory;
+        results.purchaseComparedBudgetGroupedByDivisionCategory = purchaseComparedBudgetGroupedByDivisionCategory;
+        results.purchasePlannedBudgetGroupedByCategory = purchasePlannedBudgetGroupedByCategory;
+        results.purchaseComparedBudgetGroupedByCategory = purchaseComparedBudgetGroupedByCategory;
         return res.status(200).json(results);
     } else {
         return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
@@ -340,7 +392,7 @@ function prototypePurchase(param, variantIndicators) {
  * GroupBy and Sum
  * @param data Array of objects to be grouped by
  * @param groupByProperties Array of properties to group of
- * @returns [groupBySumDivisionResult] Array of objects grouped and summed
+ * @returns [purchaseGroupedByDivisionCategory] Array of objects grouped and summed up
  */
 const groupBySumDivisionCategory = ({
     group: data,
@@ -377,7 +429,7 @@ const groupBySumDivisionCategory = ({
         groupArray.forEach(function(item) {
             if (!this[item.collection_title] && !this[item.product_type]) {
                 this[item.collection_title] = {
-                    header: i18n.__('purchase.header'),
+                    header: i18n.__('purchase_header_by_division_category'),
                     collection_title: item.collection_title,
                     product_type: item.product_type,
                     inventory_quantity: 0,
@@ -393,6 +445,65 @@ const groupBySumDivisionCategory = ({
                 item.purchase_quantity_to_buy
             );
             this[item.collection_title].purchase_quantity_to_buy_modified += parseFloat(
+                item.purchase_quantity_to_buy_modified
+            );
+        }, Object.create(null));
+    }
+    return result;
+};
+
+/**
+ * GroupBy and Sum
+ * @param data Array of objects to be grouped by
+ * @param groupByProperties Array of properties to group of
+ * @returns [purchaseGroupedByCategory] Array of objects grouped and summed up
+ */
+const groupBySumCategory = ({ group: data, by: groupByProperties, sum: sumByProperties }) => {
+    getGroupedItems = item => {
+        returnArray = [];
+        let i;
+        for (i = 0; i < groupByProperties.length; i++) {
+            returnArray.push(item[groupByProperties[i]]);
+        }
+        return returnArray;
+    };
+
+    getReducedDataRecord = item => {
+        let concatProperties = _.concat(groupByProperties, sumByProperties);
+        return _.pick(item, concatProperties);
+    };
+
+    let groupResult = {};
+    for (let i = 0; i < data.length; i++) {
+        const fullDataRecord = data[i];
+        const group = JSON.stringify(getGroupedItems(fullDataRecord));
+        groupResult[group] = groupResult[group] || [];
+
+        const reducedDataRecord = getReducedDataRecord(fullDataRecord);
+        groupResult[group].push(reducedDataRecord);
+    }
+
+    result = [];
+    for (let i in groupResult) {
+        let groupArray = groupResult[i];
+        groupArray.forEach(function(item) {
+            if (!this[item.product_type] && !this[item.product_type]) {
+                this[item.product_type] = {
+                    header: i18n.__('purchase_header_by_category'),
+                    product_type: item.product_type,
+                    inventory_quantity: 0,
+                    inventory_optimal: 0,
+                    purchase_quantity_to_buy: 0,
+                    purchase_quantity_to_buy_modified: 0
+                };
+                result.push(this[item.product_type]);
+            }
+            this[item.product_type].inventory_quantity += parseFloat(item.inventory_quantity);
+            this[item.product_type].inventory_optimal += parseFloat(item.inventory_optimal);
+            this[item.product_type].purchase_quantity_to_buy += parseFloat(
+                item.purchase_quantity_to_buy
+            );
+            this[item.product_type].purchase_quantity_to_buy_modified += parseFloat(
                 item.purchase_quantity_to_buy_modified
             );
         }, Object.create(null));
