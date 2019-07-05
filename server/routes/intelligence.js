@@ -4,9 +4,60 @@ const passport = require('passport');
 const _ = require('lodash');
 // const i18n = require('i18n');
 const i18n = require('../plugins/i18n.js');
+const { Collection } = require('../models/Collection');
+const { ProductType } = require('../models/ProductType');
+const { PriceRange } = require('../models/PriceRange');
 const { Purchase } = require('../models/Purchase');
 const { VariantIndicator } = require('../models/VariantIndicator');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
+
+/**
+ * @description GET /api/admin/intelligence/purchase
+ */
+router.get('/init', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    let results = {};
+
+    let collectionProjection = {
+        created_at: false,
+        updated_at: false,
+        __v: false,
+        _id: false
+    };
+    let collections = await Collection.find({}, collectionProjection);
+    if (collections) {
+        results.collections = collections;
+    } else {
+        return res.status(404).json({ error: res.$t('collections_error_NOTFOUND') });
+    }
+
+    let productTypeProjection = {
+        created_at: false,
+        updated_at: false,
+        __v: false,
+        _id: false
+    };
+    let productTypes = await ProductType.find({}, productTypeProjection);
+    if (productTypes) {
+        results.productTypes = productTypes;
+    } else {
+        return res.status(404).json({ error: res.$t('productTypes_error_NOTFOUND') });
+    }
+
+    let priceRangeProjection = {
+        created_at: false,
+        updated_at: false,
+        __v: false,
+        _id: false
+    };
+    let priceRanges = await PriceRange.find({}, priceRangeProjection);
+    if (priceRanges) {
+        results.priceRanges = priceRanges;
+    } else {
+        return res.status(404).json({ error: res.$t('priceRanges_error_NOTFOUND') });
+    }
+
+    return res.status(200).json(results);
+});
 
 /**
  * @description GET /api/admin/intelligence/purchase
@@ -29,8 +80,17 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     }
 
     let productTypes = req.query.product_types ? JSON.parse(req.query.product_types) : null;
+    let productTypeIDs = [];
+    let productTypeTitles = [];
+    if (productTypes) {
+        for (let i = 0; i < productTypes.length; i++) {
+            let productType = productTypes[i];
+            productTypeIDs.push(productType.id);
+            productTypeTitles.push(productType.title);
+        }
+    }
     if (productTypes && productTypes.length > 0) {
-        filterJsonStr = filterJsonStr + `"product_type": { "$in": ${productTypes} }`;
+        filterJsonStr = filterJsonStr + `"product_type": { "$in": "${productTypeTitles}" }`;
         filterJsonStr = filterJsonStr + ', ';
     }
 
@@ -81,9 +141,19 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
     let variantIndicators = await VariantIndicator.findByFilter(filterObj);
     if (param && variantIndicators) {
+        if (plannedBudget && plannedBudget > 0) {
+            let repurchasePlannedBudget = computeRepurchase(plannedBudget, variantIndicators);
+            console.log('repurchasePlannedBudget: ', repurchasePlannedBudget);
+        }
+
+        // if (comparedBudget && comparedBudget > 0) {
+        //     let repurchaseComparedBudget = computeRepurchase(comparedBudget, variantIndicators);
+        //     console.log('repurchaseComparedBudget: ', repurchaseComparedBudget);
+        // }
+
         let purchase = prototypePurchase(param, variantIndicators);
 
-        let purchasePlannedBudgetGroupedByDivisionCategory = [];
+        let purchasePlannedBudgetGroupedByCollectionProductType = [];
         if (plannedBudget && parseInt(plannedBudget) > 0) {
             let groupByPlannedBudget = ['collection_title', 'product_type'];
             let sumByPlannedBudget = [
@@ -92,13 +162,13 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 'purchase_quantity_to_buy',
                 'purchase_quantity_to_buy_modified'
             ];
-            purchasePlannedBudgetGroupedByDivisionCategory = groupBySumDivisionCategory({
+            purchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType({
                 group: purchase.purchases,
                 by: groupByPlannedBudget,
                 sum: sumByPlannedBudget
             });
         }
-        let purchaseComparedBudgetGroupedByDivisionCategory = [];
+        let purchaseComparedBudgetGroupedByCollectionProductType = [];
         if (comparedBudget && parseInt(comparedBudget) > 0) {
             let groupByComparedBudget = ['collection_title', 'product_type'];
             let sumByComparedBudget = [
@@ -107,14 +177,14 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 'purchase_quantity_to_buy',
                 'purchase_quantity_to_buy_modified'
             ];
-            purchaseComparedBudgetGroupedByDivisionCategory = groupBySumDivisionCategory({
+            purchaseComparedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType({
                 group: purchase.purchases,
                 by: groupByComparedBudget,
                 sum: sumByComparedBudget
             });
         }
 
-        let purchasePlannedBudgetGroupedByCategory = [];
+        let purchasePlannedBudgetGroupedByProductType = [];
         if (plannedBudget && parseInt(plannedBudget) > 0) {
             let groupByPlannedBudget = ['product_type'];
             let sumByPlannedBudget = [
@@ -123,13 +193,13 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 'purchase_quantity_to_buy',
                 'purchase_quantity_to_buy_modified'
             ];
-            purchasePlannedBudgetGroupedByCategory = groupBySumCategory({
+            purchasePlannedBudgetGroupedByProductType = groupBySumProductType({
                 group: purchase.purchases,
                 by: groupByPlannedBudget,
                 sum: sumByPlannedBudget
             });
         }
-        let purchaseComparedBudgetGroupedByCategory = [];
+        let purchaseComparedBudgetGroupedByProductType = [];
         if (comparedBudget && parseInt(comparedBudget) > 0) {
             let groupByComparedBudget = ['product_type'];
             let sumByComparedBudget = [
@@ -138,7 +208,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 'purchase_quantity_to_buy',
                 'purchase_quantity_to_buy_modified'
             ];
-            purchaseComparedBudgetGroupedByCategory = groupBySumCategory({
+            purchaseComparedBudgetGroupedByProductType = groupBySumProductType({
                 group: purchase.purchases,
                 by: groupByComparedBudget,
                 sum: sumByComparedBudget
@@ -147,10 +217,10 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
         let results = {};
         results.purchase = purchase;
-        results.purchasePlannedBudgetGroupedByDivisionCategory = purchasePlannedBudgetGroupedByDivisionCategory;
-        results.purchaseComparedBudgetGroupedByDivisionCategory = purchaseComparedBudgetGroupedByDivisionCategory;
-        results.purchasePlannedBudgetGroupedByCategory = purchasePlannedBudgetGroupedByCategory;
-        results.purchaseComparedBudgetGroupedByCategory = purchaseComparedBudgetGroupedByCategory;
+        results.purchasePlannedBudgetGroupedByCollectionProductType = purchasePlannedBudgetGroupedByCollectionProductType;
+        results.purchaseComparedBudgetGroupedByCollectionProductType = purchaseComparedBudgetGroupedByCollectionProductType;
+        results.purchasePlannedBudgetGroupedByProductType = purchasePlannedBudgetGroupedByProductType;
+        results.purchaseComparedBudgetGroupedByProductType = purchaseComparedBudgetGroupedByProductType;
         return res.status(200).json(results);
     } else {
         return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
@@ -392,9 +462,9 @@ function prototypePurchase(param, variantIndicators) {
  * GroupBy and Sum
  * @param data Array of objects to be grouped by
  * @param groupByProperties Array of properties to group of
- * @returns [purchaseGroupedByDivisionCategory] Array of objects grouped and summed up
+ * @returns [purchaseGroupedByCollectionProductType] Array of objects grouped and summed up
  */
-const groupBySumDivisionCategory = ({
+const groupBySumCollectionProductType = ({
     group: data,
     by: groupByProperties,
     sum: sumByProperties
@@ -429,7 +499,7 @@ const groupBySumDivisionCategory = ({
         groupArray.forEach(function(item) {
             if (!this[item.collection_title] && !this[item.product_type]) {
                 this[item.collection_title] = {
-                    header: i18n.__('purchase_header_by_division_category'),
+                    header: i18n.__('purchase_header_by_collection_product_type'),
                     collection_title: item.collection_title,
                     product_type: item.product_type,
                     inventory_quantity: 0,
@@ -456,9 +526,9 @@ const groupBySumDivisionCategory = ({
  * GroupBy and Sum
  * @param data Array of objects to be grouped by
  * @param groupByProperties Array of properties to group of
- * @returns [purchaseGroupedByCategory] Array of objects grouped and summed up
+ * @returns [purchaseGroupedByProductType] Array of objects grouped and summed up
  */
-const groupBySumCategory = ({ group: data, by: groupByProperties, sum: sumByProperties }) => {
+const groupBySumProductType = ({ group: data, by: groupByProperties, sum: sumByProperties }) => {
     getGroupedItems = item => {
         returnArray = [];
         let i;
@@ -489,7 +559,7 @@ const groupBySumCategory = ({ group: data, by: groupByProperties, sum: sumByProp
         groupArray.forEach(function(item) {
             if (!this[item.product_type] && !this[item.product_type]) {
                 this[item.product_type] = {
-                    header: i18n.__('purchase_header_by_category'),
+                    header: i18n.__('purchase_header_by_product_type'),
                     product_type: item.product_type,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
@@ -508,6 +578,92 @@ const groupBySumCategory = ({ group: data, by: groupByProperties, sum: sumByProp
             );
         }, Object.create(null));
     }
+    return result;
+};
+
+/**
+ * GroupBy and Sum
+ * @param data Array of objects to be grouped by
+ * @param groupByProperties Array of properties to group of
+ * @returns [purchaseGroupedByProductType] Array of objects grouped and summed up
+ */
+const computeRepurchase = (plannedBudget, variantIndicators) => {
+    if (!plannedBudget || !variantIndicators) return;
+    console.log('computeRepurchase plannedBudget:', plannedBudget);
+    console.log('computeRepurchase variantIndicators:', variantIndicators);
+
+    // 1. Ordenar os itens (variant) a serem comprados por indicadores relevantes para recompra
+    //    a. Os itens com o mais elevado volume de vendas (sales_volume)
+    //    b. Os items com o maior potencial de vendas (sales_potential)
+    //    c. ...
+
+    // 2. Identificar a quantidade e o valor a serem comprados de cada item (variant)
+    //    a. Quantidade a ser comprada: (inventory_optimal - inventory_quantity)
+    //    b. Valor a ser comprado: (inventory_cost *  Quantidade a ser comprada)
+    //    c. ...
+
+    // 3. Verificar se o saldo do valor do orçamento de compra é suficiente para comprar o item (variant)
+    //    a. SALDO (plannedBudget) > (Valor a ser comprado)
+    // 3.1 Se SIM
+    //    a. plannedBudget = plannedBudget - (Valor a ser comprado)
+    // 3.2 Se NAO (LOOP)
+    //    a. Diminuir o valor a ser comprado em UMA unidade e calcular o novo valor do item
+    //    b. Comparar o novo valor do item com o saldo do valor do orçamento de compra;
+    //       c. Se o saldo for suficiente efetuar alocação de compra
+    //       c. Senão repetir o item 3.2 até que o saldo seja alocado
+
+    // 4. Formatar objeto que representa a recompra sugerida
+    // 5. Persistir objeto que representa a recompra sugerida
+
+    // getGroupedItems = item => {
+    //     returnArray = [];
+    //     let i;
+    //     for (i = 0; i < groupByProperties.length; i++) {
+    //         returnArray.push(item[groupByProperties[i]]);
+    //     }
+    //     return returnArray;
+    // };
+
+    // getReducedDataRecord = item => {
+    //     let concatProperties = _.concat(groupByProperties, sumByProperties);
+    //     return _.pick(item, concatProperties);
+    // };
+
+    // let groupResult = {};
+    // for (let i = 0; i < data.length; i++) {
+    //     const fullDataRecord = data[i];
+    //     const group = JSON.stringify(getGroupedItems(fullDataRecord));
+    //     groupResult[group] = groupResult[group] || [];
+
+    //     const reducedDataRecord = getReducedDataRecord(fullDataRecord);
+    //     groupResult[group].push(reducedDataRecord);
+    // }
+
+    result = [];
+    // for (let i in groupResult) {
+    //     let groupArray = groupResult[i];
+    //     groupArray.forEach(function(item) {
+    //         if (!this[item.product_type] && !this[item.product_type]) {
+    //             this[item.product_type] = {
+    //                 header: i18n.__('purchase_header_by_product_type'),
+    //                 product_type: item.product_type,
+    //                 inventory_quantity: 0,
+    //                 inventory_optimal: 0,
+    //                 purchase_quantity_to_buy: 0,
+    //                 purchase_quantity_to_buy_modified: 0
+    //             };
+    //             result.push(this[item.product_type]);
+    //         }
+    //         this[item.product_type].inventory_quantity += parseFloat(item.inventory_quantity);
+    //         this[item.product_type].inventory_optimal += parseFloat(item.inventory_optimal);
+    //         this[item.product_type].purchase_quantity_to_buy += parseFloat(
+    //             item.purchase_quantity_to_buy
+    //         );
+    //         this[item.product_type].purchase_quantity_to_buy_modified += parseFloat(
+    //             item.purchase_quantity_to_buy_modified
+    //         );
+    //     }, Object.create(null));
+    // }
     return result;
 };
 

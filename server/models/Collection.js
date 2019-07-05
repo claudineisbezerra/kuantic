@@ -23,7 +23,5 @@ const CollectionSchema = new Schema(
 );
 
 CollectionSchema.set('collection', 'collections');
-
 const Collection = mongoose.model('Collection', CollectionSchema);
-
 module.exports = { Collection };

@@ -23,7 +23,5 @@ const ProductTypeSchema = new Schema(
 );
 
 ProductTypeSchema.set('collection', 'productTypes');
-
 const ProductType = mongoose.model('ProductType', ProductTypeSchema);
-
 module.exports = { ProductType };

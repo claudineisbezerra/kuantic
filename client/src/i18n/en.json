@@ -386,9 +386,9 @@
   "purchase": {
     "filter_title": "What do you want to buy?",
     "filter_result": "Is everything here?",
-    "division": "Division",
+    "collection": "Division",
     "department": "Department",
-    "category": "Category",
+    "product_type": "Category",
     "brand": "Brand",
     "line": "Line",
     "color": "Cor",
@@ -396,7 +396,7 @@
     "size": "Size",
     "material": "Material",
     "sleeve": "Sleeve",
-    "price_range": "Price Ranges",
+    "price_range": "Prices Range",
     "planned_budget": "Planned Budget",
     "compared_budget": "Actual Budget",
     "compute": "Compute",
@@ -409,11 +409,11 @@
     "ideal_stock": "Ideal Stock",
     "purchase_suggested": "Suggested purchase",
     "purchase_todo": "Buy-in",
-    "header_by_category": "Purchase by category",
-    "header_by_category_summary_suggested": "SUGGESTED PURCHASE by category",
-    "header_by_category_summary_todo": "BUY-IN by category",
-    "header_by_division_category": "Purchase by division and category",
-    "header_by_division_category_summary": "Summary by division and category"
+    "header_by_product_type": "Purchase by category",
+    "header_by_product_type_summary_suggested": "SUGGESTED PURCHASE by category",
+    "header_by_product_type_summary_todo": "BUY-IN by category",
+    "header_by_collection_product_type": "Purchase by collection and category",
+    "header_by_collection_product_type_summary": "Summary by collection and category"
   },
   "spinners": {
     "title": "Spinners",

@@ -28,7 +28,5 @@ const PriceRangeSchema = new Schema(
 );
 
 PriceRangeSchema.set('collection', 'priceRanges');
-
 const PriceRange = mongoose.model('PriceRange', PriceRangeSchema);
-
 module.exports = { PriceRange };

@@ -356,9 +356,9 @@
   "purchase": {
     "filter_title": "¿Qué desea comprar?",
     "filter_result": "¿Está todo aquí?",
-    "division": "División",
+    "collection": "División",
     "department": "Departamento",
-    "category": "Categoría",
+    "product_type": "Categoría",
     "brand": "Marca",
     "line": "Linea",
     "color": "Cor",
@@ -366,7 +366,7 @@
     "size": "Tamaño",
     "material": "Material",
     "sleeve": "Manga",
-    "price_range": "Gamas de precios",
+    "price_range": "Gama de precios",
     "planned_budget": "Presupuesto planificado",
     "compared_budget": "Presupuesto comparado",
     "compute": "Calcular",
@@ -379,11 +379,11 @@
     "ideal_stock": "Stock ideal",
     "purchase_suggested": "Compra sugerida",
     "purchase_todo": "Compra a realizar",
-    "header_by_category": "Compra por categoría",
-     "header_by_category_summary_suggested": "COMPRAS SUGERIDAS por categoría",
-     "header_by_category_summary_todo": "COMPRAS A REALIZAR por categoría",
-     "header_by_division_category": "Compra por división y categoría",
-     "header_by_division_category_summary": "Resumen por división y categoría"
+    "header_by_product_type": "Compra por categoría",
+     "header_by_product_type_summary_suggested": "COMPRAS SUGERIDAS por categoría",
+     "header_by_product_type_summary_todo": "COMPRAS A REALIZAR por categoría",
+     "header_by_collection_product_type": "Compra por división y categoría",
+     "header_by_collection_product_type_summary": "Resumen por división y categoría"
   },
   "spinners": {
     "title": "Spinners",

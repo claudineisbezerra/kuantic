@@ -3,29 +3,35 @@
     <div class="va-row">
       <div class="flex md12">
         <kuantic-widget :headerText="'purchase.filter_title' | translate">
-          <form @submit.prevent="handleSubmit" name="purchase">
+          <form @submit.prevent="handlePurchaseSubmit" name="purchase">
             <div class="va-row">
               <div class="flex md2.5">
                 <fieldset>
-                  <kuantic-simple-select
-                    name="division"
-                    :label="'purchase.division' | translate"
-                    v-model="chosenDivision"
-                    option-key="title"
-                    v-bind:options="division"
-                  />
-                  <small v-show="veeErrors.has('division')" class="help text-danger">
-                    {{ veeErrors.first('division') }}
-                  </small>
-                  <kuantic-simple-select
-                     name="category"
-                    :label="'purchase.category' | translate"
-                    v-model="chosenCategory"
-                    v-bind:options="category"
-                  />
-                  <small v-show="veeErrors.has('category')" class="help text-danger">
-                    {{ veeErrors.first('category') }}
-                  </small>
+                  <template v-if="collections && collections.length > 0">
+                    <kuantic-simple-select
+                      name="collections"
+                      :label="'purchase.collection' | translate"
+                      v-model="chosenCollection"
+                      option-key="title"
+                      v-bind:options="collections"
+                    />
+                    <small v-show="veeErrors.has('collections')" class="help text-danger">
+                      {{ veeErrors.first('collections') }}
+                    </small>
+                  </template>
+
+                  <template v-if="productTypes && productTypes.length > 0">
+                    <kuantic-simple-select
+                      name='productTypes'
+                      :label="'purchase.product_type' | translate"
+                      v-model="chosenProductType"
+                      option-key="title"
+                      v-bind:options='productTypes'
+                    />
+                    <small v-show="veeErrors.has('productTypes')" class="help text-danger">
+                      {{ veeErrors.first('productTypes') }}
+                    </small>
+                  </template>
                 </fieldset>
               </div>
               <div class="flex md2.5">
@@ -128,10 +134,10 @@
     </div>
 
     <div class="va-row">
-      <template v-for="(divisionCategory, id) in purchasePlannedBudgetGroupedByDivisionCategory">
+      <template v-for="(collectionProductType, id) in purchasePlannedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="divisionCategory.product_type+'::'+divisionCategory.collection_title">
-            <kuantic-chart :data="setByDivisionCategoryChartData(divisionCategory)" type="vertical-bar"/>
+          <kuantic-widget class="chart-widget" :headerText="collectionProductType.product_type+'::'+collectionProductType.collection_title">
+            <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
       </template>
@@ -139,16 +145,16 @@
 
     <div class="va-row">
       <div class="flex md6 xs12"
-           v-if="purchasePlannedBudgetGroupedByCategory && Object.keys(purchasePlannedBudgetGroupedByCategory).length > 0">
-        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_category_summary_suggested')">
-          <kuantic-chart :data="setByPlannedCategoryChartData(purchasePlannedBudgetGroupedByCategory)" type="donut"/>
+           v-if="purchasePlannedBudgetGroupedByProductType && Object.keys(purchasePlannedBudgetGroupedByProductType).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_suggested')">
+          <kuantic-chart :data="setByPlannedProductTypeChartData(purchasePlannedBudgetGroupedByProductType)" type="donut"/>
         </kuantic-widget>
       </div>
 
       <div class="flex md6 xs12"
-           v-if="purchaseComparedBudgetGroupedByCategory  && Object.keys(purchaseComparedBudgetGroupedByCategory).length > 0">
-        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_category_summary_todo')">
-          <kuantic-chart :data="setByComparedCategoryChartData(purchaseComparedBudgetGroupedByCategory)" type="donut"/>
+           v-if="purchaseComparedBudgetGroupedByProductType  && Object.keys(purchaseComparedBudgetGroupedByProductType).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_todo')">
+          <kuantic-chart :data="setByComparedProductTypeChartData(purchaseComparedBudgetGroupedByProductType)" type="donut"/>
         </kuantic-widget>
       </div>
     </div>
@@ -156,9 +162,6 @@
 </template>
 
 <script>
-import Division from '@/data/store/collection'
-import Category from '@/data/store/product-type'
-import PriceRanges from '@/data/store/price-range'
 import FieldsDef from '@/data/table/fields-definition'
 import ItemsPerPageDef from '@/data/table/items-per-page-definition'
 import QueryParams from '@/data/table/query-params'
@@ -192,11 +195,11 @@ export default {
   },
   data () {
     return {
-      division: Division,
-      category: Category,
-      priceRanges: PriceRanges,
-      chosenDivision:{},
-      chosenCategory: null,
+      collections: [],
+      productTypes: [],
+      priceRanges: [],
+      chosenCollection:{},
+      chosenProductType: {},
       plannedBudget: null,
       comparedBudget: null,
       checkedPriceRanges: [],
@@ -217,10 +220,10 @@ export default {
       paginationPath: '',
       defaultTablePerPage: 6,
       queryParams: QueryParams,
-      purchasePlannedBudgetGroupedByDivisionCategory: [],
-      purchaseComparedBudgetGroupedByDivisionCategory: [],
-      purchasePlannedBudgetGroupedByCategory: [],
-      purchaseComparedBudgetGroupedByCategory: [],
+      purchasePlannedBudgetGroupedByCollectionProductType: [],
+      purchaseComparedBudgetGroupedByCollectionProductType: [],
+      purchasePlannedBudgetGroupedByProductType: [],
+      purchaseComparedBudgetGroupedByProductType: [],
     }
   },
   methods: {
@@ -266,8 +269,8 @@ export default {
     },
     setPurchaseParams () {
       let param = {
-        purchase_id: null, // Sera gerado automáticamente no SERVER
-        purchase_title: 'Default title', // Definido manuamente - por enquanto
+        purchase_id: null, // Será gerado automáticamente no SERVER
+        purchase_title: 'Default title', // todo: Definido manuamente (por enquanto)
         collections: [],
         product_types: [],
         price_ranges: [],
@@ -275,10 +278,10 @@ export default {
         compared_budget: null,
       }
 
-      if (this.chosenDivision && Object.keys(this.chosenDivision).length > 0) {
+      if (this.chosenCollection && Object.keys(this.chosenCollection).length > 0) {
         let collections = []
         let collection = {}
-        Object.entries(this.chosenDivision).forEach(entry => {
+        Object.entries(this.chosenCollection).forEach(entry => {
           let key = entry[0];
           let value = entry[1];
           collection[key] = value
@@ -287,12 +290,16 @@ export default {
         param.collections = collections
       }
 
-      if (this.chosenCategory) {
-        let chosenCategoryStr = `"${this.chosenCategory}"`
-        param.product_types.push(chosenCategoryStr)
-
-      } else {
-        param.product_types = []
+      if (this.chosenProductType && Object.keys(this.chosenProductType).length > 0) {
+        let productTypes = []
+        let productType = {}
+        Object.entries(this.chosenProductType).forEach(entry => {
+          let key = entry[0];
+          let value = entry[1];
+          productType[key] = value
+        });
+        productTypes.push(productType)
+        param.product_types = productTypes
       }
 
       if (this.checkedPriceRanges && this.checkedPriceRanges.length > 0) {
@@ -340,7 +347,25 @@ export default {
       let unmasked = value.replace(/[^\d^\-\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
       return unmasked
     },
-    handleSubmit () {
+    handlePurchaseInit () {
+      this.errors = []
+      axios.get('/api/admin/intelligence/init')
+      .then((res) => {
+        if (res.data.errors) {
+          for (const error of res.data.errors) {
+            const [key] = Object.keys(error)
+            const [value] = Object.values(error)
+            this.errors.push({ key, value })
+          }
+        } else {
+          this.collections = res.data.collections
+          this.productTypes = res.data.productTypes
+          this.priceRanges = res.data.priceRanges
+        }
+      })
+      setTimeout(() => { this.errors = [] }, 1500)
+    },
+    handlePurchaseSubmit () {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
@@ -349,7 +374,6 @@ export default {
             { params: {
                 purchase_id: param.purchase_id,
                 purchase_title: param.purchase_title,
-                collections: JSON.stringify(param.collections),
                 collections: JSON.stringify(param.collections),
                 product_types: JSON.stringify(param.product_types),
                 price_ranges: JSON.stringify(param.price_ranges),
@@ -367,33 +391,19 @@ export default {
                 }
               } else {
                 this.purchase = res.data.purchase
-                this.purchasePlannedBudgetGroupedByDivisionCategory = res.data.purchasePlannedBudgetGroupedByDivisionCategory
-                this.purchaseComparedBudgetGroupedByDivisionCategory = res.data.purchaseComparedBudgetGroupedByDivisionCategory
-                this.purchasePlannedBudgetGroupedByCategory = res.data.purchasePlannedBudgetGroupedByCategory
-                this.purchaseComparedBudgetGroupedByCategory = res.data.purchaseComparedBudgetGroupedByCategory
-
-                // console.log('res.data.user:', res.data.user)
-                // console.log('res.data.user.handle:', res.data.user.handle)
-
-                // localStorage.setItem('authToken', res.data.token)
-                // this.$store.dispatch('app/toggleAuthState', true)
-                // this.$store.dispatch('app/saveUserData', res.data.user)
-
-                // setAuthToken(res.data.token)
-
-              // this.$router.push({
-              //   name: 'profile',
-              //   params: { handle: res.data.user.handle }
-              // })
+                this.purchasePlannedBudgetGroupedByCollectionProductType = res.data.purchasePlannedBudgetGroupedByCollectionProductType
+                this.purchaseComparedBudgetGroupedByCollectionProductType = res.data.purchaseComparedBudgetGroupedByCollectionProductType
+                this.purchasePlannedBudgetGroupedByProductType = res.data.purchasePlannedBudgetGroupedByProductType
+                this.purchaseComparedBudgetGroupedByProductType = res.data.purchaseComparedBudgetGroupedByProductType
               }
             })
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
-    setByPlannedCategoryChartData (purchaseByCategory) {
-      if (!purchaseByCategory) return
-      if (purchaseByCategory.length <= 0) return
+    setByPlannedProductTypeChartData (purchaseByProductType) {
+      if (!purchaseByProductType) return
+      if (purchaseByProductType.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette
@@ -401,8 +411,8 @@ export default {
 
       let labels = []
       let data = []
-      for (let i in purchaseByCategory) {
-        let item = purchaseByCategory[i]
+      for (let i in purchaseByProductType) {
+        let item = purchaseByProductType[i]
         let label = item.product_type
         labels.push(label)
 
@@ -423,9 +433,9 @@ export default {
 
       return chartData
     },
-    setByComparedCategoryChartData (purchaseByCategory) {
-      if (!purchaseByCategory) return
-      if (purchaseByCategory.length <= 0) return
+    setByComparedProductTypeChartData (purchaseByProductType) {
+      if (!purchaseByProductType) return
+      if (purchaseByProductType.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette
@@ -433,8 +443,8 @@ export default {
 
       let labels = []
       let data = []
-      for (let i in purchaseByCategory) {
-        let item = purchaseByCategory[i]
+      for (let i in purchaseByProductType) {
+        let item = purchaseByProductType[i]
         let label = item.product_type
         labels.push(label)
 
@@ -456,9 +466,9 @@ export default {
 
       return chartData
     },
-    setByDivisionCategoryChartData (purchaseByDivisionCategory) {
-      if (!purchaseByDivisionCategory) return
-      if (purchaseByDivisionCategory.length <= 0) return
+    setByCollectionProductTypeChartData (purchaseByCollectionProductType) {
+      if (!purchaseByCollectionProductType) return
+      if (purchaseByCollectionProductType.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette
@@ -471,16 +481,16 @@ export default {
       labels.push(this.$t('purchase.purchase_todo'))
 
       let data = []
-      data.push(purchaseByDivisionCategory.inventory_quantity)
-      data.push(purchaseByDivisionCategory.inventory_optimal)
-      data.push(purchaseByDivisionCategory.purchase_quantity_to_buy)
-      data.push(purchaseByDivisionCategory.purchase_quantity_to_buy_modified)
+      data.push(purchaseByCollectionProductType.inventory_quantity)
+      data.push(purchaseByCollectionProductType.inventory_optimal)
+      data.push(purchaseByCollectionProductType.purchase_quantity_to_buy)
+      data.push(purchaseByCollectionProductType.purchase_quantity_to_buy_modified)
 
       let chartData = {
         labels: labels,
         datasets: [
           {
-            label: purchaseByDivisionCategory.product_type,
+            label: purchaseByCollectionProductType.product_type,
             backgroundColor: backgroundColor,
             borderColor: palette.transparent,
             data: data,
@@ -496,6 +506,7 @@ export default {
   },
   created () {
     this.$nextTick(() => {
+      this.handlePurchaseInit ()
       // this.$validator.validateAll()
     })
   },

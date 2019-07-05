@@ -925,22 +925,22 @@ module.exports = {
     ],
     priceRangeSeedData: [
         {
-            id: 2,
+            id: 1,
             start_at: 0,
             end_at: 50
         },
         {
-            id: 3,
+            id: 2,
             start_at: 51,
             end_at: 200
         },
         {
-            id: 4,
+            id: 3,
             start_at: 201,
             end_at: 150
         },
         {
-            id: 5,
+            id: 4,
             start_at: 150,
             end_at: parseInt(CONSTANT.PRICE.MAX_RANGE.VALUE)
         }

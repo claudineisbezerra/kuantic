@@ -22,10 +22,13 @@
 	"userName_error_NOTFOUND": "No User Found",
   "username_error_LENGTH": "Username must be between 5 and 15 characters",
   "username_error_EXISTS": "Username already taken",
+  "collections_error_NOTFOUND": "No Collections found",
+  "productTypes_error_NOTFOUND": "No ProductTypes found",
+  "priceRanges_error_NOTFOUND": "No PriceRanges found",
   "variantIndicators_error_NOTFOUND": "No VariantIndicator found",
 	"will_redirect": "You will now be redirected",
-	"purchase_header_by_category": "Purchase by category",
-	"purchase_header_by_category_summary_suggested": "Summary by category",
-	"purchase_header_by_division_category": "Purchase by division and category",
-	"purchase_header_by_division_category_summary": "Summary by division and category"
+	"purchase_header_by_product_type": "Purchase by category",
+	"purchase_header_by_product_type_summary_suggested": "Summary by category",
+	"purchase_header_by_collection_product_type": "Purchase by collection and category",
+	"purchase_header_by_collection_product_type_summary": "Summary by collection and category"
 }
