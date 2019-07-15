@@ -4,10 +4,10 @@ export default {
       value: 5,
     },
     {
-      value: 6,
+      value: 10,
     },
     {
-      value: 10,
+      value: 30,
     },
   ],
 }

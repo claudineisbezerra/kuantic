@@ -25,7 +25,7 @@ export default {
         },
       ],
       planned_budget: 100,
-      compared_budget: 100
+      executed_budget: 100
     },
     purchases:
     [
@@ -46,10 +46,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 2,
@@ -68,10 +68,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 3,
@@ -90,10 +90,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 4,
@@ -112,10 +112,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 5,
@@ -134,10 +134,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 6,
@@ -156,10 +156,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 7,
@@ -178,10 +178,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 8,
@@ -200,10 +200,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 9,
@@ -222,10 +222,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
       {
         product_id: 10,
@@ -244,10 +244,10 @@ export default {
         inventory_quantity: '5',
         inventory_optimal: '100',
         inventory_cost: '10.00',
-        purchase_quantity_to_buy: '95',
-        purchase_quantity_to_buy_modified: '80',
-        purchase_cost: '400,00',
-        purchase_cost_modified: '400,00'
+        purchase_planned_quantity_to_buy: '95',
+        purchase_executed_quantity_to_buy: '80',
+        purchase_planned_value_to_buy: '400,00',
+        purchase_executed_value_to_buy: '400,00'
       },
     ]
   }

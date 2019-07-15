@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const _ = require('lodash');
-// const i18n = require('i18n');
+const CONSTANT = require('../utils/serverConstants');
 const i18n = require('../plugins/i18n.js');
 const { Collection } = require('../models/Collection');
 const { ProductType } = require('../models/ProductType');
 const { PriceRange } = require('../models/PriceRange');
 const { Purchase } = require('../models/Purchase');
+const { PurchasePlannedItem } = require('../models/PurchasePlannedItem');
+const { PurchaseExecutedItem } = require('../models/PurchaseExecutedItem');
 const { VariantIndicator } = require('../models/VariantIndicator');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
 
@@ -64,6 +66,9 @@ router.get('/init', passport.authenticate('jwt', { session: false }), async (req
  */
 router.get('/purchase', passport.authenticate('jwt', { session: false }), async (req, res) => {
     let filterJsonStr = '{ ';
+    let purchaseID = req.query.purchase_id ? req.query.purchase_id : null;
+    let purchaseTitle = req.query.purchase_title ? req.query.purchase_title : null;
+
     let collections = req.query.collections ? JSON.parse(req.query.collections) : null;
     let collectionIDs = [];
     let collectionTitles = [];
@@ -118,109 +123,122 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     let filterObj = JSON.parse(filterJsonStr);
 
     let plannedBudget =
-        req.query.planned_budget && parseInt(req.query.planned_budget) > 0
+        req.query.planned_budget && parseFloat(req.query.planned_budget) > 0
             ? req.query.planned_budget
-            : null;
+            : 0;
+    let planned_budget_not_used = req.query.planned_budget_not_used
+        ? req.query.planned_budget_not_used
+        : 0;
 
-    let comparedBudget =
-        req.query.compared_budget && parseInt(req.query.compared_budget) > 0
-            ? req.query.compared_budget
-            : null;
+    let executedBudget = null;
+    if (req.query.executed_budget && parseFloat(req.query.executed_budget) > 0) {
+        executedBudget = parseFloat(req.query.executed_budget);
+    } else {
+        if (parseFloat(req.query.planned_budget) > 0) {
+            executedBudget = parseFloat(req.query.planned_budget);
+        }
+    }
 
-    let purchaseID = req.query.purchase_id ? req.query.purchase_id : null;
-    let purchaseTitle = req.query.purchase_title ? req.query.purchase_title : null;
+    let executed_budget_not_used = req.query.executed_budget_not_used
+        ? req.query.executed_budget_not_used
+        : 0;
 
-    let param = {
+    let params = {
+        purchase_id: purchaseID,
         purchase_title: purchaseTitle,
         collection: collections,
         product_type: productTypes,
         price_range: priceRanges,
         planned_budget: plannedBudget,
-        compared_budget: comparedBudget
+        planned_budget_not_used: planned_budget_not_used,
+        executed_budget: executedBudget,
+        executed_budget_not_used: executed_budget_not_used
     };
 
     let variantIndicators = await VariantIndicator.findByFilter(filterObj);
-    if (param && variantIndicators) {
-        if (plannedBudget && plannedBudget > 0) {
-            let repurchasePlannedBudget = computeRepurchase(plannedBudget, variantIndicators);
-            console.log('repurchasePlannedBudget: ', repurchasePlannedBudget);
-        }
-
-        // if (comparedBudget && comparedBudget > 0) {
-        //     let repurchaseComparedBudget = computeRepurchase(comparedBudget, variantIndicators);
-        //     console.log('repurchaseComparedBudget: ', repurchaseComparedBudget);
-        // }
-
-        let purchase = prototypePurchase(param, variantIndicators);
+    if (params && variantIndicators) {
+        let purchase = computeRepurchase(params, variantIndicators);
 
         let purchasePlannedBudgetGroupedByCollectionProductType = [];
-        if (plannedBudget && parseInt(plannedBudget) > 0) {
-            let groupByPlannedBudget = ['collection_title', 'product_type'];
-            let sumByPlannedBudget = [
+        if (plannedBudget && parseFloat(plannedBudget) > 0) {
+            let groupByFields_plannedBudget = ['collection_title', 'product_type'];
+            let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_quantity_to_buy',
-                'purchase_quantity_to_buy_modified'
+                'purchase_planned_quantity_to_buy',
+                'purchase_executed_quantity_to_buy'
             ];
-            purchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType({
-                group: purchase.purchases,
-                by: groupByPlannedBudget,
-                sum: sumByPlannedBudget
-            });
-        }
-        let purchaseComparedBudgetGroupedByCollectionProductType = [];
-        if (comparedBudget && parseInt(comparedBudget) > 0) {
-            let groupByComparedBudget = ['collection_title', 'product_type'];
-            let sumByComparedBudget = [
-                'inventory_quantity',
-                'inventory_optimal',
-                'purchase_quantity_to_buy',
-                'purchase_quantity_to_buy_modified'
-            ];
-            purchaseComparedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType({
-                group: purchase.purchases,
-                by: groupByComparedBudget,
-                sum: sumByComparedBudget
-            });
+            let objParam = {};
+            objParam.budgetType = CONSTANT.BUDGET.TYPE.PLANNED;
+            objParam.groupByData = purchase.purchases;
+            objParam.groupByFields = groupByFields_plannedBudget;
+            objParam.sumByFields = sumByFields_plannedBudget;
+            purchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
+                objParam
+            );
         }
 
         let purchasePlannedBudgetGroupedByProductType = [];
-        if (plannedBudget && parseInt(plannedBudget) > 0) {
-            let groupByPlannedBudget = ['product_type'];
-            let sumByPlannedBudget = [
+        if (plannedBudget && parseFloat(plannedBudget) > 0) {
+            let groupByFields_plannedBudget = ['product_type'];
+            let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_quantity_to_buy',
-                'purchase_quantity_to_buy_modified'
+                'purchase_planned_quantity_to_buy',
+                'purchase_executed_quantity_to_buy'
             ];
-            purchasePlannedBudgetGroupedByProductType = groupBySumProductType({
-                group: purchase.purchases,
-                by: groupByPlannedBudget,
-                sum: sumByPlannedBudget
-            });
+            let objParam = {};
+            objParam.budgetType = CONSTANT.BUDGET.TYPE.PLANNED;
+            objParam.groupByData = purchase.purchases;
+            objParam.groupByFields = groupByFields_plannedBudget;
+            objParam.sumByFields = sumByFields_plannedBudget;
+            purchasePlannedBudgetGroupedByProductType = groupBySumProductType(objParam);
         }
-        let purchaseComparedBudgetGroupedByProductType = [];
-        if (comparedBudget && parseInt(comparedBudget) > 0) {
-            let groupByComparedBudget = ['product_type'];
-            let sumByComparedBudget = [
+
+        let purchaseExecutedBudgetGroupedByCollectionProductType = [];
+        if (executedBudget && parseFloat(executedBudget) > 0) {
+            let groupByFields_executedBudget = ['collection_title', 'product_type'];
+            let sumByFields_executedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_quantity_to_buy',
-                'purchase_quantity_to_buy_modified'
+                'purchase_planned_quantity_to_buy',
+                'purchase_executed_quantity_to_buy'
             ];
-            purchaseComparedBudgetGroupedByProductType = groupBySumProductType({
-                group: purchase.purchases,
-                by: groupByComparedBudget,
-                sum: sumByComparedBudget
-            });
+
+            let objParam = {};
+            objParam.budgetType = CONSTANT.BUDGET.TYPE.EXECUTED;
+            objParam.groupByData = purchase.purchases;
+            objParam.groupByFields = groupByFields_executedBudget;
+            objParam.sumByFields = sumByFields_executedBudget;
+            purchaseExecutedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
+                objParam
+            );
+        }
+
+        let purchaseExecutedBudgetGroupedByProductType = [];
+        if (executedBudget && parseFloat(executedBudget) > 0) {
+            let groupByFields_executedBudget = ['product_type'];
+            let sumByFields_executedBudget = [
+                'inventory_quantity',
+                'inventory_optimal',
+                'purchase_planned_quantity_to_buy',
+                'purchase_executed_quantity_to_buy'
+            ];
+            let objParam = {};
+            objParam.budgetType = CONSTANT.BUDGET.TYPE.EXECUTED;
+            objParam.groupByData = purchase.purchases;
+            objParam.groupByFields = groupByFields_executedBudget;
+            objParam.sumByFields = sumByFields_executedBudget;
+            purchaseExecutedBudgetGroupedByProductType = groupBySumProductType(objParam);
         }
 
         let results = {};
         results.purchase = purchase;
         results.purchasePlannedBudgetGroupedByCollectionProductType = purchasePlannedBudgetGroupedByCollectionProductType;
-        results.purchaseComparedBudgetGroupedByCollectionProductType = purchaseComparedBudgetGroupedByCollectionProductType;
         results.purchasePlannedBudgetGroupedByProductType = purchasePlannedBudgetGroupedByProductType;
-        results.purchaseComparedBudgetGroupedByProductType = purchaseComparedBudgetGroupedByProductType;
+
+        results.purchaseExecutedBudgetGroupedByCollectionProductType = purchaseExecutedBudgetGroupedByCollectionProductType;
+        results.purchaseExecutedBudgetGroupedByProductType = purchaseExecutedBudgetGroupedByProductType;
         return res.status(200).json(results);
     } else {
         return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
@@ -417,75 +435,168 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
 /**
  * Prototype new object with parameter properties
- * @param param Parameters used to filter data for purchase
- * @param variantIndicators List of object as of search result
+ * @param params Parameters used to filter data for purchase
+ * @param plannedItems List of object as result of Planned Budget
+ * @param executedItems List of object as result of Compared Budget
  * @returns {Purchase} Purchase object model
  */
-function prototypePurchase(param, variantIndicators) {
-    let purchase = {};
-    if (!param && !variantIndicators) return purchase;
-    let newPurchases = [];
-    for (let key in variantIndicators) {
-        let variantIndicator = variantIndicators[key];
-        let newPurchase = {};
-        newPurchase.product_id = variantIndicator.product_id;
-        newPurchase.variant_id = variantIndicator.variant_id;
-        newPurchase.title = variantIndicator.title;
-        newPurchase.handle = variantIndicator.handle;
-        newPurchase.product_type = variantIndicator.product_type;
-        newPurchase.collection_title = variantIndicator.collection_title;
-        newPurchase.image_src = variantIndicator.image_src;
-        newPurchase.sku = variantIndicator.sku;
-        newPurchase.price = variantIndicator.price;
-        newPurchase.size = variantIndicator.size;
-        newPurchase.color = variantIndicator.color;
-        newPurchase.material = variantIndicator.material;
-        newPurchase.vendor = variantIndicator.vendor;
-        newPurchase.inventory_quantity = variantIndicator.inventory_quantity;
-        newPurchase.inventory_cost = variantIndicator.inventory_cost;
-        newPurchase.inventory_optimal = variantIndicator.inventory_optimal;
-        newPurchase.purchase_quantity_to_buy = 95;
-        newPurchase.purchase_quantity_to_buy_modified = 95;
-        newPurchase.purchase_cost = 950;
-        newPurchase.purchase_cost_modified = 950;
-        newPurchases.push(newPurchase);
+
+function prototypePurchase(params, plannedItems, executedItems) {
+    if (!params && !plannedItems) return purchase;
+
+    let purchases = {};
+    purchases.planned_items = [];
+    purchases.executed_items = [];
+    if (plannedItems && plannedItems.length > 0) {
+        purchases.planned_items = plannedItems;
     }
-    purchase = new Purchase({
-        param: param,
-        purchases: newPurchases
+    if (executedItems && executedItems.length > 0) {
+        purchases.executed_items = executedItems;
+    }
+
+    let purchase = new Purchase({
+        params: params,
+        purchases: purchases
     });
 
     return purchase;
 }
 
 /**
- * GroupBy and Sum
- * @param data Array of objects to be grouped by
- * @param groupByProperties Array of properties to group of
- * @returns [purchaseGroupedByCollectionProductType] Array of objects grouped and summed up
+ * Prototype new object with parameter properties
+ * @param variantIndicators List of object as of search result
+ * @param budgetType Type of budget to be processed I.E.: 'planned' or 'executed'
+ * @param qtyBuyIn Qty of products to buy
+ * @param valueBuyIn Value of products to buy
+ * @returns {Purchase} Purchase object model
  */
-const groupBySumCollectionProductType = ({
-    group: data,
-    by: groupByProperties,
-    sum: sumByProperties
-}) => {
+
+function prototypePurchaseItem(variantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
+    if (!variantIndicator || !qtyBuyIn || !valueBuyIn) return purchaseItem;
+
+    let purchaseItem = null;
+    if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
+        purchaseItem = new PurchasePlannedItem();
+    }
+    if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
+        purchaseItem = new PurchaseExecutedItem();
+    }
+
+    purchaseItem.product_id = variantIndicator.product_id;
+    purchaseItem.variant_id = variantIndicator.variant_id;
+    purchaseItem.title = variantIndicator.title;
+    purchaseItem.handle = variantIndicator.handle;
+    purchaseItem.product_type = variantIndicator.product_type;
+    purchaseItem.collection_title = variantIndicator.collection_title;
+    purchaseItem.image_src = variantIndicator.image_src;
+    purchaseItem.sku = variantIndicator.sku;
+    purchaseItem.price = variantIndicator.price;
+    purchaseItem.size = variantIndicator.size;
+    purchaseItem.color = variantIndicator.color;
+    purchaseItem.material = variantIndicator.material;
+    purchaseItem.vendor = variantIndicator.vendor;
+    purchaseItem.inventory_quantity = variantIndicator.inventory_quantity;
+    purchaseItem.inventory_cost = variantIndicator.inventory_cost;
+    purchaseItem.inventory_optimal = variantIndicator.inventory_optimal;
+
+    purchaseItem.purchase_planned_quantity_to_buy = 0;
+    purchaseItem.purchase_planned_value_to_buy = 0.0;
+    if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
+        purchaseItem.purchase_planned_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
+        purchaseItem.purchase_planned_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
+    }
+
+    purchaseItem.purchase_executed_quantity_to_buy = 0;
+    purchaseItem.purchase_executed_value_to_buy = 0.0;
+    if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
+        purchaseItem.purchase_executed_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
+        purchaseItem.purchase_executed_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
+    }
+
+    return purchaseItem;
+}
+
+/**
+ * GroupBy and SumBy Collection and Category
+ * @param objParam Object parameter
+ * @returns [purchaseGroupedByCollectionProductType] Array of objects grouped by and summed up
+ */
+const groupBySumCollectionProductType = objParam => {
+    let result = [];
+    if (!objParam) return result;
+    let budgetType = objParam.budgetType;
+
+    let groupByData = [];
+    if (objParam.groupByData && Object.keys(objParam.groupByData).length > 0) {
+        let planned_items = objParam.groupByData.planned_items;
+        let executed_items = objParam.groupByData.executed_items;
+        if (!planned_items || !executed_items) return result;
+
+        if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
+            _.forEach(planned_items, function(item, index) {
+                _.assign(
+                    item,
+                    _.pick(
+                        _.find(executed_items, function(o) {
+                            return (
+                                o.collection_title === item.collection_title &&
+                                o.product_type === item.product_type &&
+                                o.sku === item.sku
+                            );
+                        }),
+                        ['purchase_executed_quantity_to_buy', 'purchase_executed_value_to_buy']
+                    )
+                );
+                _.defaults(item, {
+                    purchase_executed_quantity_to_buy: 0,
+                    purchase_executed_value_to_buy: 0.0
+                });
+            });
+            groupByData = planned_items;
+        }
+
+        if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
+            _.forEach(executed_items, function(item, index) {
+                _.assign(
+                    item,
+                    _.pick(
+                        _.find(planned_items, function(o) {
+                            return (
+                                o.collection_title === item.collection_title &&
+                                o.product_type === item.product_type &&
+                                o.sku === item.sku
+                            );
+                        }),
+                        ['purchase_planned_quantity_to_buy', 'purchase_planned_value_to_buy']
+                    )
+                );
+                _.defaults(item, {
+                    purchase_planned_quantity_to_buy: 0,
+                    purchase_planned_value_to_buy: 0.0
+                });
+            });
+            groupByData = executed_items;
+        }
+    }
+    let groupByFields = objParam.groupByFields;
+    let sumByFields = objParam.sumByFields;
+
     getGroupedItems = item => {
         returnArray = [];
-        let i;
-        for (i = 0; i < groupByProperties.length; i++) {
-            returnArray.push(item[groupByProperties[i]]);
+        for (let i = 0; i < groupByFields.length; i++) {
+            returnArray.push(item[groupByFields[i]]);
         }
         return returnArray;
     };
 
     getReducedDataRecord = item => {
-        let concatProperties = _.concat(groupByProperties, sumByProperties);
+        let concatProperties = _.concat(groupByFields, sumByFields);
         return _.pick(item, concatProperties);
     };
 
     let groupResult = {};
-    for (let i = 0; i < data.length; i++) {
-        const fullDataRecord = data[i];
+    for (let i = 0; i < groupByData.length; i++) {
+        const fullDataRecord = groupByData[i];
         const group = JSON.stringify(getGroupedItems(fullDataRecord));
         groupResult[group] = groupResult[group] || [];
 
@@ -493,7 +604,6 @@ const groupBySumCollectionProductType = ({
         groupResult[group].push(reducedDataRecord);
     }
 
-    result = [];
     for (let i in groupResult) {
         let groupArray = groupResult[i];
         groupArray.forEach(function(item) {
@@ -504,18 +614,18 @@ const groupBySumCollectionProductType = ({
                     product_type: item.product_type,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
-                    purchase_quantity_to_buy: 0,
-                    purchase_quantity_to_buy_modified: 0
+                    purchase_planned_quantity_to_buy: 0,
+                    purchase_executed_quantity_to_buy: 0
                 };
                 result.push(this[item.collection_title]);
             }
             this[item.collection_title].inventory_quantity += parseFloat(item.inventory_quantity);
             this[item.collection_title].inventory_optimal += parseFloat(item.inventory_optimal);
-            this[item.collection_title].purchase_quantity_to_buy += parseFloat(
-                item.purchase_quantity_to_buy
+            this[item.collection_title].purchase_planned_quantity_to_buy += parseFloat(
+                item.purchase_planned_quantity_to_buy
             );
-            this[item.collection_title].purchase_quantity_to_buy_modified += parseFloat(
-                item.purchase_quantity_to_buy_modified
+            this[item.collection_title].purchase_executed_quantity_to_buy += parseFloat(
+                item.purchase_executed_quantity_to_buy
             );
         }, Object.create(null));
     }
@@ -523,29 +633,86 @@ const groupBySumCollectionProductType = ({
 };
 
 /**
- * GroupBy and Sum
- * @param data Array of objects to be grouped by
- * @param groupByProperties Array of properties to group of
- * @returns [purchaseGroupedByProductType] Array of objects grouped and summed up
+ * GroupBy and SumBy Category
+ * @param objParam Object parameter
+ * @returns [purchaseGroupedByProductType] Array of objects grouped by and summed up
  */
-const groupBySumProductType = ({ group: data, by: groupByProperties, sum: sumByProperties }) => {
+const groupBySumProductType = objParam => {
+    let result = [];
+    if (!objParam) return result;
+    let budgetType = objParam.budgetType;
+
+    let groupByData = [];
+    if (objParam.groupByData && Object.keys(objParam.groupByData).length > 0) {
+        let planned_items = objParam.groupByData.planned_items;
+        let executed_items = objParam.groupByData.executed_items;
+        if (!planned_items || !executed_items) return result;
+
+        if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
+            _.forEach(planned_items, function(item, index) {
+                _.assign(
+                    item,
+                    _.pick(
+                        _.find(executed_items, function(o) {
+                            return (
+                                o.collection_title === item.collection_title &&
+                                o.product_type === item.product_type &&
+                                o.sku === item.sku
+                            );
+                        }),
+                        ['purchase_executed_quantity_to_buy', 'purchase_executed_value_to_buy']
+                    )
+                );
+                _.defaults(item, {
+                    purchase_executed_quantity_to_buy: 0,
+                    purchase_executed_value_to_buy: 0.0
+                });
+            });
+            groupByData = planned_items;
+        }
+
+        if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
+            _.forEach(executed_items, function(item, index) {
+                _.assign(
+                    item,
+                    _.pick(
+                        _.find(planned_items, function(o) {
+                            return (
+                                o.collection_title === item.collection_title &&
+                                o.product_type === item.product_type &&
+                                o.sku === item.sku
+                            );
+                        }),
+                        ['purchase_planned_quantity_to_buy', 'purchase_planned_value_to_buy']
+                    )
+                );
+                _.defaults(item, {
+                    purchase_planned_quantity_to_buy: 0,
+                    purchase_planned_value_to_buy: 0.0
+                });
+            });
+            groupByData = executed_items;
+        }
+    }
+    let groupByFields = objParam.groupByFields;
+    let sumByFields = objParam.sumByFields;
+
     getGroupedItems = item => {
         returnArray = [];
-        let i;
-        for (i = 0; i < groupByProperties.length; i++) {
-            returnArray.push(item[groupByProperties[i]]);
+        for (let i = 0; i < groupByFields.length; i++) {
+            returnArray.push(item[groupByFields[i]]);
         }
         return returnArray;
     };
 
     getReducedDataRecord = item => {
-        let concatProperties = _.concat(groupByProperties, sumByProperties);
+        let concatProperties = _.concat(groupByFields, sumByFields);
         return _.pick(item, concatProperties);
     };
 
     let groupResult = {};
-    for (let i = 0; i < data.length; i++) {
-        const fullDataRecord = data[i];
+    for (let i = 0; i < groupByData.length; i++) {
+        const fullDataRecord = groupByData[i];
         const group = JSON.stringify(getGroupedItems(fullDataRecord));
         groupResult[group] = groupResult[group] || [];
 
@@ -563,18 +730,18 @@ const groupBySumProductType = ({ group: data, by: groupByProperties, sum: sumByP
                     product_type: item.product_type,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
-                    purchase_quantity_to_buy: 0,
-                    purchase_quantity_to_buy_modified: 0
+                    purchase_planned_quantity_to_buy: 0,
+                    purchase_executed_quantity_to_buy: 0
                 };
                 result.push(this[item.product_type]);
             }
             this[item.product_type].inventory_quantity += parseFloat(item.inventory_quantity);
             this[item.product_type].inventory_optimal += parseFloat(item.inventory_optimal);
-            this[item.product_type].purchase_quantity_to_buy += parseFloat(
-                item.purchase_quantity_to_buy
+            this[item.product_type].purchase_planned_quantity_to_buy += parseFloat(
+                item.purchase_planned_quantity_to_buy
             );
-            this[item.product_type].purchase_quantity_to_buy_modified += parseFloat(
-                item.purchase_quantity_to_buy_modified
+            this[item.product_type].purchase_executed_quantity_to_buy += parseFloat(
+                item.purchase_executed_quantity_to_buy
             );
         }, Object.create(null));
     }
@@ -582,89 +749,115 @@ const groupBySumProductType = ({ group: data, by: groupByProperties, sum: sumByP
 };
 
 /**
- * GroupBy and Sum
- * @param data Array of objects to be grouped by
- * @param groupByProperties Array of properties to group of
- * @returns [purchaseGroupedByProductType] Array of objects grouped and summed up
+ * Calculate and prototype new object result
+ * @param params Parameters used to filter data for purchase
+ * @param variantIndicators List of object as of search result
+ * @returns {purchase} Purchase object model
  */
-const computeRepurchase = (plannedBudget, variantIndicators) => {
-    if (!plannedBudget || !variantIndicators) return;
-    console.log('computeRepurchase plannedBudget:', plannedBudget);
-    console.log('computeRepurchase variantIndicators:', variantIndicators);
+const computeRepurchase = (params, variantIndicators) => {
+    if (!params || !variantIndicators) return;
 
-    // 1. Ordenar os itens (variant) a serem comprados por indicadores relevantes para recompra
-    //    a. Os itens com o mais elevado volume de vendas (sales_volume)
-    //    b. Os items com o maior potencial de vendas (sales_potential)
-    //    c. ...
+    // Execute Planned Budget
+    let planned_items = [];
+    let budgetToExecute = 0;
+    if (parseFloat(params.planned_budget) > 0) {
+        budgetToExecute = parseFloat(params.planned_budget);
+    }
 
-    // 2. Identificar a quantidade e o valor a serem comprados de cada item (variant)
-    //    a. Quantidade a ser comprada: (inventory_optimal - inventory_quantity)
-    //    b. Valor a ser comprado: (inventory_cost *  Quantidade a ser comprada)
-    //    c. ...
+    for (let i in variantIndicators) {
+        let variantIndicator = variantIndicators[i];
+        let itemCost =
+            variantIndicator.inventory_cost > 0 ? parseFloat(variantIndicator.inventory_cost) : 0;
+        let qtyBuyIn = parseFloat(
+            variantIndicator.inventory_optimal - variantIndicator.inventory_quantity
+        );
+        let valueBuyIn = parseFloat(itemCost * qtyBuyIn);
 
-    // 3. Verificar se o saldo do valor do orçamento de compra é suficiente para comprar o item (variant)
-    //    a. SALDO (plannedBudget) > (Valor a ser comprado)
-    // 3.1 Se SIM
-    //    a. plannedBudget = plannedBudget - (Valor a ser comprado)
-    // 3.2 Se NAO (LOOP)
-    //    a. Diminuir o valor a ser comprado em UMA unidade e calcular o novo valor do item
-    //    b. Comparar o novo valor do item com o saldo do valor do orçamento de compra;
-    //       c. Se o saldo for suficiente efetuar alocação de compra
-    //       c. Senão repetir o item 3.2 até que o saldo seja alocado
+        if (budgetToExecute >= 0 && budgetToExecute >= itemCost) {
+            if (budgetToExecute >= 0 && budgetToExecute >= valueBuyIn) {
+                budgetToExecute = budgetToExecute - valueBuyIn;
+            } else {
+                while (
+                    budgetToExecute >= 0 &&
+                    budgetToExecute >= itemCost &&
+                    budgetToExecute < valueBuyIn
+                ) {
+                    qtyBuyIn = qtyBuyIn - 1;
+                    valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+                }
+                if (
+                    budgetToExecute >= 0 &&
+                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= valueBuyIn
+                ) {
+                    budgetToExecute = budgetToExecute - valueBuyIn;
+                }
+            }
+            let planned_item = prototypePurchaseItem(
+                variantIndicator,
+                CONSTANT.BUDGET.TYPE.PLANNED,
+                qtyBuyIn,
+                valueBuyIn
+            );
+            planned_items.push(planned_item);
+        }
+    }
+    params.planned_budget_not_used = budgetToExecute;
 
-    // 4. Formatar objeto que representa a recompra sugerida
-    // 5. Persistir objeto que representa a recompra sugerida
+    // Execute Compared Budget
+    let executed_items = [];
+    budgetToExecute = 0;
+    if (parseFloat(params.executed_budget) > 0) {
+        budgetToExecute = parseFloat(params.executed_budget);
+    } else {
+        if (parseFloat(params.planned_budget) > 0) {
+            budgetToExecute = parseFloat(params.planned_budget);
+        }
+    }
 
-    // getGroupedItems = item => {
-    //     returnArray = [];
-    //     let i;
-    //     for (i = 0; i < groupByProperties.length; i++) {
-    //         returnArray.push(item[groupByProperties[i]]);
-    //     }
-    //     return returnArray;
-    // };
+    for (let i in variantIndicators) {
+        let variantIndicator = variantIndicators[i];
+        let itemCost =
+            variantIndicator.inventory_cost > 0 ? parseFloat(variantIndicator.inventory_cost) : 0;
+        let qtyBuyIn = parseFloat(
+            variantIndicator.inventory_optimal - variantIndicator.inventory_quantity
+        );
+        let valueBuyIn = parseFloat(itemCost * qtyBuyIn);
 
-    // getReducedDataRecord = item => {
-    //     let concatProperties = _.concat(groupByProperties, sumByProperties);
-    //     return _.pick(item, concatProperties);
-    // };
+        if (budgetToExecute >= 0 && budgetToExecute >= itemCost) {
+            if (budgetToExecute >= 0 && budgetToExecute >= valueBuyIn) {
+                budgetToExecute = budgetToExecute - valueBuyIn;
+            } else {
+                while (
+                    budgetToExecute >= 0 &&
+                    budgetToExecute >= itemCost &&
+                    budgetToExecute < valueBuyIn
+                ) {
+                    qtyBuyIn = qtyBuyIn - 1;
+                    valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+                }
+                if (
+                    budgetToExecute >= 0 &&
+                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= valueBuyIn
+                ) {
+                    budgetToExecute = budgetToExecute - valueBuyIn;
+                }
+            }
+            let executed_item = prototypePurchaseItem(
+                variantIndicator,
+                CONSTANT.BUDGET.TYPE.EXECUTED,
+                qtyBuyIn,
+                valueBuyIn
+            );
+            executed_items.push(executed_item);
+        }
+    }
+    params.executed_budget_not_used = budgetToExecute;
 
-    // let groupResult = {};
-    // for (let i = 0; i < data.length; i++) {
-    //     const fullDataRecord = data[i];
-    //     const group = JSON.stringify(getGroupedItems(fullDataRecord));
-    //     groupResult[group] = groupResult[group] || [];
+    let purchase = prototypePurchase(params, planned_items, executed_items);
 
-    //     const reducedDataRecord = getReducedDataRecord(fullDataRecord);
-    //     groupResult[group].push(reducedDataRecord);
-    // }
-
-    result = [];
-    // for (let i in groupResult) {
-    //     let groupArray = groupResult[i];
-    //     groupArray.forEach(function(item) {
-    //         if (!this[item.product_type] && !this[item.product_type]) {
-    //             this[item.product_type] = {
-    //                 header: i18n.__('purchase_header_by_product_type'),
-    //                 product_type: item.product_type,
-    //                 inventory_quantity: 0,
-    //                 inventory_optimal: 0,
-    //                 purchase_quantity_to_buy: 0,
-    //                 purchase_quantity_to_buy_modified: 0
-    //             };
-    //             result.push(this[item.product_type]);
-    //         }
-    //         this[item.product_type].inventory_quantity += parseFloat(item.inventory_quantity);
-    //         this[item.product_type].inventory_optimal += parseFloat(item.inventory_optimal);
-    //         this[item.product_type].purchase_quantity_to_buy += parseFloat(
-    //             item.purchase_quantity_to_buy
-    //         );
-    //         this[item.product_type].purchase_quantity_to_buy_modified += parseFloat(
-    //             item.purchase_quantity_to_buy_modified
-    //         );
-    //     }, Object.create(null));
-    // }
-    return result;
+    return purchase;
 };
 
 module.exports = router;

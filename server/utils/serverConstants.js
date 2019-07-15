@@ -5,6 +5,12 @@ module.exports = {
             VALUE: 10000
         }
     },
+    BUDGET: {
+        TYPE: {
+            PLANNED: 'PLANNED',
+            EXECUTED: 'EXECUTED'
+        }
+    },
     STATUS: {
         ACTIVE: 'ACTIVE',
         INACTIVE: 'INACTIVE'

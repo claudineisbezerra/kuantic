@@ -35,7 +35,6 @@
       ref="vuetable"
       :apiUrl="apiUrl"
       :apiMode="apiMode"
-      :data="data"
       :httpFetch="httpFetch"
       :httpOptions="httpOptions"
       :fields="tableFields"
@@ -191,6 +190,10 @@ export default {
   watch: {
     onFilterCustom: function (val) {
       this.onFilterSet(val)
+    },
+    data: function (newData) {
+      this.tableData.data = newData
+      Vue.nextTick(() => this.$refs.vuetable.refresh())
     }
   },
   computed: {
@@ -224,7 +227,6 @@ export default {
       const txt = new RegExp(this.filterText, 'i')
 
       let filteredData = this.tableData.data.slice()
-
       filteredData = this.tableData.data.filter((item) => {
         return this.dataModeFilterableFieldsComputed.some(field => {
           const val = item[field] + ''
@@ -242,7 +244,6 @@ export default {
       } else if (this.$options.propsData.itemsPerPage) {
         defaultPerPage = this.$options.propsData.itemsPerPage[0].value
       }
-
       return defaultPerPage
     },
     paginationPathComputed () {
@@ -251,6 +252,9 @@ export default {
   },
 
   created () {
+    if (!this.apiMode) {
+      this.tableData.data = this.data
+    }
     this.perPage = this.defaultPerPageComputed
   },
 

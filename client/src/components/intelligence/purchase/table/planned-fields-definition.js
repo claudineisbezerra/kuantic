@@ -10,13 +10,13 @@ export default {
       name: 'title',
       title: 'Produto',
       sortField: 'title',
-      width: '20%',
+      width: '25%',
     },
     {
       name: 'sku',
       title: 'sku',
       sortField: 'sku',
-      width: '20%',
+      width: '15%',
     },
     {
       name: 'vendor',
@@ -32,7 +32,7 @@ export default {
     },
     {
       name: 'inventory_quantity',
-      title: 'QTD em estoque',
+      title: 'Quantidade estoque',
       sortField: 'inventory_quantity',
       width: '10%',
     },
@@ -43,23 +43,23 @@ export default {
       width: '10%',
     },
     {
-      name: 'purchase_quantity_to_buy',
-      title: 'QTD a comprar',
-      sortField: 'purchase_quantity_to_buy',
+      name: 'purchase_planned_quantity_to_buy',
+      title: 'Quantidade total',
+      sortField: 'purchase_planned_quantity_to_buy',
       width: '10%',
     },
     {
-      name: 'purchase_cost',
+      name: 'purchase_planned_value_to_buy',
       title: 'Custo total',
-      sortField: 'purchase_cost',
+      sortField: 'purchase_planned_value_to_buy',
       width: '10%',
-    },
+    }
   ],
   sortFunctions: {
-    'name': function (item1, item2) {
+    'title': function (item1, item2) {
       return item1 >= item2 ? 1 : -1
     },
-    'email': function (item1, item2) {
+    'sku': function (item1, item2) {
       return item1 >= item2 ? 1 : -1
     },
   },

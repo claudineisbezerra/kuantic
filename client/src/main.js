@@ -93,11 +93,9 @@ if (localStorage.authToken) {
 /** Axios Request Intercept */
 axios.interceptors.request.use(
   function (config) {
-    console.log('axios.interceptors.request.use config:', config)
     return config
   },
   function (err) {
-    console.log('axios.interceptors.request.use err:', err)
     return Promise.reject(err)
   }
 )
@@ -105,11 +103,9 @@ axios.interceptors.request.use(
 /** Axios Response Intercept */
 axios.interceptors.response.use(
   function (response) {
-    // console.log('axios.interceptors.response.use response:', response)
     return response
   },
   function (err) {
-    // console.log('axios.interceptors.response.use err:', err)
     if (err.response.status === 401) {
       localStorage.removeItem('authToken')
       store.dispatch('app/toggleAuthState', false)
@@ -124,10 +120,6 @@ axios.interceptors.response.use(
 
 /** Router intercept before each routing */
 router.beforeEach(async (to, from, next) => {
-  // console.log('router.beforeEach from:', from.name)
-  console.log('router.beforeEach to:', to.name)
-  console.log('router.beforeEach to.meta.requiresAuth:', to.meta.requiresAuth)
-
   store.commit('app/setLoading', true)
   next()
 
@@ -157,9 +149,6 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  // console.log('router.afterEach from:', from.name)
-  // console.log('router.afterEach to:', to.name)
-
   store.commit('app/setLoading', false)
 })
 

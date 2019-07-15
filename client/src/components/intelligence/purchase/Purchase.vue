@@ -73,21 +73,21 @@
               </div>
               <div class="flex md2.5">
                 <fieldset>
-                  <div class="form-group" :class="{'has-error': veeErrors.has('compared_budget')}">
+                  <div class="form-group" :class="{'has-error': veeErrors.has('executed_budget')}">
                     <div class="input-group">
                       <input
-                        id="compared_budget"
-                        name="compared_budget"
-                        v-model="comparedBudget"
-                        v-money="money_comparedBudget"
+                        id="executed_budget"
+                        name="executed_budget"
+                        v-model="executedBudget"
+                        v-money="money_executedBudget"
                         v-validate="'ge_zeros'"
                         />
-                      <label class="control-label" for="compared_budget">
-                        {{'purchase.compared_budget' | translate}}
+                      <label class="control-label" for="executed_budget">
+                        {{'purchase.executed_budget' | translate}}
                       </label>
                       <i class="bar"></i>
-                      <small v-show="veeErrors.has('compared_budget')" class="help text-danger">
-                        {{ veeErrors.first('compared_budget') }}
+                      <small v-show="veeErrors.has('executed_budget')" class="help text-danger">
+                        {{ veeErrors.first('executed_budget') }}
                       </small>
                     </div>
                   </div>
@@ -108,18 +108,24 @@
       </div>
     </div>
 
-    <div class="va-row">
+   <!-- PLANNED BUDGET -->
+    <div v-if="purchase &&
+              Object.keys(purchase).length > 0 &&
+              purchase.purchases &&
+              purchase.purchases.planned_items &&
+              Object.keys(purchase.purchases.planned_items).length > 0"
+         class="va-row">
       <div class="flex md12 xs12">
-        <kuantic-widget :headerText="$t('purchase.filter_result')">
+        <kuantic-widget :headerText="$t('purchase.planned_budget_filter_result')">
           <kuantic-data-table
             :apiUrl="apiUrl"
             :apiMode="apiMode"
-            :data="purchase.purchases"
-            :tableFields="tableFields"
+            :data="purchase.purchases.planned_items"
             :itemsPerPage="itemsPerPage"
-            :defaultPerPage="defaultTablePerPage"
-            :sortFunctions="sortFunctions"
-            :paginationPath="paginationPath"
+            :defaultPerPage="defaultItemsPerPage"
+            :tableFields="plannedTableFields"
+            :filterInputLabel="$t('purchase.filter_label')"
+            :sortFunctions="plannedSortFunctions"
             :queryParams="queryParams"
           >
             <spring-spinner
@@ -136,7 +142,7 @@
     <div class="va-row">
       <template v-for="(collectionProductType, id) in purchasePlannedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="collectionProductType.product_type+'::'+collectionProductType.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_suggested') +': '+ collectionProductType.product_type+' > '+collectionProductType.collection_title">
             <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
@@ -147,24 +153,71 @@
       <div class="flex md6 xs12"
            v-if="purchasePlannedBudgetGroupedByProductType && Object.keys(purchasePlannedBudgetGroupedByProductType).length > 0">
         <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_suggested')">
-          <kuantic-chart :data="setByPlannedProductTypeChartData(purchasePlannedBudgetGroupedByProductType)" type="donut"/>
-        </kuantic-widget>
-      </div>
-
-      <div class="flex md6 xs12"
-           v-if="purchaseComparedBudgetGroupedByProductType  && Object.keys(purchaseComparedBudgetGroupedByProductType).length > 0">
-        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_todo')">
-          <kuantic-chart :data="setByComparedProductTypeChartData(purchaseComparedBudgetGroupedByProductType)" type="donut"/>
+          <kuantic-chart :data="setByProductTypeChartData(purchasePlannedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.PLANNED)" type="donut"/>
         </kuantic-widget>
       </div>
     </div>
+
+    <!-- EXECUTED BUDGET -->
+    <div v-if="purchase &&
+              Object.keys(purchase).length > 0 &&
+              purchase.purchases &&
+              purchase.purchases.executed_items &&
+              Object.keys(purchase.purchases.executed_items).length > 0"
+         class="va-row">
+
+      <div class="flex md12 xs12">
+        <kuantic-widget :headerText="$t('purchase.executed_budget_filter_result')">
+          <kuantic-data-table
+            :apiUrl="apiUrl"
+            :apiMode="apiMode"
+            :data="purchase.purchases.executed_items"
+            :tableFields="executedTableFields"
+            :defaultPerPage="defaultItemsPerPage"
+            :filterInputLabel="$t('purchase.filter_label')"
+            :sortFunctions="executedSortFunctions"
+            :queryParams="queryParams"
+          >
+            <spring-spinner
+              slot="loading"
+              :animation-duration="2500"
+              :size="70"
+              color="#4ae387"
+            />
+          </kuantic-data-table>
+        </kuantic-widget>
+      </div>
+    </div>
+
+    <div class="va-row">
+      <template v-for="(collectionProductType, id) in purchaseExecutedBudgetGroupedByCollectionProductType">
+        <div :key="id" class="flex md6 xs12">
+          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_todo') +': '+ collectionProductType.product_type+' > '+collectionProductType.collection_title">
+            <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
+          </kuantic-widget>
+        </div>
+      </template>
+    </div>
+
+    <div class="va-row">
+      <div class="flex md6 xs12"
+           v-if="purchaseExecutedBudgetGroupedByProductType  && Object.keys(purchaseExecutedBudgetGroupedByProductType).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_todo')">
+          <kuantic-chart :data="setByProductTypeChartData(purchaseExecutedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.EXECUTED)" type="donut"/>
+        </kuantic-widget>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
-import FieldsDef from '@/data/table/fields-definition'
-import ItemsPerPageDef from '@/data/table/items-per-page-definition'
-import QueryParams from '@/data/table/query-params'
+import PlannedFields from './table/planned-fields-definition'
+import ExecutedFields from './table/executed-fields-definition'
+import ItemsPerPage from './table/items-per-page-definition'
+import QueryParams from './table/query-params'
+import DataTableStyles from './table/data-table-styles'
+
 
 import { SpringSpinner } from 'epic-spinners'
 import { VMoney } from 'v-money'
@@ -192,6 +245,12 @@ export default {
       }
       return isValid
     },
+    executed_items () {
+      return this.purchase.purchases.executed_items
+    },
+    planned_items () {
+      return this.purchase.purchases.planned_items
+    }
   },
   data () {
     return {
@@ -201,29 +260,30 @@ export default {
       chosenCollection:{},
       chosenProductType: {},
       plannedBudget: null,
-      comparedBudget: null,
+      executedBudget: null,
       checkedPriceRanges: [],
       money_plannedBudget: {
         min: Number.MIN_SAFE_INTEGER,
         max: Number.MAX_SAFE_INTEGER
       },
-      money_comparedBudget: {
+      money_executedBudget: {
         min: Number.MIN_SAFE_INTEGER,
         max: Number.MAX_SAFE_INTEGER
       },
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
       purchase: {},
-      tableFields: FieldsDef.tableFields,
-      itemsPerPage: ItemsPerPageDef.itemsPerPage,
-      sortFunctions: FieldsDef.sortFunctions,
-      paginationPath: '',
-      defaultTablePerPage: 6,
+      itemsPerPage: ItemsPerPage.itemsPerPage,
+      defaultItemsPerPage: 6,
+      plannedTableFields: PlannedFields.tableFields,
+      plannedSortFunctions: PlannedFields.sortFunctions,
+      executedTableFields: ExecutedFields.tableFields,
+      executedSortFunctions: ExecutedFields.sortFunctions,
       queryParams: QueryParams,
       purchasePlannedBudgetGroupedByCollectionProductType: [],
-      purchaseComparedBudgetGroupedByCollectionProductType: [],
+      purchaseExecutedBudgetGroupedByCollectionProductType: [],
       purchasePlannedBudgetGroupedByProductType: [],
-      purchaseComparedBudgetGroupedByProductType: [],
+      purchaseExecutedBudgetGroupedByProductType: [],
     }
   },
   methods: {
@@ -275,7 +335,7 @@ export default {
         product_types: [],
         price_ranges: [],
         planned_budget: null,
-        compared_budget: null,
+        executed_budget: null,
       }
 
       if (this.chosenCollection && Object.keys(this.chosenCollection).length > 0) {
@@ -320,7 +380,7 @@ export default {
 
       if (this.plannedBudget) {
         let unmaskedPlannedBudget = this.removeCurrencyMask(this.plannedBudget)
-        if (parseInt(unmaskedPlannedBudget) >= 0) {
+        if (parseFloat(unmaskedPlannedBudget) >= 0) {
           param.planned_budget = unmaskedPlannedBudget
         } else {
           param.planned_budget = null
@@ -329,15 +389,21 @@ export default {
         param.planned_budget = null
       }
 
-      if (this.comparedBudget) {
-        let unmaskedComparedBudget = this.removeCurrencyMask(this.comparedBudget)
-        if (parseInt(unmaskedComparedBudget) >= 0) {
-          param.compared_budget = unmaskedComparedBudget
+      if (this.executedBudget && parseFloat(this.removeCurrencyMask(this.executedBudget)) <= 0) {
+         if (this.plannedBudget && parseFloat(this.removeCurrencyMask(this.plannedBudget)) > 0) {
+           this.executedBudget = this.plannedBudget
+         }
+      }
+
+      if (this.executedBudget) {
+        let unmaskedExecutedBudget = this.removeCurrencyMask(this.executedBudget)
+        if (parseFloat(unmaskedExecutedBudget) >= 0) {
+          param.executed_budget = unmaskedExecutedBudget
         } else {
-          param.compared_budget = null
+          param.executed_budget = null
         }
       } else {
-        param.compared_budget = null
+        param.executed_budget = null
       }
       return param
     },
@@ -378,7 +444,7 @@ export default {
                 product_types: JSON.stringify(param.product_types),
                 price_ranges: JSON.stringify(param.price_ranges),
                 planned_budget: param.planned_budget,
-                compared_budget: param.compared_budget
+                executed_budget: param.executed_budget
               }
             }
           )
@@ -390,19 +456,22 @@ export default {
                   this.errors.push({ key, value })
                 }
               } else {
-                this.purchase = res.data.purchase
-                this.purchasePlannedBudgetGroupedByCollectionProductType = res.data.purchasePlannedBudgetGroupedByCollectionProductType
-                this.purchaseComparedBudgetGroupedByCollectionProductType = res.data.purchaseComparedBudgetGroupedByCollectionProductType
-                this.purchasePlannedBudgetGroupedByProductType = res.data.purchasePlannedBudgetGroupedByProductType
-                this.purchaseComparedBudgetGroupedByProductType = res.data.purchaseComparedBudgetGroupedByProductType
+                this.$nextTick(() => {
+                  this.purchase = {}
+                  this.purchase = res.data.purchase
+                  this.purchasePlannedBudgetGroupedByCollectionProductType = res.data.purchasePlannedBudgetGroupedByCollectionProductType
+                  this.purchaseExecutedBudgetGroupedByCollectionProductType = res.data.purchaseExecutedBudgetGroupedByCollectionProductType
+                  this.purchasePlannedBudgetGroupedByProductType = res.data.purchasePlannedBudgetGroupedByProductType
+                  this.purchaseExecutedBudgetGroupedByProductType = res.data.purchaseExecutedBudgetGroupedByProductType
+                })
               }
             })
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
-    setByPlannedProductTypeChartData (purchaseByProductType) {
-      if (!purchaseByProductType) return
+    setByProductTypeChartData (purchaseByProductType, budgetType) {
+      if (!purchaseByProductType || !budgetType) return
       if (purchaseByProductType.length <= 0) return
 
       // Define ramdom background color
@@ -416,43 +485,16 @@ export default {
         let label = item.product_type
         labels.push(label)
 
-        let qty = item.purchase_quantity_to_buy
+        let qty = 0;
+        if (budgetType === this.$root.CONSTANT.BUDGET.TYPE.PLANNED) {
+          qty = item.purchase_planned_quantity_to_buy
+        }
+        if (budgetType === this.$root.CONSTANT.BUDGET.TYPE.EXECUTED) {
+          qty = item.purchase_executed_quantity_to_buy
+        }
         data.push(qty)
 
       }
-      let chartData = {
-        labels: labels,
-        datasets: [
-          {
-            backgroundColor: backgroundColor,
-            borderColor: palette.transparent,
-            data: data,
-          },
-        ],
-      }
-
-      return chartData
-    },
-    setByComparedProductTypeChartData (purchaseByProductType) {
-      if (!purchaseByProductType) return
-      if (purchaseByProductType.length <= 0) return
-
-      // Define ramdom background color
-      let palette = store.getters.palette
-      let backgroundColor = [palette.info, palette.success, palette.primary, palette.warning]
-
-      let labels = []
-      let data = []
-      for (let i in purchaseByProductType) {
-        let item = purchaseByProductType[i]
-        let label = item.product_type
-        labels.push(label)
-
-        let qty = item.purchase_quantity_to_buy_modified
-        data.push(qty)
-
-      }
-
       let chartData = {
         labels: labels,
         datasets: [
@@ -483,8 +525,8 @@ export default {
       let data = []
       data.push(purchaseByCollectionProductType.inventory_quantity)
       data.push(purchaseByCollectionProductType.inventory_optimal)
-      data.push(purchaseByCollectionProductType.purchase_quantity_to_buy)
-      data.push(purchaseByCollectionProductType.purchase_quantity_to_buy_modified)
+      data.push(purchaseByCollectionProductType.purchase_planned_quantity_to_buy)
+      data.push(purchaseByCollectionProductType.purchase_executed_quantity_to_buy)
 
       let chartData = {
         labels: labels,

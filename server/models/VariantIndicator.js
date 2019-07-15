@@ -187,7 +187,9 @@ const VariantIndicatorSchema = new Schema(
 
 VariantIndicatorSchema.set('collection', 'variantIndicators');
 VariantIndicatorSchema.statics.findByFilter = function(filterObj) {
-    return this.find(filterObj).exec();
+    return this.find(filterObj)
+        .sort({ sales_volume: 'desc', sales_potencial: 'desc' })
+        .exec();
 };
 
 const VariantIndicator = mongoose.model('VariantIndicator', VariantIndicatorSchema);
