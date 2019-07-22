@@ -30,5 +30,6 @@
 	"purchase_header_by_product_type": "Purchase by category",
 	"purchase_header_by_product_type_summary_suggested": "Summary by category",
 	"purchase_header_by_collection_product_type": "Purchase by collection and category",
-	"purchase_header_by_collection_product_type_summary": "Summary by collection and category"
+	"purchase_header_by_collection_product_type_summary": "Summary by collection and category",
+	"purchase_default_name": "Purchase list"
 }

@@ -4,6 +4,7 @@ const passport = require('passport');
 const _ = require('lodash');
 const CONSTANT = require('../utils/serverConstants');
 const i18n = require('../plugins/i18n.js');
+const uidGenerator = require('node-unique-id-generator');
 const { Collection } = require('../models/Collection');
 const { ProductType } = require('../models/ProductType');
 const { PriceRange } = require('../models/PriceRange');
@@ -70,32 +71,35 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     let purchaseTitle = req.query.purchase_title ? req.query.purchase_title : null;
 
     let collections = req.query.collections ? JSON.parse(req.query.collections) : null;
-    let collectionIDs = [];
-    let collectionTitles = [];
-    if (collections) {
+    if (collections && collections.length > 0) {
+        let collectionsParam = '[';
         for (let i = 0; i < collections.length; i++) {
-            let collection = collections[i];
-            collectionIDs.push(collection.id);
-            collectionTitles.push(collection.title);
+            let item = collections[i];
+            collectionsParam = collectionsParam + `"${item}"`;
+            if (parseInt(i + 1) < collections.length) {
+                collectionsParam = collectionsParam + ', ';
+            } else {
+                collectionsParam = collectionsParam + ']';
+            }
         }
-    }
-    if (collectionIDs && collectionIDs.length > 0) {
-        filterJsonStr = filterJsonStr + `"collection_id": { "$in": ${collectionIDs} }`;
+
+        filterJsonStr = filterJsonStr + `"collection_title": { "$in": ${collectionsParam} }`;
         filterJsonStr = filterJsonStr + ', ';
     }
 
     let productTypes = req.query.product_types ? JSON.parse(req.query.product_types) : null;
-    let productTypeIDs = [];
-    let productTypeTitles = [];
-    if (productTypes) {
-        for (let i = 0; i < productTypes.length; i++) {
-            let productType = productTypes[i];
-            productTypeIDs.push(productType.id);
-            productTypeTitles.push(productType.title);
-        }
-    }
     if (productTypes && productTypes.length > 0) {
-        filterJsonStr = filterJsonStr + `"product_type": { "$in": "${productTypeTitles}" }`;
+        let productTypesParam = '[';
+        for (let i = 0; i < productTypes.length; i++) {
+            let item = productTypes[i];
+            productTypesParam = productTypesParam + `"${item}"`;
+            if (parseInt(i + 1) < productTypes.length) {
+                productTypesParam = productTypesParam + ', ';
+            } else {
+                productTypesParam = productTypesParam + ']';
+            }
+        }
+        filterJsonStr = filterJsonStr + `"product_type": { "$in": ${productTypesParam} }`;
         filterJsonStr = filterJsonStr + ', ';
     }
 
@@ -117,6 +121,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
     if (priceRangesParams && priceRangesParams.length > 0) {
         filterJsonStr = filterJsonStr + priceRangesParams;
     }
+
     // Add closing parenthesis and Remove last comma separator
     filterJsonStr = filterJsonStr + ' }';
     filterJsonStr = filterJsonStr.replace(/,([^,]*)$/, ' $1');
@@ -157,7 +162,10 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
     let variantIndicators = await VariantIndicator.findByFilter(filterObj);
     if (params && variantIndicators) {
-        let purchase = computeRepurchase(params, variantIndicators);
+        let filter = { 'params.purchase_id': params.purchase_id };
+        let update = computeRepurchase(params, variantIndicators);
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        let purchase = await Purchase.findOneAndUpdate(filter, update, options);
 
         let purchasePlannedBudgetGroupedByCollectionProductType = [];
         if (plannedBudget && parseFloat(plannedBudget) > 0) {
@@ -443,7 +451,6 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
 function prototypePurchase(params, plannedItems, executedItems) {
     if (!params && !plannedItems) return purchase;
-
     let purchases = {};
     purchases.planned_items = [];
     purchases.executed_items = [];
@@ -454,10 +461,50 @@ function prototypePurchase(params, plannedItems, executedItems) {
         purchases.executed_items = executedItems;
     }
 
-    let purchase = new Purchase({
-        params: params,
-        purchases: purchases
-    });
+    let purchase = {
+        params: {},
+        purchases: {
+            planned_items: [],
+            executed_items: []
+        }
+    };
+
+    if (params.purchase_id) {
+        purchase.params.purchase_id = params.purchase_id;
+    } else {
+        purchase.params.purchase_id = uidGenerator.generateUniqueId();
+    }
+    if (params.purchase_title) {
+        purchase.params.purchase_title = params.purchase_title;
+    } else {
+        let defaultName = `${i18n.__('purchase_default_name')} ${purchase.params.purchase_id}`;
+        purchase.params.purchase_title = defaultName;
+    }
+    if (params.collection && params.collection.length > 0) {
+        purchase.params.collection = params.collection;
+    }
+    if (params.product_type && params.product_type.length > 0) {
+        purchase.params.product_type = params.product_type;
+    }
+    if (params.price_range && params.price_range.length > 0) {
+        purchase.params.price_range = params.price_range;
+    }
+    if (params.planned_budget && params.planned_budget > 0) {
+        purchase.params.planned_budget = params.planned_budget;
+    }
+    if (params.planned_budget_not_used && params.planned_budget_not_used >= 0) {
+        purchase.params.planned_budget_not_used = params.planned_budget_not_used;
+    }
+    if (params.executed_budget && params.executed_budget > 0) {
+        purchase.params.executed_budget = params.executed_budget;
+    }
+    if (params.executed_budget_not_used && params.executed_budget_not_used >= 0) {
+        purchase.params.executed_budget_not_used = params.executed_budget_not_used;
+    }
+
+    if (purchases && Object.keys(purchases).length > 0) {
+        purchase.purchases = purchases;
+    }
 
     return purchase;
 }

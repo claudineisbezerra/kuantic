@@ -5,39 +5,91 @@
         <kuantic-widget :headerText="'purchase.filter_title' | translate">
           <form @submit.prevent="handlePurchaseSubmit" name="purchase">
             <div class="va-row">
-              <div class="flex md2.5">
+              <div class="flex md6">
                 <fieldset>
-                  <template v-if="collections && collections.length > 0">
-                    <kuantic-simple-select
-                      name="collections"
-                      :label="'purchase.collection' | translate"
-                      v-model="chosenCollection"
-                      option-key="title"
-                      v-bind:options="collections"
-                    />
-                    <small v-show="veeErrors.has('collections')" class="help text-danger">
-                      {{ veeErrors.first('collections') }}
-                    </small>
-                  </template>
-
-                  <template v-if="productTypes && productTypes.length > 0">
-                    <kuantic-simple-select
-                      name='productTypes'
-                      :label="'purchase.product_type' | translate"
-                      v-model="chosenProductType"
-                      option-key="title"
-                      v-bind:options='productTypes'
-                    />
-                    <small v-show="veeErrors.has('productTypes')" class="help text-danger">
-                      {{ veeErrors.first('productTypes') }}
-                    </small>
-                  </template>
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input
+                        id="purchase_title"
+                        name="purchase_title"
+                        v-model="purchaseTitle"
+                        />
+                      <label class="control-label" for="purchase_title">
+                        {{'purchase.purchase_title' | translate}}
+                      </label>
+                      <i class="bar"></i>
+                    </div>
+                  </div>
                 </fieldset>
               </div>
-              <div class="flex md2.5">
+              <div v-if="purchaseId"
+                   class="flex md4">
                 <fieldset>
-                  <div class="form-group" :class="{'has-error': veeErrors.has('price-range')}">
+                  <div class="form-group">
                     <div class="input-group">
+                      <input
+                        id="purchase_id"
+                        name="purchase_id"
+                        readonly="readonly"
+                        v-model="purchaseId"
+                        />
+                      <label class="control-label control-label-as-title" for="purchase_id">
+                        {{'purchase.purchase_id' | translate}}
+                      </label>
+                      <i class="bar"></i>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <div class="va-row">
+              <div class="flex md2">
+                <fieldset>
+                  <div class="form-group form_group-adjust">
+                    <div class="input-group">
+                      <div class="control-label-adjust"></div>
+                      <label class="control-label control-label-as-title">
+                        {{'purchase.collection' | translate}}
+                      </label>
+                      <kuantic-checkbox
+                        v-for="(collection, id) in collections"
+                        :key="id"
+                        :label="collection.title"
+                        :val="(collection.title).toString()"
+                        v-model="checkedCollections"
+                      />
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="flex md2">
+                <fieldset>
+                  <div class="form-group form_group-adjust">
+                    <div class="input-group">
+                      <div class="control-label-adjust"></div>
+                      <label class="control-label control-label-as-title">
+                        {{'purchase.product_type' | translate}}
+                      </label>
+                      <kuantic-checkbox
+                        v-for="(productType, id) in productTypes"
+                        :key="id"
+                        :label="productType.title"
+                        :val="(productType.title).toString()"
+                        v-model="checkedProductTypes"
+                      />
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="flex md2">
+                <fieldset>
+                  <div class="form-group form_group-adjust">
+                    <div class="input-group">
+                      <div class="control-label-adjust"></div>
+                      <label class="control-label control-label-as-title">
+                        {{'purchase.price_range' | translate}}
+                      </label>
                       <kuantic-checkbox
                         v-for="(priceRange, id) in priceRanges"
                         :key="id"
@@ -49,7 +101,7 @@
                   </div>
                 </fieldset>
               </div>
-              <div class="flex md2.5">
+              <div class="flex md2">
                 <fieldset>
                   <div class="form-group" :class="{'has-error': veeErrors.has('planned_budget')}">
                     <div class="input-group">
@@ -71,7 +123,7 @@
                   </div>
                 </fieldset>
               </div>
-              <div class="flex md2.5">
+              <div class="flex md2">
                 <fieldset>
                   <div class="form-group" :class="{'has-error': veeErrors.has('executed_budget')}">
                     <div class="input-group">
@@ -93,6 +145,8 @@
                   </div>
                 </fieldset>
               </div>
+            </div>
+            <div class="va-row">
               <div class="flex md2">
                 <div class="va-row btn-margin-row">
                   <div class="flex justify--center">
@@ -254,13 +308,16 @@ export default {
   },
   data () {
     return {
+      test: true,
+      purchaseId: null,
+      purchaseTitle: null,
       collections: [],
       productTypes: [],
       priceRanges: [],
-      chosenCollection:{},
-      chosenProductType: {},
       plannedBudget: null,
       executedBudget: null,
+      checkedCollections: [],
+      checkedProductTypes: [],
       checkedPriceRanges: [],
       money_plannedBudget: {
         min: Number.MIN_SAFE_INTEGER,
@@ -284,6 +341,17 @@ export default {
       purchaseExecutedBudgetGroupedByCollectionProductType: [],
       purchasePlannedBudgetGroupedByProductType: [],
       purchaseExecutedBudgetGroupedByProductType: [],
+    }
+  },
+  watch: {
+    purchase: function (newPurchase) {
+      this.purchaseTitle = newPurchase.params.purchase_title
+      this.purchaseId = newPurchase.params.purchase_id
+      // this.checkedCollections = newPurchase.params.collections
+      // this.checkedProductTypes = newPurchase.params.product_types
+      // this.checkedPriceRanges = newPurchase.params.price_ranges
+      // this.plannedBudget = newPurchase.params.planned_budget
+      // this.executedBudget = newPurchase.params.executed_budget
     }
   },
   methods: {
@@ -329,8 +397,8 @@ export default {
     },
     setPurchaseParams () {
       let param = {
-        purchase_id: null, // Será gerado automáticamente no SERVER
-        purchase_title: 'Default title', // todo: Definido manuamente (por enquanto)
+        purchase_id: null,
+        purchase_title: null,
         collections: [],
         product_types: [],
         price_ranges: [],
@@ -338,28 +406,19 @@ export default {
         executed_budget: null,
       }
 
-      if (this.chosenCollection && Object.keys(this.chosenCollection).length > 0) {
-        let collections = []
-        let collection = {}
-        Object.entries(this.chosenCollection).forEach(entry => {
-          let key = entry[0];
-          let value = entry[1];
-          collection[key] = value
-        });
-        collections.push(collection)
-        param.collections = collections
+      if (this.purchaseId) {
+        param.purchase_id = this.purchaseId
+      }
+      if (this.purchaseTitle) {
+        param.purchase_title = this.purchaseTitle
       }
 
-      if (this.chosenProductType && Object.keys(this.chosenProductType).length > 0) {
-        let productTypes = []
-        let productType = {}
-        Object.entries(this.chosenProductType).forEach(entry => {
-          let key = entry[0];
-          let value = entry[1];
-          productType[key] = value
-        });
-        productTypes.push(productType)
-        param.product_types = productTypes
+      if (this.checkedCollections && this.checkedCollections.length > 0) {
+        param.collections = this.checkedCollections
+      }
+
+      if (this.checkedProductTypes && this.checkedProductTypes.length > 0) {
+        param.product_types = this.checkedProductTypes
       }
 
       if (this.checkedPriceRanges && this.checkedPriceRanges.length > 0) {
@@ -394,7 +453,6 @@ export default {
            this.executedBudget = this.plannedBudget
          }
       }
-
       if (this.executedBudget) {
         let unmaskedExecutedBudget = this.removeCurrencyMask(this.executedBudget)
         if (parseFloat(unmaskedExecutedBudget) >= 0) {
@@ -405,6 +463,7 @@ export default {
       } else {
         param.executed_budget = null
       }
+
       return param
     },
     removeCurrencyMask (value) {
@@ -433,6 +492,7 @@ export default {
     },
     handlePurchaseSubmit () {
       this.errors = []
+      console.log('params: ',this.setPurchaseParams())
       this.$validator.validateAll().then((result) => {
         if (result) {
           let param = this.setPurchaseParams()

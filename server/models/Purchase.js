@@ -7,6 +7,7 @@ const PurchaseSchema = new Schema(
         params: {
             purchase_id: {
                 type: String,
+                unique: true,
                 required: true,
                 trim: true,
                 default: function() {
@@ -18,21 +19,7 @@ const PurchaseSchema = new Schema(
                 trim: true,
                 default: null
             },
-            collection: [
-                {
-                    collection_id: {
-                        type: String,
-                        required: true,
-                        trim: true,
-                        unique: true
-                    },
-                    collection_title: {
-                        type: String,
-                        trim: true,
-                        default: null
-                    }
-                }
-            ],
+            collection: [],
             product_type: [],
             price_range: [
                 {
@@ -69,14 +56,13 @@ const PurchaseSchema = new Schema(
                     product_id: {
                         type: String,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     variant_id: {
                         type: String,
+                        unique: true,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     title: {
                         type: String,
@@ -90,9 +76,9 @@ const PurchaseSchema = new Schema(
                     },
                     product_type: {
                         type: String,
+                        unique: true,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     collection_title: {
                         type: String,
@@ -176,14 +162,13 @@ const PurchaseSchema = new Schema(
                     product_id: {
                         type: String,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     variant_id: {
                         type: String,
+                        unique: true,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     title: {
                         type: String,
@@ -197,9 +182,9 @@ const PurchaseSchema = new Schema(
                     },
                     product_type: {
                         type: String,
+                        unique: true,
                         required: true,
-                        trim: true,
-                        unique: true
+                        trim: true
                     },
                     collection_title: {
                         type: String,

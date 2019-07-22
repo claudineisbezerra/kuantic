@@ -388,6 +388,8 @@
     "filter_label": "Search",
     "planned_budget_filter_result": "We suggest you buy these products",
     "executed_budget_filter_result": "These are the products you have decided to buy",
+    "purchase_title": "Name of repurchase list",
+    "purchase_id": "Code of repurchase",
     "collection": "Division",
     "department": "Department",
     "product_type": "Category",

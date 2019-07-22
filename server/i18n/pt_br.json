@@ -30,5 +30,6 @@
 	"purchase_header_by_product_type": "Compra por categoria",
 	"purchase_header_by_product_type_summary": "Resumo por categoria",
 	"purchase_header_by_collection_product_type": "Compra por divisão e categoria",
-	"purchase_header_by_collection_product_type_summary": "Resumo por divisão e categoria"
+	"purchase_header_by_collection_product_type_summary": "Resumo por divisão e categoria",
+	"purchase_default_name": "Lista de compras"
 }

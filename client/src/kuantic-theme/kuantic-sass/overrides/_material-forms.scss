@@ -223,6 +223,19 @@ fieldset {
     transition: all $mf-transition-speed ease;
   }
 
+  .control-label-as-title {
+    font-size: $mf-active-font-size;
+    color: $mf-focus-color;
+    font-weight: 600;
+    text-transform: uppercase;
+    top: $mf-active-top;
+    left: 0;
+  }
+
+  .control-label-adjust {
+    height: ($mf-font-size * 0.5);
+  }
+
   .bar {
     position: relative;
     border-bottom: ($mf-font-size / 16) solid $mf-border-color;

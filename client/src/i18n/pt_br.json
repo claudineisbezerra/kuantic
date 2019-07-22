@@ -368,6 +368,8 @@
     "filter_label": "Buscar",
     "planned_budget_filter_result": "Sugerimos que você compre esses produtos",
     "executed_budget_filter_result": "Estes são os produtos que você decidiu comprar",
+    "purchase_title": "Nome da lista de recompra",
+    "purchase_id": "Código da recompra",
     "collection": "Divisão",
     "department": "Departamento",
     "product_type": "Categoria",
