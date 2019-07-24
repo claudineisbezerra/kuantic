@@ -25,6 +25,7 @@
     "element-resize-detector": "^1.1.15",
     "epic-spinners": "^1.1.0",
     "es6-promise": "^4.2.8",
+    "export-from-json": "^1.1.4",
     "extend": "3.0.2",
     "flag-icon-css": "^3.3.0",
     "gemini-scrollbar": "^1.5.1",

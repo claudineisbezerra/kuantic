@@ -60,7 +60,6 @@ const PurchaseSchema = new Schema(
                     },
                     variant_id: {
                         type: String,
-                        unique: true,
                         required: true,
                         trim: true
                     },
@@ -76,7 +75,6 @@ const PurchaseSchema = new Schema(
                     },
                     product_type: {
                         type: String,
-                        unique: true,
                         required: true,
                         trim: true
                     },
@@ -166,7 +164,6 @@ const PurchaseSchema = new Schema(
                     },
                     variant_id: {
                         type: String,
-                        unique: true,
                         required: true,
                         trim: true
                     },
@@ -182,7 +179,6 @@ const PurchaseSchema = new Schema(
                     },
                     product_type: {
                         type: String,
-                        unique: true,
                         required: true,
                         trim: true
                     },

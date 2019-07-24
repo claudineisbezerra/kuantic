@@ -42,7 +42,6 @@
                 </fieldset>
               </div>
             </div>
-
             <div class="va-row">
               <div class="flex md2">
                 <fieldset>
@@ -146,17 +145,15 @@
                 </fieldset>
               </div>
             </div>
+
             <div class="va-row">
-              <div class="flex md2">
-                <div class="va-row btn-margin-row">
-                  <div class="flex justify--center">
-                    <button class="btn btn-sm btn-primary">
-                      {{'purchase.compute' | translate}}
-                    </button>
-                  </div>
-                </div>
+              <div class="flex sm6 lg6 xl3">
+                <button class="btn btn-primary">
+                  {{'purchase.compute' | translate}}
+                </button>
               </div>
             </div>
+
           </form>
         </kuantic-widget>
       </div>
@@ -167,29 +164,73 @@
               Object.keys(purchase).length > 0 &&
               purchase.purchases &&
               purchase.purchases.planned_items &&
-              Object.keys(purchase.purchases.planned_items).length > 0"
-         class="va-row">
-      <div class="flex md12 xs12">
-        <kuantic-widget :headerText="$t('purchase.planned_budget_filter_result')">
-          <kuantic-data-table
-            :apiUrl="apiUrl"
-            :apiMode="apiMode"
-            :data="purchase.purchases.planned_items"
-            :itemsPerPage="itemsPerPage"
-            :defaultPerPage="defaultItemsPerPage"
-            :tableFields="plannedTableFields"
-            :filterInputLabel="$t('purchase.filter_label')"
-            :sortFunctions="plannedSortFunctions"
-            :queryParams="queryParams"
-          >
-            <spring-spinner
-              slot="loading"
-              :animation-duration="2500"
-              :size="70"
-              color="#4ae387"
-            />
-          </kuantic-data-table>
-        </kuantic-widget>
+              Object.keys(purchase.purchases.planned_items).length > 0">
+      <div class="va-row">
+        <div class="flex md12 xs12">
+          <kuantic-widget :headerText="$t('purchase.planned_budget_filter_result')">
+            <div>
+              <div class="va-row">
+                <kuantic-data-table
+                  :apiUrl="apiUrl"
+                  :apiMode="apiMode"
+                  :data="purchase.purchases.planned_items"
+                  :itemsPerPage="itemsPerPage"
+                  :defaultPerPage="defaultItemsPerPage"
+                  :tableFields="plannedTableFields"
+                  :filterInputLabel="$t('purchase.filter_label')"
+                  :sortFunctions="plannedSortFunctions"
+                  :queryParams="queryParams">
+                  <spring-spinner
+                    slot="loading"
+                    :animation-duration="2500"
+                    :size="70"
+                    color="#4ae387"
+                  />
+                </kuantic-data-table>
+              </div>
+              <div class="va-row">
+                <div class="flex sm6 lg6 xl3">
+                  <button class="btn btn-primary dropdown-toggle theme-toggle" type="button">
+                    {{'purchase.download' | translate}}
+                    <i class="ion-ios-arrow-down arrow-down"></i>
+                    <kuantic-dropdown position="bottom">
+                      <template>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.planned_items,
+                                                  purchase.params.purchase_id,
+                                                  'csv')">
+                          {{'purchase.download_csv' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.planned_items,
+                                                  purchase.params.purchase_id,
+                                                  'xls')">
+                          {{'purchase.download_xls' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.planned_items,
+                                                  purchase.params.purchase_id,
+                                                  'json')">
+                          {{'purchase.download_json' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.planned_items,
+                                                  purchase.params.purchase_id,
+                                                  'txt')">
+                          {{'purchase.download_txt' | translate}}
+                        </a>
+                      </template>
+                    </kuantic-dropdown>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </kuantic-widget>
+        </div>
       </div>
     </div>
 
@@ -217,29 +258,72 @@
               Object.keys(purchase).length > 0 &&
               purchase.purchases &&
               purchase.purchases.executed_items &&
-              Object.keys(purchase.purchases.executed_items).length > 0"
-         class="va-row">
-
-      <div class="flex md12 xs12">
-        <kuantic-widget :headerText="$t('purchase.executed_budget_filter_result')">
-          <kuantic-data-table
-            :apiUrl="apiUrl"
-            :apiMode="apiMode"
-            :data="purchase.purchases.executed_items"
-            :tableFields="executedTableFields"
-            :defaultPerPage="defaultItemsPerPage"
-            :filterInputLabel="$t('purchase.filter_label')"
-            :sortFunctions="executedSortFunctions"
-            :queryParams="queryParams"
-          >
-            <spring-spinner
-              slot="loading"
-              :animation-duration="2500"
-              :size="70"
-              color="#4ae387"
-            />
-          </kuantic-data-table>
-        </kuantic-widget>
+              Object.keys(purchase.purchases.executed_items).length > 0">
+      <div class="va-row">
+        <div class="flex md12 xs12">
+          <kuantic-widget :headerText="$t('purchase.executed_budget_filter_result')">
+            <div>
+              <div class="va-row">
+                <kuantic-data-table
+                  :apiUrl="apiUrl"
+                  :apiMode="apiMode"
+                  :data="purchase.purchases.executed_items"
+                  :tableFields="executedTableFields"
+                  :defaultPerPage="defaultItemsPerPage"
+                  :filterInputLabel="$t('purchase.filter_label')"
+                  :sortFunctions="executedSortFunctions"
+                  :queryParams="queryParams">
+                  <spring-spinner
+                    slot="loading"
+                    :animation-duration="2500"
+                    :size="70"
+                    color="#4ae387"
+                  />
+                </kuantic-data-table>
+              </div>
+              <div class="va-row">
+                <div class="flex sm6 lg6 xl3">
+                  <button class="btn btn-primary dropdown-toggle theme-toggle" type="button">
+                    {{'purchase.download' | translate}}
+                    <i class="ion-ios-arrow-down arrow-down"></i>
+                    <kuantic-dropdown position="bottom">
+                      <template>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.executed_items,
+                                                  purchase.params.purchase_id,
+                                                  'csv')">
+                          {{'purchase.download_csv' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.executed_items,
+                                                  purchase.params.purchase_id,
+                                                  'xls')">
+                          {{'purchase.download_xls' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.executed_items,
+                                                  purchase.params.purchase_id,
+                                                  'json')">
+                          {{'purchase.download_json' | translate}}
+                        </a>
+                        <a  class="dropdown-item"
+                            href="#"
+                            @click="handleExport (purchase.purchases.executed_items,
+                                                  purchase.params.purchase_id,
+                                                  'txt')">
+                          {{'purchase.download_txt' | translate}}
+                        </a>
+                      </template>
+                    </kuantic-dropdown>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </kuantic-widget>
+        </div>
       </div>
     </div>
 
@@ -281,6 +365,7 @@ import _ from 'lodash'
 import store from 'vuex-store'
 import { mapActions } from 'vuex'
 import setAuthToken from 'utils/authToken'
+import exportFromJSON from 'export-from-json'
 
 export default {
   name: 'profile',
@@ -492,7 +577,6 @@ export default {
     },
     handlePurchaseSubmit () {
       this.errors = []
-      console.log('params: ',this.setPurchaseParams())
       this.$validator.validateAll().then((result) => {
         if (result) {
           let param = this.setPurchaseParams()
@@ -601,6 +685,15 @@ export default {
       }
 
       return chartData
+    },
+    handleExport (jsonData, defaultName, defaultType) {
+      if (!jsonData || !defaultName || !defaultType) return
+
+      let data = jsonData
+      let fileName = defaultName
+      let exportType = defaultType
+
+      exportFromJSON({ data, fileName, exportType })
     },
   },
   mounted () {
