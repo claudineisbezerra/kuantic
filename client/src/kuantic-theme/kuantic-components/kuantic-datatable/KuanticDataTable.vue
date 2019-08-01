@@ -250,7 +250,6 @@ export default {
       return this.apiMode ? this.paginationPath : 'pagination'
     },
   },
-
   created () {
     if (!this.apiMode) {
       this.tableData.data = this.data

@@ -1,6 +1,9 @@
 <template>
   <kuantic-navbar>
     <header-selector slot="selector" :isOpen.sync="valueProxy"/>
+    <!-- <span slot="logo">
+      <icon-kletter/>
+    </span> -->
     <span slot="logo">
       <kuantic-icon-kuantic/>
     </span>
@@ -19,6 +22,7 @@
 </template>
 
 <script>
+import IconKletter from '../../../kuantic-theme/kuantic-components/kuantic-icon/IconKletter'
 import KuanticIconKuantic
   from '../../../kuantic-theme/kuantic-components/kuantic-icon/KuanticIconKuantic'
 import KuanticNavbar
@@ -34,6 +38,7 @@ export default {
   name: 'app-navbar',
 
   components: {
+    IconKletter,
     KuanticIconKuantic,
     KuanticNavbar,
     HeaderSelector,

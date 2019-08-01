@@ -428,6 +428,31 @@ export default new Router({
           ],
         },
         {
+          path: 'settings',
+          name: 'settings',
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'coverage',
+              name: 'coverage',
+              component: lazyLoading('settings/coverage/Coverage'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/coverage',
+              },
+            },
+            {
+              path: 'indicator',
+              name: 'indicator',
+              component: lazyLoading('settings/indicator/Indicator'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/indicator',
+              },
+            },
+          ],
+        },
+        {
           path: 'about',
           name: 'about',
           component: lazyLoading('about/About'),

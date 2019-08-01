@@ -350,11 +350,11 @@
 </template>
 
 <script>
-import PlannedFields from './table/planned-fields-definition'
-import ExecutedFields from './table/executed-fields-definition'
-import ItemsPerPage from './table/items-per-page-definition'
-import QueryParams from './table/query-params'
-import DataTableStyles from './table/data-table-styles'
+import PlannedFields from './table/data/planned-fields-definition'
+import ExecutedFields from './table/data/executed-fields-definition'
+import ItemsPerPage from './table/data/items-per-page-definition'
+import QueryParams from './table/data/query-params'
+import DataTableStyles from './table/data/data-table-styles'
 
 
 import { SpringSpinner } from 'epic-spinners'
@@ -368,7 +368,7 @@ import setAuthToken from 'utils/authToken'
 import exportFromJSON from 'export-from-json'
 
 export default {
-  name: 'profile',
+  name: 'purchase',
   components: {
     SpringSpinner
   },

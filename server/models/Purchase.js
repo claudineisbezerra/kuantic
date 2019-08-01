@@ -73,15 +73,25 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    product_type: {
-                        type: String,
-                        required: true,
-                        trim: true
+                    collection_id: {
+                        type: Number,
+                        trim: true,
+                        default: null
                     },
                     collection_title: {
                         type: String,
                         trim: true,
                         default: null
+                    },
+                    product_type_id: {
+                        type: Number,
+                        required: true,
+                        trim: true
+                    },
+                    product_type_title: {
+                        type: String,
+                        required: true,
+                        trim: true
                     },
                     image_src: {
                         type: String,
@@ -177,15 +187,25 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    product_type: {
-                        type: String,
-                        required: true,
-                        trim: true
+                    collection_id: {
+                        type: Number,
+                        trim: true,
+                        default: null
                     },
                     collection_title: {
                         type: String,
                         trim: true,
                         default: null
+                    },
+                    product_type_id: {
+                        type: Number,
+                        required: true,
+                        trim: true
+                    },
+                    product_type_title: {
+                        type: String,
+                        required: true,
+                        trim: true
                     },
                     image_src: {
                         type: String,

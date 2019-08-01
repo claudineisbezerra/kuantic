@@ -8,21 +8,46 @@ const InventoryItemSchema = new Schema(
             required: true,
             trim: true
         },
-        cost: {
-            type: Number,
-            required: true,
-            trim: true
-        },
         sku: {
             type: String,
             trim: true,
             default: null
         },
-        country_code_of_origin: {
+        cost: {
             type: Number,
+            required: true,
+            trim: true
+        },
+        tracked: {
+            type: Boolean
+        },
+        requires_shipping : {
+            type: Boolean
+        },
+        country_code_of_origin: {
+            type: String,
             trim: true,
             default: null
-        }
+        },
+        province_code_of_origin: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        country_harmonized_system_codes: [
+            {
+                harmonized_system_code: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                country_code: {
+                    type: String,
+                    required: true,
+                    trim: true
+                }
+            }
+        ]
     },
     {
         timestamps: {

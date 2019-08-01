@@ -18,7 +18,12 @@ const ProductSchema = new Schema(
             required: true,
             trim: true
         },
-        product_type: {
+        product_type_id: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        product_type_title: {
             type: String,
             required: true,
             trim: true

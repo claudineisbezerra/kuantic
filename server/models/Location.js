@@ -17,6 +17,56 @@ const LocationSchema = new Schema(
             type: String,
             trim: true,
             default: null
+        },
+        address1: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        address2: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        city: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        province: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        province_code: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        country: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        country_code: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        zip: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        phone: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        legacy: {
+            type: Boolean,
+            trim: true,
+            default: null
         }
     },
     {

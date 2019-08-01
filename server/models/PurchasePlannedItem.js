@@ -26,16 +26,27 @@ const PurchasePlannedItemSchema = new Schema(
             trim: true,
             default: null
         },
-        product_type: {
-            type: String,
-            required: true,
+        collection_id: {
+            type: Number,
             trim: true,
-            unique: true
+            default: null
         },
         collection_title: {
             type: String,
             trim: true,
             default: null
+        },
+        product_type_id: {
+            type: Number,
+            required: true,
+            trim: true,
+            unique: true
+        },
+        product_type_title: {
+            type: String,
+            required: true,
+            trim: true,
+            unique: true
         },
         image_src: {
             type: String,

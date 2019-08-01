@@ -60,6 +60,38 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
+
+      <sidebar-link-group>
+        <span slot="title">
+          <span
+            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
+          <span>{{ $t('menu.settings') }}</span>
+        </span>
+        <sidebar-link
+          :to="{ name: 'coverage' }">
+          <span slot="title">
+            <span>{{ $t('menu.coverage') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'indicator' }">
+          <span slot="title">
+            <span>{{ $t('menu.indicator') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+      <sidebar-link
+        :to="{ name: 'about' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon">
+            <i class="fa fa-question icon-left input-icon"/>
+          </span>
+          <span>{{ $t('menu.about') }}</span>
+        </span>
+      </sidebar-link>
+
+
+
       <sidebar-link-group>
         <span slot="title">
           <span
@@ -297,14 +329,22 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
-      <sidebar-link
+      <!-- <sidebar-link
+        :to="{ name: 'settings' }">
+        <span slot="title">
+          <span class="sidebar-menu-item-icon kuantic-icon kuantic-icon-settings"></span>
+          <span>{{ $t('menu.settings') }}</span>
+        </span>
+      </sidebar-link> -->
+      <!-- <sidebar-link
         :to="{ name: 'about' }">
         <span slot="title">
-          <span
-            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-settings"></span>
+          <span class="sidebar-menu-item-icon">
+            <i class="fa fa-question icon-left input-icon"/>
+          </span>
           <span>{{ $t('menu.about') }}</span>
         </span>
-      </sidebar-link>
+      </sidebar-link> -->
     </template>
   </kuantic-sidebar>
 </template>

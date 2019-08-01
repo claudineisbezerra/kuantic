@@ -11,8 +11,7 @@ const { PriceRange } = require('../models/PriceRange');
 const { Purchase } = require('../models/Purchase');
 const { PurchasePlannedItem } = require('../models/PurchasePlannedItem');
 const { PurchaseExecutedItem } = require('../models/PurchaseExecutedItem');
-const { VariantIndicator } = require('../models/VariantIndicator');
-const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
+const { ProductVariantIndicator } = require('../models/ProductVariantIndicator');
 
 /**
  * @description GET /api/admin/intelligence/purchase
@@ -99,7 +98,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 productTypesParam = productTypesParam + ']';
             }
         }
-        filterJsonStr = filterJsonStr + `"product_type": { "$in": ${productTypesParam} }`;
+        filterJsonStr = filterJsonStr + `"product_type_title": { "$in": ${productTypesParam} }`;
         filterJsonStr = filterJsonStr + ', ';
     }
 
@@ -160,7 +159,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         executed_budget_not_used: executed_budget_not_used
     };
 
-    let variantIndicators = await VariantIndicator.findByFilter(filterObj);
+    let variantIndicators = await ProductVariantIndicator.findByFilter(filterObj);
     if (params && variantIndicators) {
         let filter = { 'params.purchase_id': params.purchase_id };
         let update = computeRepurchase(params, variantIndicators);
@@ -169,7 +168,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
         let purchasePlannedBudgetGroupedByCollectionProductType = [];
         if (plannedBudget && parseFloat(plannedBudget) > 0) {
-            let groupByFields_plannedBudget = ['collection_title', 'product_type'];
+            let groupByFields_plannedBudget = ['collection_title', 'product_type_title'];
             let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
@@ -188,7 +187,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
         let purchasePlannedBudgetGroupedByProductType = [];
         if (plannedBudget && parseFloat(plannedBudget) > 0) {
-            let groupByFields_plannedBudget = ['product_type'];
+            let groupByFields_plannedBudget = ['product_type_title'];
             let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
@@ -205,7 +204,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
         let purchaseExecutedBudgetGroupedByCollectionProductType = [];
         if (executedBudget && parseFloat(executedBudget) > 0) {
-            let groupByFields_executedBudget = ['collection_title', 'product_type'];
+            let groupByFields_executedBudget = ['collection_title', 'product_type_title'];
             let sumByFields_executedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
@@ -225,7 +224,7 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
         let purchaseExecutedBudgetGroupedByProductType = [];
         if (executedBudget && parseFloat(executedBudget) > 0) {
-            let groupByFields_executedBudget = ['product_type'];
+            let groupByFields_executedBudget = ['product_type_title'];
             let sumByFields_executedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
@@ -254,201 +253,12 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 });
 
 /**
- * @description POST /api/purchase
- */
-// router.post(
-//     '/',
-//     [passport.authenticate('jwt', { session: false }), checkCreateRoomFields],
-//     async (req, res) => {
-//         let errors = [];
-
-//         const room = await Room.findOne({ name: req.body.room_name }).exec();
-//         if (room) {
-//             if (room.name === req.body.room_name) {
-//                 errors.push({ param: 'room_taken', msg: res.$t('room_error_NAMEEXISTS') });
-//             }
-//             return res.json({ errors: createErrorObject(errors) });
-//         } else {
-//             const newRoom = new Room({
-//                 name: req.body.room_name,
-//                 user: req.user.id,
-//                 access: req.body.password ? false : true,
-//                 password: req.body.password
-//             });
-
-//             if (newRoom.access === false) {
-//                 newRoom.accessIds.push(req.user.id);
-//             }
-
-//             newRoom
-//                 .save()
-//                 .then(room => {
-//                     Room.populate(room, { path: 'user', select: 'username' }, (err, room) => {
-//                         if (err) {
-//                             console.log(err);
-//                         }
-//                         return res.status(200).json(room);
-//                     });
-//                 })
-//                 .catch(err => {
-//                     return res.json(err);
-//                 });
-//         }
-//     }
-// );
-
-/**
- * @description POST /api/room/verify
- */
-// router.post('/verify', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     if (!req.body.password === true) {
-//         return res.json({
-//             errors: createErrorObject([
-//                 {
-//                     param: 'password_required',
-//                     msg: res.$t('password_error_REQUIRED')
-//                 }
-//             ])
-//         });
-//     }
-
-//     const room = await Room.findOne({ name: req.body.room_name }).exec();
-
-//     if (room) {
-//         const verified = await room.isValidPassword(req.body.password);
-
-//         if (verified === true) {
-//             room.accessIds.push(req.user.id);
-//             await room.save();
-//             return res.status(200).json({ success: true });
-//         } else {
-//             return res.json({
-//                 errors: createErrorObject([
-//                     {
-//                         param: 'invalid_password',
-//                         msg: res.$t('password_error_INVALID')
-//                     }
-//                 ])
-//             });
-//         }
-//     } else {
-//         return res.status(404).json({
-//             errors: `${res.$t('room_error_NONAME')} ${req.params.room_name} ${res.$t('found')}`
-//         });
-//     }
-// });
-
-/**
- * @description DELETE /api/room/:room_name
- */
-// router.delete('/:room_name', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     try {
-//         const room = await Room.findOneAndDelete({ name: req.params.room_name })
-//             .populate('user', ['username'])
-//             .select('-password')
-//             .lean();
-
-//         if (room) {
-//             return res.status(200).json(room);
-//         } else {
-//             return res.status(404).json({
-//                 errors: `${res.$t('room_error_NONAME')}
-//                 ${req.params.room_name} ${res.$t('found')} + ',' + ${res.$t('will_redirect')}`
-//             });
-//         }
-//     } catch (err) {
-//         return res.status(404).json(err);
-//     }
-// });
-
-/**
- * @description PUT /api/room/update/name
- */
-// router.post('/update/name', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     req.check('new_room_name')
-//         .isString()
-//         .isLength({ min: 5, max: 20 })
-//         .withMessage(res.$t('room_error_LENGTH'));
-
-//     let errors = req.validationErrors();
-
-//     if (errors.length > 0) {
-//         return res.send({
-//             errors: createErrorObject(errors)
-//         });
-//     }
-
-//     const room = await Room.findOneAndUpdate(
-//         { name: req.body.room_name },
-//         { name: req.body.new_room_name },
-//         { fields: { password: 0 }, new: true }
-//     )
-//         .populate('user', ['username'])
-//         .populate('users.lookup', ['username']);
-
-//     if (room) {
-//         return res.status(200).json(room);
-//     } else {
-//         return res.status(404).json({
-//             errors: `${res.$t('room_error_NONAME')} ${req.params.room_name} ${res.$t('found')}`
-//         });
-//     }
-// });
-
-/**
- * @description PUT /api/room/remove/users
- */
-// router.post('/remove/users', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     const room = await Room.findOne({ name: req.body.room_name });
-
-//     if (room) {
-//         if (room.users.find(user => user.lookup.toString() === req.user.id)) {
-//             room.users = room.users.filter(user => user.lookup.toString() !== req.user.id);
-//             await room.save();
-//         }
-//         const returnRoom = await Room.populate(room, {
-//             path: 'user users.lookup',
-//             select: 'username social image handle'
-//         });
-//         return res.status(200).json(returnRoom);
-//     } else {
-//         return res.status(404).json({
-//             errors: `${res.$t('room_error_NONAME')} ${req.params.room_name} ${res.$t('found')}`
-//         });
-//     }
-// });
-
-/**
- * @description PUT /api/room/remove/users/:id/all
- */
-// router.put(
-//     '/remove/users/all',
-//     passport.authenticate('jwt', { session: false }),
-//     async (req, res) => {
-//         await Room.updateMany({ $pull: { users: { $in: [req.body.user_id] } } });
-
-//         const rooms = await Room.find({})
-//             .populate('user', ['username'])
-//             .populate('users.lookup', ['username'])
-//             .select('-password')
-//             .exec();
-
-//         if (rooms) {
-//             return res.status(200).json(rooms);
-//         } else {
-//             return res.status(404).json({ error: res.$t('rooms_error_NOTFOUND') });
-//         }
-//     }
-// );
-
-/**
  * Prototype new object with parameter properties
  * @param params Parameters used to filter data for purchase
  * @param plannedItems List of object as result of Planned Budget
  * @param executedItems List of object as result of Compared Budget
  * @returns {Purchase} Purchase object model
  */
-
 function prototypePurchase(params, plannedItems, executedItems) {
     if (!params && !plannedItems) return purchase;
     let purchases = {};
@@ -517,7 +327,6 @@ function prototypePurchase(params, plannedItems, executedItems) {
  * @param valueBuyIn Value of products to buy
  * @returns {Purchase} Purchase object model
  */
-
 function prototypePurchaseItem(variantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
     if (!variantIndicator || !qtyBuyIn || !valueBuyIn) return purchaseItem;
 
@@ -533,8 +342,10 @@ function prototypePurchaseItem(variantIndicator, budgetType, qtyBuyIn, valueBuyI
     purchaseItem.variant_id = variantIndicator.variant_id;
     purchaseItem.title = variantIndicator.title;
     purchaseItem.handle = variantIndicator.handle;
-    purchaseItem.product_type = variantIndicator.product_type;
+    purchaseItem.collection_id = variantIndicator.collection_id;
     purchaseItem.collection_title = variantIndicator.collection_title;
+    purchaseItem.product_type_id = variantIndicator.product_type_id;
+    purchaseItem.product_type_title = variantIndicator.product_type_title;
     purchaseItem.image_src = variantIndicator.image_src;
     purchaseItem.sku = variantIndicator.sku;
     purchaseItem.price = variantIndicator.price;
@@ -587,7 +398,7 @@ const groupBySumCollectionProductType = objParam => {
                         _.find(executed_items, function(o) {
                             return (
                                 o.collection_title === item.collection_title &&
-                                o.product_type === item.product_type &&
+                                o.product_type_title === item.product_type_title &&
                                 o.sku === item.sku
                             );
                         }),
@@ -610,7 +421,7 @@ const groupBySumCollectionProductType = objParam => {
                         _.find(planned_items, function(o) {
                             return (
                                 o.collection_title === item.collection_title &&
-                                o.product_type === item.product_type &&
+                                o.product_type_title === item.product_type_title &&
                                 o.sku === item.sku
                             );
                         }),
@@ -654,11 +465,11 @@ const groupBySumCollectionProductType = objParam => {
     for (let i in groupResult) {
         let groupArray = groupResult[i];
         groupArray.forEach(function(item) {
-            if (!this[item.collection_title] && !this[item.product_type]) {
+            if (!this[item.collection_title] && !this[item.product_type_title]) {
                 this[item.collection_title] = {
                     header: i18n.__('purchase_header_by_collection_product_type'),
                     collection_title: item.collection_title,
-                    product_type: item.product_type,
+                    product_type_title: item.product_type_title,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
                     purchase_planned_quantity_to_buy: 0,
@@ -703,7 +514,7 @@ const groupBySumProductType = objParam => {
                         _.find(executed_items, function(o) {
                             return (
                                 o.collection_title === item.collection_title &&
-                                o.product_type === item.product_type &&
+                                o.product_type_title === item.product_type_title &&
                                 o.sku === item.sku
                             );
                         }),
@@ -726,7 +537,7 @@ const groupBySumProductType = objParam => {
                         _.find(planned_items, function(o) {
                             return (
                                 o.collection_title === item.collection_title &&
-                                o.product_type === item.product_type &&
+                                o.product_type_title === item.product_type_title &&
                                 o.sku === item.sku
                             );
                         }),
@@ -771,23 +582,23 @@ const groupBySumProductType = objParam => {
     for (let i in groupResult) {
         let groupArray = groupResult[i];
         groupArray.forEach(function(item) {
-            if (!this[item.product_type] && !this[item.product_type]) {
-                this[item.product_type] = {
+            if (!this[item.product_type_title] && !this[item.product_type_title]) {
+                this[item.product_type_title] = {
                     header: i18n.__('purchase_header_by_product_type'),
-                    product_type: item.product_type,
+                    product_type_title: item.product_type_title,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
                     purchase_planned_quantity_to_buy: 0,
                     purchase_executed_quantity_to_buy: 0
                 };
-                result.push(this[item.product_type]);
+                result.push(this[item.product_type_title]);
             }
-            this[item.product_type].inventory_quantity += parseFloat(item.inventory_quantity);
-            this[item.product_type].inventory_optimal += parseFloat(item.inventory_optimal);
-            this[item.product_type].purchase_planned_quantity_to_buy += parseFloat(
+            this[item.product_type_title].inventory_quantity += parseFloat(item.inventory_quantity);
+            this[item.product_type_title].inventory_optimal += parseFloat(item.inventory_optimal);
+            this[item.product_type_title].purchase_planned_quantity_to_buy += parseFloat(
                 item.purchase_planned_quantity_to_buy
             );
-            this[item.product_type].purchase_executed_quantity_to_buy += parseFloat(
+            this[item.product_type_title].purchase_executed_quantity_to_buy += parseFloat(
                 item.purchase_executed_quantity_to_buy
             );
         }, Object.create(null));

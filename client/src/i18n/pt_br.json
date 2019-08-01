@@ -269,6 +269,9 @@
     "stockPricing": "Estoques",
     "reports": "Relatórios",
     "bestSellers": "Mais vendidos",
+    "settings": "Configurações",
+    "coverage": "Coberturas",
+    "indicator": "Indicadores",
     "tables": "Tabelas",
     "typography": "Tipografia",
     "uiElements": "Elementos UI",
@@ -403,6 +406,18 @@
     "header_by_product_type_summary_todo": "Compras a realizar por categoria",
     "header_by_collection_product_type": "por categoria e divisão",
     "header_by_collection_product_type_summary": "Resumo de compras por categoria e divisão"
+  },
+  "coverage": {
+    "title_by_collection": "Coberturas por divisão",
+    "title_by_product_type": "Coberturas por categoria"
+  },
+  "indicator": {
+    "title_by_collection": "Indicadores por divisão",
+    "title_by_product_type": "Indicadores por categoria"
+  },
+  "settings": {
+    "title_by_collection": "Configuração por divisão",
+    "title_by_product_type": "Configuração por categoria"
   },
   "spinners": {
     "title": "Spinners",

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VariantSchema = new Schema(
+const ProductVariantSchema = new Schema(
     {
         id: {
             type: Number,
@@ -23,16 +23,6 @@ const VariantSchema = new Schema(
             required: true,
             trim: true
         },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        inventory_quantity: {
-            type: Number,
-            trim: true,
-            default: null
-        },
         sku: {
             type: String,
             trim: true,
@@ -49,12 +39,12 @@ const VariantSchema = new Schema(
             trim: true
         },
         weight: {
-            type: String,
+            type: Number,
             trim: true,
             default: null
         },
         weight_unit: {
-            type: Number,
+            type: String,
             required: true,
             trim: true
         },
@@ -67,6 +57,26 @@ const VariantSchema = new Schema(
             type: String,
             trim: true,
             default: null
+        },
+        inventory_quantity: {
+            type: Number,
+            trim: true,
+            default: null
+        },
+        position: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        price: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        compare_at_price: {
+            type: String,
+            required: true,
+            trim: true
         }
     },
     {
@@ -77,8 +87,8 @@ const VariantSchema = new Schema(
     }
 );
 
-VariantSchema.set('collection', 'variants');
+ProductVariantSchema.set('collection', 'productVariants');
 
-const Variant = mongoose.model('Variant', VariantSchema);
+const ProductVariant = mongoose.model('ProductVariant', ProductVariantSchema);
 
-module.exports = { Variant };
+module.exports = { ProductVariant };

@@ -55,6 +55,8 @@ const profileRoutes = require('./routes/profile');
 const roomRoutes = require('./routes/room');
 const messageRoutes = require('./routes/messages');
 const intelligenceRoutes = require('./routes/intelligence');
+const coverageRoutes = require('./routes/coverage');
+const indicatorRoutes = require('./routes/indicator');
 
 /** Middlewares */
 app.use(
@@ -89,6 +91,8 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/room', roomRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/admin/intelligence', intelligenceRoutes);
+app.use('/api/admin/coverage', coverageRoutes);
+app.use('/api/admin/indicator', indicatorRoutes);
 
 /** Logs environment not equal production */
 if (process.env.NODE_ENV !== 'production') {

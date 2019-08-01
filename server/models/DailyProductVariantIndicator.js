@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const VariantIndicatorSchema = new Schema(
+const DailyProductVariantIndicatorSchema = new Schema(
     {
+        indicator_at: {
+            type: Number,
+            required: true,
+            trim: true
+        },
         product_id: {
             type: Number,
             required: true,
@@ -12,6 +17,16 @@ const VariantIndicatorSchema = new Schema(
             type: Number,
             required: true,
             trim: true
+        },
+        image_id: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        image_src: {
+            type: String,
+            trim: true,
+            default: null
         },
         title: {
             type: String,
@@ -23,7 +38,12 @@ const VariantIndicatorSchema = new Schema(
             trim: true,
             default: null
         },
-        product_type: {
+        product_type_id: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        product_type_title: {
             type: String,
             required: true,
             trim: true
@@ -34,16 +54,6 @@ const VariantIndicatorSchema = new Schema(
             trim: true
         },
         collection_title: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_src: {
             type: String,
             trim: true,
             default: null
@@ -88,7 +98,7 @@ const VariantIndicatorSchema = new Schema(
             trim: true,
             default: null
         },
-        inventory_cost: {
+        inventory_unit_cost: {
             type: Number,
             trim: true,
             default: null
@@ -185,12 +195,12 @@ const VariantIndicatorSchema = new Schema(
     }
 );
 
-VariantIndicatorSchema.set('collection', 'variantIndicators');
-VariantIndicatorSchema.statics.findByFilter = function(filterObj) {
+DailyProductVariantIndicatorSchema.set('collection', 'dailyProductVariantIndicators');
+DailyProductVariantIndicatorSchema.statics.findByFilter = function(filterObj) {
     return this.find(filterObj)
         .sort({ sales_volume: 'desc', sales_potencial: 'desc' })
         .exec();
 };
 
-const VariantIndicator = mongoose.model('VariantIndicator', VariantIndicatorSchema);
-module.exports = { VariantIndicator };
+const DailyProductVariantIndicator = mongoose.model('DailyProductVariantIndicator', DailyProductVariantIndicatorSchema);
+module.exports = { DailyProductVariantIndicator };

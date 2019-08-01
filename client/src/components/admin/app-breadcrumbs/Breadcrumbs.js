@@ -207,6 +207,21 @@ export const breadcrumbs = {
       ],
     },
     {
+      name: 'settings',
+      displayName: 'menu.settings',
+      disabled: true,
+      children: [
+        {
+          name: 'coverage',
+          displayName: 'menu.coverage',
+        },
+        {
+          name: 'indicator',
+          displayName: 'menu.indicator',
+        },
+      ],
+    },
+    {
       name: 'about',
       displayName: 'menu.about',
     },

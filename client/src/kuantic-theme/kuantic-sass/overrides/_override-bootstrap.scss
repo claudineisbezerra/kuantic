@@ -82,6 +82,10 @@ h5, .h5 {
   @include button-size($btn-padding-y-micro, $btn-padding-x-micro, $font-size-smaller, $btn-line-height-sm, $btn-border-radius);
 }
 
+.btn.btn-tiny {
+  @include button-size($btn-padding-y-tiny, $btn-padding-x-tiny, $font-size-smaller, $btn-line-height-sm, $btn-border-radius);
+}
+
 .btn.btn-primary {
   @include theme-button-variant($white, theme-color("primary"), $btn-border, $btn-box-shadow);
 

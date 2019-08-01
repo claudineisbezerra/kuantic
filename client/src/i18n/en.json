@@ -285,6 +285,9 @@
     "stockPricing": "Stock",
     "reports": "Reports",
     "bestSellers": "Best Sellers",
+    "settings": "Settings",
+    "coverage": "Coverages",
+    "indicator": "Indicators",
     "statistics": "Statistics",
     "tables": "Tables",
     "tags": "Tags",
@@ -423,6 +426,18 @@
     "header_by_product_type_summary_todo": "Buy-in by category",
     "header_by_collection_product_type": "by collection and category",
     "header_by_collection_product_type_summary": "Summary by collection and category"
+  },
+  "coverage": {
+    "title_by_collection": "Coverages by division",
+    "title_by_product_type": "Coverages by category"
+  },
+  "indicator": {
+    "title_by_collection": "Indicators by division",
+    "title_by_product_type": "Indicators by category"
+  },
+  "settings": {
+    "title_by_collection": "Settings by division",
+    "title_by_product_type": "Settings by category"
   },
   "spinners": {
     "title": "Spinners",

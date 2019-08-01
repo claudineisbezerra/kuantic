@@ -3,10 +3,11 @@ const { mongoose, connect } = require('../../db/mongoose');
 const { User } = require('../../models/User');
 const { Room } = require('../../models/Room');
 const { Message } = require('../../models/Message');
-const { VariantIndicator } = require('../../models/VariantIndicator');
+const { ProductVariantIndicator } = require('../../models/ProductVariantIndicator');
 const { Collection } = require('../../models/Collection');
 const { ProductType } = require('../../models/ProductType');
 const { PriceRange } = require('../../models/PriceRange');
+const { Coverage } = require('../../models/Coverage');
 const gravatar = require('gravatar');
 const {
     userSeedData,
@@ -15,7 +16,8 @@ const {
     variantIndicatorSeedData,
     collectionSeedData,
     productTypeSeedData,
-    priceRangeSeedData
+    priceRangeSeedData,
+    coverageSeedData
 } = require('./seedData');
 
 const slugify = require('slugify');
@@ -66,17 +68,18 @@ const populateData = async () => {
     }
     console.log('[PROCESS:FIN] Completed Seeding Message Data');
 
-    console.log('[PROCESS:SEED] Seeding VariantIndicator Data');
-    await VariantIndicator.deleteMany({}).exec();
+    console.log('[PROCESS:SEED] Seeding ProductVariantIndicator Data');
+    await ProductVariantIndicator.deleteMany({}).exec();
     for (let variantIndicator of variantIndicatorSeedData) {
-        await new VariantIndicator({
+        await new ProductVariantIndicator({
             product_id: variantIndicator.product_id,
             variant_id: variantIndicator.variant_id,
             title: variantIndicator.title,
             handle: variantIndicator.handle,
-            product_type: variantIndicator.product_type,
             collection_id: variantIndicator.collection_id,
             collection_title: variantIndicator.collection_title,
+            product_type_id: variantIndicator.product_type_id,
+            product_type_title: variantIndicator.product_type_title,
             image_id: variantIndicator.image_id,
             image_src: variantIndicator.image_src,
             sku: variantIndicator.sku,
@@ -107,7 +110,7 @@ const populateData = async () => {
             updated_at: variantIndicator.updated_at
         }).save();
     }
-    console.log('[PROCESS:FIN] Completed Seeding VariantIndicator Data');
+    console.log('[PROCESS:FIN] Completed Seeding ProductVariantIndicator Data');
 
     console.log('[PROCESS:SEED] Seeding Collection Data');
     await Collection.deleteMany({}).exec();
@@ -145,6 +148,11 @@ const populateData = async () => {
         }).save();
     }
     console.log('[PROCESS:FIN] Completed Seeding PriceRange Data');
+
+    console.log('[PROCESS:SEED] Seeding Coverage Data');
+    await Coverage.deleteMany({}).exec();
+    await new Coverage({ product_types: coverageSeedData }).save();
+    console.log('[PROCESS:FIN] Completed Seeding Coverage Data');
 
     await mongoose.connection.close();
 };
