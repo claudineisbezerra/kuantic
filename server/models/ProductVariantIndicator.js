@@ -190,12 +190,15 @@ const ProductVariantIndicatorSchema = new Schema(
     }
 );
 
-ProductVariantIndicatorSchema.set('collection', 'variantIndicators');
+ProductVariantIndicatorSchema.set('collection', 'productVariantIndicators');
 ProductVariantIndicatorSchema.statics.findByFilter = function(filterObj) {
     return this.find(filterObj)
         .sort({ sales_volume: 'desc', sales_potencial: 'desc' })
         .exec();
 };
 
-const ProductVariantIndicator = mongoose.model('ProductVariantIndicator', ProductVariantIndicatorSchema);
+const ProductVariantIndicator = mongoose.model(
+    'ProductVariantIndicator',
+    ProductVariantIndicatorSchema
+);
 module.exports = { ProductVariantIndicator };

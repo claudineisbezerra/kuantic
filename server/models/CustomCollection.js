@@ -18,7 +18,37 @@ const CustomCollectionSchema = new Schema(
             trim: true,
             default: null
         },
+        image: {
+            type: Object,
+            required: true,
+            trim: true
+        },
         template_suffix: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        body_html: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        sort_order: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        published: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        published_at: {
+            type: Date,
+            required: true,
+            trim: true
+        },
+        published_scope: {
             type: String,
             required: true,
             trim: true
@@ -26,7 +56,6 @@ const CustomCollectionSchema = new Schema(
     },
     {
         timestamps: {
-            createdAt: 'created_at',
             updatedAt: 'updated_at'
         }
     }

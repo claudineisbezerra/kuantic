@@ -25,7 +25,6 @@ const CustomerSchema = new Schema(
         },
         phone: {
             type: String,
-            required: true,
             trim: true
         },
         default_address: {
@@ -35,37 +34,70 @@ const CustomerSchema = new Schema(
         },
         addresses: {
             type: Schema.Types.Mixed,
-            required: true,
             trim: true
         },
         last_order_id: {
             type: Number,
-            required: true,
             trim: true
         },
         last_order_name: {
             type: String,
-            required: true,
             trim: true
         },
         orders_count: {
             type: Number,
-            required: true,
+            trim: true
+        },
+        total_spent: {
+            type: String,
             trim: true
         },
         note: {
             type: String,
-            required: true,
             trim: true
         },
         currency: {
             type: String,
-            required: true,
             trim: true
         },
-        total_spent: {
-            type: Number,
-            required: true,
+        marketing_opt_in_level: {
+            type: String,
+            trim: true
+        },
+        accepts_marketing: {
+            type: Boolean,
+            trim: true
+        },
+        accepts_marketing_updated_at: {
+            type: Date,
+            trim: true
+        },
+        state: {
+            type: String,
+            trim: true
+        },
+        verified_email: {
+            type: Boolean,
+            trim: true
+        },
+        multipass_identifier: {
+            type: String,
+            trim: true
+        },
+        tax_exempt: {
+            type: Boolean,
+            trim: true
+        },
+        tax_exemptions: {
+            type: Array,
+            trim: true
+        },
+        tags: {
+            type: String,
+            trim: true
+        },
+        metafield: {
+            type: Object,
             trim: true
         }
     },

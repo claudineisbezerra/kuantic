@@ -18,12 +18,7 @@ const ProductSchema = new Schema(
             required: true,
             trim: true
         },
-        product_type_id: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        product_type_title: {
+        product_type: {
             type: String,
             required: true,
             trim: true
@@ -48,27 +43,37 @@ const ProductSchema = new Schema(
             required: true,
             trim: true
         },
+        body_html: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        tags: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        template_suffix: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        metafields_global_title_tag: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        metafields_global_description_tag: {
+            type: String,
+            required: true,
+            trim: true
+        },
         published_at: {
             type: Date,
             required: true,
             trim: true
         },
         published_scope: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        published_at_min: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        published_at_max: {
-            type: String,
-            trim: true,
-            default: null
-        },
-        published_status: {
             type: String,
             trim: true,
             default: null

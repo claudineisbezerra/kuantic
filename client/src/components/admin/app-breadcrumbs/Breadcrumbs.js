@@ -212,8 +212,8 @@ export const breadcrumbs = {
       disabled: true,
       children: [
         {
-          name: 'coverage',
-          displayName: 'menu.coverage',
+          name: 'configurations',
+          displayName: 'menu.configurations',
         },
         {
           name: 'indicator',

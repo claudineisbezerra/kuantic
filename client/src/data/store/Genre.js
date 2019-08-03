@@ -1,5 +1,5 @@
 export default [
-  'Marculino',
+  'Masculino',
   'Feminino',
   'Unissex'
 ]

@@ -8,9 +8,12 @@ const OrderSchema = new Schema(
             required: true,
             trim: true
         },
-        customer_id: {
-            type: Number,
-            required: true,
+        browser_ip: {
+            type: String,
+            trim: true
+        },
+        buyer_accepts_marketing: {
+            type: Boolean,
             trim: true
         },
         billing_address: {
@@ -20,22 +23,23 @@ const OrderSchema = new Schema(
         },
         cancel_reason: {
             type: String,
-            required: true,
             trim: true
         },
         cancelled_at: {
             type: Date,
+            trim: true
+        },
+        cart_token: {
+            type: String,
             required: true,
+            trim: true
+        },
+        client_details: {
+            type: Object,
             trim: true
         },
         closed_at: {
             type: Date,
-            required: true,
-            trim: true
-        },
-        created_at: {
-            type: Date,
-            required: true,
             trim: true
         },
         currency: {
@@ -50,17 +54,14 @@ const OrderSchema = new Schema(
         },
         customer_locale: {
             type: String,
-            required: true,
             trim: true
         },
         discount_applications: {
             type: Schema.Types.Mixed,
-            required: true,
             trim: true
         },
         discount_codes: {
             type: Schema.Types.Mixed,
-            required: true,
             trim: true
         },
         email: {
@@ -75,7 +76,10 @@ const OrderSchema = new Schema(
         },
         fulfillments: {
             type: Schema.Types.Mixed,
-            required: true,
+            trim: true
+        },
+        fulfillment_status: {
+            type: String,
             trim: true
         },
         line_items: {
@@ -85,12 +89,10 @@ const OrderSchema = new Schema(
         },
         location_id: {
             type: Number,
-            required: true,
             trim: true
         },
         name: {
             type: String,
-            required: true,
             trim: true
         },
         note: {
@@ -100,12 +102,10 @@ const OrderSchema = new Schema(
         },
         note_attributes: {
             type: Schema.Types.Mixed,
-            required: true,
             trim: true
         },
         number: {
             type: Number,
-            required: true,
             trim: true
         },
         order_number: {
@@ -115,97 +115,78 @@ const OrderSchema = new Schema(
         },
         phone: {
             type: String,
-            required: true,
             trim: true
         },
         presentment_currency: {
             type: String,
-            required: true,
             trim: true
         },
         processed_at: {
             type: Date,
-            required: true,
             trim: true
         },
         shipping_address: {
             type: Object,
-            required: true,
             trim: true
         },
         shipping_lines: {
             type: Schema.Types.Mixed,
-            required: true,
             trim: true
         },
         source_name: {
             type: String,
-            required: true,
             trim: true
         },
         subtotal_price: {
             type: Number,
-            required: true,
             trim: true
         },
         subtotal_price_set: {
             type: Object,
-            required: true,
             trim: true
         },
         total_discounts: {
             type: Number,
-            required: true,
             trim: true
         },
         total_discounts_set: {
             type: Object,
-            required: true,
             trim: true
         },
         total_line_items_price: {
             type: Number,
-            required: true,
             trim: true
         },
         total_line_items_price_set: {
             type: Object,
-            required: true,
             trim: true
         },
         total_price: {
-            type: Number,
-            required: true,
+            type: String,
             trim: true
         },
         total_price_set: {
             type: Object,
-            required: true,
             trim: true
         },
         total_tax: {
-            type: Number,
-            required: true,
+            type: String,
             trim: true
         },
         total_tax_set: {
             type: Object,
-            required: true,
             trim: true
         },
         total_tip_received: {
-            type: Number,
-            required: true,
+            type: String,
             trim: true
         },
         total_weight: {
             type: Number,
-            required: true,
             trim: true
         },
         user_id: {
             type: Number,
-            required: true,
             trim: true
         }
     },

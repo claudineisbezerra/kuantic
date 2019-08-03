@@ -8,11 +8,6 @@ const LocationSchema = new Schema(
             required: true,
             trim: true
         },
-        active: {
-            type: Boolean,
-            trim: true,
-            default: true
-        },
         name: {
             type: String,
             trim: true,
@@ -62,6 +57,11 @@ const LocationSchema = new Schema(
             type: String,
             trim: true,
             default: null
+        },
+        active: {
+            type: Boolean,
+            trim: true,
+            default: true
         },
         legacy: {
             type: Boolean,

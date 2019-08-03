@@ -68,9 +68,9 @@
           <span>{{ $t('menu.settings') }}</span>
         </span>
         <sidebar-link
-          :to="{ name: 'coverage' }">
+          :to="{ name: 'configurations' }">
           <span slot="title">
-            <span>{{ $t('menu.coverage') }}</span>
+            <span>{{ $t('menu.configurations') }}</span>
           </span>
         </sidebar-link>
         <sidebar-link

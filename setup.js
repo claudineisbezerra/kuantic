@@ -15,6 +15,5 @@ fs.readdirSync(root)
     if (!fs.existsSync(join(modPath, 'package.json'))) return
     // Determine OS and set command accordingly
     const cmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
-    // install folder
   //   cp.spawn(cmd, ['i','--prefix', modPath], { env: process.env, cwd: modPath, stdio: 'inherit' })
 })

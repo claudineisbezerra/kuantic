@@ -12,6 +12,5 @@ export default [
   'Amarelo',
   'Rosa',
   'Multicolorido',
-  'Roxo',
-  'Stan Smith'
+  'Roxo'
 ]

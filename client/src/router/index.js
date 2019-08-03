@@ -433,12 +433,12 @@ export default new Router({
           component: EmptyParentComponent,
           children: [
             {
-              path: 'coverage',
-              name: 'coverage',
-              component: lazyLoading('settings/coverage/Coverage'),
+              path: 'configurations',
+              name: 'configurations',
+              component: lazyLoading('settings/configurations/Configurations'),
               meta: {
                 requiresAuth: false,
-                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/coverage',
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/configurations',
               },
             },
             {

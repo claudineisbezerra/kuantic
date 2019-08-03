@@ -18,7 +18,47 @@ const SmartCollectionSchema = new Schema(
             trim: true,
             default: null
         },
+        image: {
+            type: Object,
+            required: true,
+            trim: true
+        },
         template_suffix: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        body_html: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        rules: {
+            type: Object,
+            required: true,
+            trim: true
+        },
+        disjunctive: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        sort_order: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        products_manually_sorted_count: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        published_at: {
+            type: Date,
+            required: true,
+            trim: true
+        },
+        published_scope: {
             type: String,
             required: true,
             trim: true

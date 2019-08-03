@@ -286,7 +286,7 @@
     "reports": "Reports",
     "bestSellers": "Best Sellers",
     "settings": "Settings",
-    "coverage": "Coverages",
+    "configurations": "Configurations",
     "indicator": "Indicators",
     "statistics": "Statistics",
     "tables": "Tables",
@@ -428,8 +428,8 @@
     "header_by_collection_product_type_summary": "Summary by collection and category"
   },
   "coverage": {
-    "title_by_collection": "Coverages by division",
-    "title_by_product_type": "Coverages by category"
+    "title_by_collection": "Coverages",
+    "title_by_product_type": "Coverages"
   },
   "indicator": {
     "title_by_collection": "Indicators by division",

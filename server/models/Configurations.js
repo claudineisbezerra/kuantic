@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const CoverageSchema = new Schema(
+const ConfigurationsSchema = new Schema(
     {
-        product_types: [
+        coverages: [
             {
                 collection_id: {
                     type: Number,
@@ -46,7 +46,7 @@ const CoverageSchema = new Schema(
     }
 );
 
-CoverageSchema.set('collection', 'coverages');
+ConfigurationsSchema.set('collection', 'configurations');
 
-const Coverage = mongoose.model('Coverage', CoverageSchema);
-module.exports = { Coverage };
+const Configurations = mongoose.model('Configurations', ConfigurationsSchema);
+module.exports = { Configurations };

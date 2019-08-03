@@ -21,7 +21,7 @@ const InventoryItemSchema = new Schema(
         tracked: {
             type: Boolean
         },
-        requires_shipping : {
+        requires_shipping: {
             type: Boolean
         },
         country_code_of_origin: {

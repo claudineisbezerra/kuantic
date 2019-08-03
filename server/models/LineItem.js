@@ -8,8 +8,13 @@ const LineItemSchema = new Schema(
             required: true,
             trim: true
         },
-        order_id: {
+        product_id: {
             type: Number,
+            required: true,
+            trim: true
+        },
+        title: {
+            type: String,
             required: true,
             trim: true
         },
@@ -18,13 +23,33 @@ const LineItemSchema = new Schema(
             required: true,
             trim: true
         },
+        variant_title: {
+            type: String,
+            required: true,
+            trim: true
+        },
         name: {
             type: String,
             required: true,
             trim: true
         },
-        price: {
+        sku: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        vendor: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        quantity: {
             type: Number,
+            required: true,
+            trim: true
+        },
+        price: {
+            type: String,
             required: true,
             trim: true
         },
@@ -38,28 +63,58 @@ const LineItemSchema = new Schema(
             required: true,
             trim: true
         },
-        quantity: {
+        fulfillable_quantity: {
             type: Number,
             required: true,
             trim: true
         },
-        sku: {
+        fulfillment_service: {
             type: String,
             required: true,
             trim: true
         },
-        title: {
+        fulfillment_status: {
             type: String,
             required: true,
             trim: true
         },
-        variant_title: {
+        grams: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        requires_shipping: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        gift_card: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        taxable: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        tax_lines: {
+            type: Schema.Types.Mixed,
+            required: true,
+            trim: true
+        },
+        total_discount: {
             type: String,
             required: true,
             trim: true
         },
-        vendor: {
-            type: String,
+        total_discount_set: {
+            type: Object,
+            required: true,
+            trim: true
+        },
+        discount_allocations: {
+            type: Schema.Types.Mixed,
             required: true,
             trim: true
         }

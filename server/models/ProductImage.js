@@ -32,11 +32,6 @@ const ProductImageSchema = new Schema(
             type: Number,
             required: true,
             trim: true
-        },
-        weight: {
-            type: Number,
-            trim: true,
-            default: null
         }
     },
     {

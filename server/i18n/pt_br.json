@@ -23,7 +23,7 @@
 	"username_error_LENGTH": "O nome de usuário deve ter entre 5 e 15 caracteres",
 	"username_error_EXISTS": "Nome de usuário já utilizado",
   "collections_error_NOTFOUND": "Collections não encontrado",
-	"settings_error_NOTFOUND": "Configuração não encontrada",
+	"configurations_error_NOTFOUND": "Configuração não encontrada",
 	"settings_error_NOTNUMERIC": "O campo não é numérico",
 	"settings_error_UPDATE": "Não foi possível atualizar a configuração",
 	"settings_error_REMOVE": "Não foi possível remover a configuração",

@@ -17,6 +17,21 @@ const CollectSchema = new Schema(
             type: Number,
             required: true,
             trim: true
+        },
+        featured: {
+            type: Boolean,
+            required: true,
+            trim: true
+        },
+        position: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        sort_value: {
+            type: String,
+            required: true,
+            trim: true
         }
     },
     {

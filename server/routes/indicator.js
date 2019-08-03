@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const { ProductVariant } = require('../models/ProductVariant');
 const { ProductImage } = require('../models/ProductImage');
+const { Configurations } = require('../models/Configurations');
 const { ProductVariantIndicator } = require('../models/ProductVariantIndicator');
 const { DailyProductVariantIndicator } = require('../models/DailyProductVariantIndicator');
 const { InventoryItem } = require('../models/InventoryItem');
@@ -28,7 +29,7 @@ router.get(
         console.log('/composeIndicators dailyIndicators:', dailyIndicators);
 
         // TODOS OS DADOS DEVEM SER CALCULADOS POR DIA (Mesmo se não houver movimento, deverá haver registro com indicações zeradas)
-        // 4. Get Coverage settings data (configurações de cobertura mínima / cobertura ideal)
+        // 4. Get Configurations settings data (configurações de cobertura mínima / cobertura ideal)
         // 5. Calcular quantidade de productVariants (QUANTIDADE DE ITENS VENDIDOS POR DIA)
         // 6. Calcular valor de productVariants (VALOR DE ITENS VENDIDOS POR DIA)
         // 7. Calcular indicador diário de POTENCIAL DE VENDA
@@ -142,38 +143,46 @@ router.delete('/remove', passport.authenticate('jwt', { session: false }), async
 async function composeDailyIndicators() {
     let dailyProductVariantsIndicator = [];
     let productVariants = ProductVariant.find({}).cursor();
-    await productVariants.eachAsync(async function(variant) {
+
+    // Coletar informações de productVariant
+    await productVariants.eachAsync(async function(productVariant) {
         let dailyProductVariantIndicator = new DailyProductVariantIndicator();
         dailyProductVariantIndicator.indicator_at = getDateKey();
-        dailyProductVariantIndicator.product_id = variant.product_id;
-        dailyProductVariantIndicator.variant_id = variant.id;
-
-        dailyProductVariantIndicator.image_id = variant.image_id;
-
+        dailyProductVariantIndicator.product_id = productVariant.product_id;
+        dailyProductVariantIndicator.variant_id = productVariant.id;
+        dailyProductVariantIndicator.image_id = productVariant.image_id;
         // Get image_src from productImages collection
-        let images = ProductImage.find({ id: variant.image_id }).cursor();
+        let images = ProductImage.find({ id: productVariant.image_id }).cursor();
         let image_src = null;
         await images.eachAsync(async function(image) {
             image_src = image['src'];
         });
         dailyProductVariantIndicator.image_src = image_src;
-
-        dailyProductVariantIndicator.inventory_item_id = variant.inventory_item_id;
-
+        dailyProductVariantIndicator.inventory_item_id = productVariant.inventory_item_id;
         // Get cost from inventoryItems collection;
-        let inventoryItems = InventoryItem.find({ id: variant.inventory_item_id }).cursor();
+        let inventoryItems = InventoryItem.find({ id: productVariant.inventory_item_id }).cursor();
         let cost = null;
         await inventoryItems.eachAsync(async function(inventoryItem) {
             cost = inventoryItem['cost'];
         });
         dailyProductVariantIndicator.inventory_unit_cost = cost ? cost : 0.0;
 
-        dailyProductVariantIndicator.inventory_quantity = variant.inventory_quantity
-            ? variant.inventory_quantity
+        dailyProductVariantIndicator.inventory_quantity = productVariant.inventory_quantity
+            ? productVariant.inventory_quantity
             : 0.0;
-        dailyProductVariantIndicator.price = variant.price ? variant.price : 0.0;
-        dailyProductVariantIndicator.sku = variant.sku;
+        dailyProductVariantIndicator.price = productVariant.price ? productVariant.price : 0.0;
+        dailyProductVariantIndicator.sku = productVariant.sku;
         dailyProductVariantsIndicator.push(dailyProductVariantIndicator);
+    });
+
+    // Associar dados de cobertura a cada productVariant contido no dailyProductVariantIndicator
+    let configurations = Configurations.findOne({}).cursor();
+    await configurations.eachAsync(async function(configuration) {
+        let coverages = configuration.coverages;
+        coverages.forEach(coverage => {
+            console.log('coverage.product_type_id:', coverage.product_type_id);
+            console.log('coverage.product_type_title:', coverage.product_type_title);
+        });
     });
 
     return dailyProductVariantsIndicator;

@@ -20,50 +20,9 @@ const CustomerAddressSchema = new Schema(
         },
         address2: {
             type: String,
-            required: true,
             trim: true
         },
         city: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        country: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        country_code: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        country_name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        company: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        first_name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        last_name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        phone: {
             type: String,
             required: true,
             trim: true
@@ -75,11 +34,53 @@ const CustomerAddressSchema = new Schema(
         },
         province_code: {
             type: String,
+            trim: true
+        },
+        country: {
+            type: String,
             required: true,
+            trim: true
+        },
+        country_code: {
+            type: String,
             trim: true
         },
         zip: {
             type: String,
+            required: true,
+            trim: true
+        },
+        latitude: {
+            type: String,
+            trim: true
+        },
+        longitude: {
+            type: String,
+            trim: true
+        },
+        company: {
+            type: String,
+            trim: true
+        },
+        name: {
+            type: String,
+            trim: true
+        },
+        first_name: {
+            type: String,
+            trim: true
+        },
+        last_name: {
+            type: String,
+            trim: true
+        },
+        phone: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        default: {
+            type: Boolean,
             required: true,
             trim: true
         }

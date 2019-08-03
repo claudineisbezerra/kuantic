@@ -23,7 +23,7 @@
 	"username_error_LENGTH": "Username must be between 5 and 15 characters",
 	"username_error_EXISTS": "Username already taken",
 	"collections_error_NOTFOUND": "No Collections found",
-	"settings_error_NOTFOUND": "No Settings found",
+	"configurations_error_NOTFOUND": "No Settings found",
 	"settings_error_NOTNUMERIC": "Field is not numeric",
 	"settings_error_UPDATE": "Unable to update settings",
 	"settings_error_REMOVE": "Unable to remove settings",

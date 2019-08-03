@@ -7,7 +7,7 @@
           <kuantic-editable-data-table
             :apiUrl="apiUrl"
             :apiMode="apiMode"
-            :data="coverage.product_types"
+            :data="configurations.coverages"
             :itemsPerPage="itemsPerPage"
             :defaultPerPage="defaultItemsPerPage"
             :tableFields="tableFields"
@@ -48,7 +48,7 @@ import { mapActions } from 'vuex'
 import setAuthToken from 'utils/authToken'
 
 export default {
-  name: 'coverage',
+  name: 'configurations',
   components: {
     SpringSpinner
   },
@@ -63,7 +63,7 @@ export default {
       defaultTablePerPage: 6,
       defaultItemsPerPage: 6,
       queryParams: QueryParams,
-      coverage: {}
+      configurations: {}
     }
   },
   methods: {
@@ -72,9 +72,9 @@ export default {
     clear (field) {
       this[field] = ''
     },
-    getCoverages () {
+    getConfigs () {
       this.errors = []
-      axios.get('/api/admin/coverage/getCoverages')
+      axios.get('/api/admin/config/getConfigs')
       .then((res) => {
         if (res.data.errors) {
           for (const error of res.data.errors) {
@@ -83,8 +83,7 @@ export default {
             this.errors.push({ key, value })
           }
         } else {
-          console.log('res.data.coverage:', res.data.coverage)
-          this.coverage = res.data.coverage
+          this.configurations = res.data.configurations
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
@@ -93,7 +92,7 @@ export default {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          axios.post('/api/admin/coverage/update', item)
+          axios.post('/api/admin/config/updateCoverage', item)
             .then((res) => {
               if (res.data.errors) {
                 for (const error of res.data.errors) {
@@ -109,9 +108,8 @@ export default {
     },
     removeCoverage (_id) {
       this.errors = []
-      console.log('removeCoverage _id:', _id)
       if (! _id) return
-      axios.delete('/api/admin/coverage/remove',{ params: {_id: _id} })
+      axios.delete('/api/admin/config/removeCoverage',{ params: {_id: _id} })
       .then((res) => {
         if (res.data.errors) {
           for (const error of res.data.errors) {
@@ -119,11 +117,8 @@ export default {
             const [value] = Object.values(error)
             this.errors.push({ key, value })
           }
-          console.log('removeCoverage this.errors:', this.errors)
         } else {
-          // console.log('res.data:', res.data)
-          console.log('res.data.coverage:', res.data.coverage)
-          this.coverage = res.data.coverage
+          this.configurations = res.data.configurations
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
@@ -134,7 +129,7 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      this.getCoverages ()
+      this.getConfigs ()
     })
   },
 }
