@@ -74,9 +74,15 @@
           </span>
         </sidebar-link>
         <sidebar-link
-          :to="{ name: 'indicator' }">
+          :to="{ name: 'dailyindicators' }">
           <span slot="title">
-            <span>{{ $t('menu.indicator') }}</span>
+            <span>{{ $t('menu.dailyindicators') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'summaryindicators' }">
+          <span slot="title">
+            <span>{{ $t('menu.summaryindicators') }}</span>
           </span>
         </sidebar-link>
       </sidebar-link-group>

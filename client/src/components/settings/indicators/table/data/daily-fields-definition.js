@@ -6,6 +6,11 @@ export default {
       width: '4%',
     },
     {
+      name: 'indicator_at',
+      title: 'Data',
+      sortField: 'indicator_at'
+    },
+    {
       name: 'collection_title',
       title: 'Divisão',
       sortField: 'collection_title'
@@ -16,22 +21,29 @@ export default {
       sortField: 'product_type_title'
     },
     {
-      name: '__slot:coverage_min',
-      title: 'Cobertura mínima (dias)',
-      sortField: 'coverage_min',
-      titleClass: 'center aligned',
-      dataClass: 'center aligned'
+      name: 'title',
+      title: 'Produto',
+      sortField: 'title'
     },
     {
-      name: '__slot:coverage_optimal',
-      title: 'Cobertura ideal  (dias)',
+      name: 'inventory_quantity',
+      title: 'Estoque',
+      sortField: 'inventory_quantity'
+    },
+    {
+      name: 'coverage_optimal',
+      title: 'Cobertura',
       sortField: 'coverage_optimal'
     },
     {
-      name: '__slot:actions',
-      sortField: 'actions',
-      titleClass: 'center aligned',
-      dataClass: 'center aligned'
+      name: 'sales_volume',
+      title: 'Quantidade vendida',
+      sortField: 'sales_volume'
+    },
+    {
+      name: 'sales_value',
+      title: 'Valor vendido',
+      sortField: 'sales_value'
     }
   ],
   sortFunctions: {

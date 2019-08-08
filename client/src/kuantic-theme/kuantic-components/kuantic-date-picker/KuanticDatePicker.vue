@@ -9,6 +9,10 @@
 </template>
 
 <script>
+import flatpickr from "flatpickr";
+import { Portuguese } from "flatpickr/dist/l10n/pt.js"
+flatpickr.localize(Portuguese);
+flatpickr.setDefaults({dateFormat : 'd-m-Y'});
 import VueFlatpickrComponent from 'vue-flatpickr-component'
 
 export default {

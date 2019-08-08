@@ -271,7 +271,8 @@
     "bestSellers": "Mais vendidos",
     "settings": "Definições",
     "configurations": "Configurações",
-    "indicator": "Indicadores",
+    "dailyindicators": "Indicadores diários",
+    "summaryindicators": "Indicadores resumo",
     "tables": "Tabelas",
     "typography": "Tipografia",
     "uiElements": "Elementos UI",
@@ -407,17 +408,21 @@
     "header_by_collection_product_type": "por categoria e divisão",
     "header_by_collection_product_type_summary": "Resumo de compras por categoria e divisão"
   },
-  "coverage": {
-    "title_by_collection": "Coberturas",
-    "title_by_product_type": "Coberturas"
-  },
-  "indicator": {
-    "title_by_collection": "Indicadores por divisão",
-    "title_by_product_type": "Indicadores por categoria"
-  },
   "settings": {
-    "title_by_collection": "Configuração por divisão",
-    "title_by_product_type": "Configuração por categoria"
+    "coverages_params_title": "Parâmetros de coberturas",
+    "calculation_params_title": "Parâmetros de cálculo",
+    "title": "Título",
+    "start_date": "Data inicial",
+    "end_date": "Data final",
+    "number_of_days": "Quantidade de dias",
+    "date_of_calculation": "Data do cálculo",
+    "filter_label": "Buscar"
+  },
+  "dailyindicators": {
+    "dailyindicators_title": "Indicadores diários"
+  },
+  "summaryindicators": {
+    "summaryindicators_title": "Indicadores resumo"
   },
   "spinners": {
     "title": "Spinners",

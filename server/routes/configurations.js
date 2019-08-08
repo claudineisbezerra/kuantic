@@ -22,7 +22,6 @@ router.get('/getConfigs', passport.authenticate('jwt', { session: false }), asyn
     } else {
         return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
     }
-
     return res.status(200).json(results);
 });
 
@@ -88,6 +87,110 @@ router.delete(
                     errors: `${res.$t('coverage_error_REMOVE')}`
                 });
             }
+        } catch (err) {
+            return res.status(500).json(err);
+        }
+    }
+);
+
+/**
+ * @description POST /api/admin/config/updateDaysOfCalculation
+ */
+router.post(
+    '/updateDaysOfCalculation',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        let results = {};
+        req.check('number_of_days')
+            .isNumeric()
+            .withMessage(res.$t('settings_error_NOTNUMERIC'));
+        let errors = req.validationErrors();
+        if (errors.length > 0) {
+            return res.send({
+                errors: createErrorObject(errors)
+            });
+        }
+        let filter = {};
+        let update = {
+            $set: {
+                'calculation.days_of_calculation.number_of_days': req.body.number_of_days
+            }
+        };
+        let options = { upsert: true, new: true };
+        let configurations = await Configurations.findOneAndUpdate(filter, update, options);
+        if (configurations) {
+            results.configurations = configurations;
+            return res.status(200).json(results);
+        } else {
+            return res.status(500).json({
+                errors: `${res.$t('settings_error_UPDATE')}`
+            });
+        }
+    }
+);
+
+/**
+ * @description DELETE /api/admin/config/removeDaysOfCalculation
+ */
+router.delete(
+    '/removeDaysOfCalculation',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
+            console.log('to be created...');
+            return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
+        } catch (err) {
+            return res.status(500).json(err);
+        }
+    }
+);
+
+/**
+ * @description POST /api/admin/config/updateDateOfCalculation
+ */
+router.post(
+    '/updateDateOfCalculation',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        let results = {};
+        req.check('at_date')
+            .isISO8601()
+            .withMessage(res.$t('settings_error_NOTDATE'));
+        let errors = req.validationErrors();
+        if (errors.length > 0) {
+            return res.send({
+                errors: createErrorObject(errors)
+            });
+        }
+        let filter = {};
+        let update = {
+            $set: {
+                'calculation.date_of_calculation.at_date': req.body.at_date
+            }
+        };
+        let options = { upsert: true, new: true };
+        let configurations = await Configurations.findOneAndUpdate(filter, update, options);
+        if (configurations) {
+            results.configurations = configurations;
+            return res.status(200).json(results);
+        } else {
+            return res.status(500).json({
+                errors: `${res.$t('settings_error_UPDATE')}`
+            });
+        }
+    }
+);
+
+/**
+ * @description DELETE /api/admin/config/removeDateOfCalculation
+ */
+router.delete(
+    '/removeDateOfCalculation',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
+            console.log('to be created...');
+            return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
         } catch (err) {
             return res.status(500).json(err);
         }

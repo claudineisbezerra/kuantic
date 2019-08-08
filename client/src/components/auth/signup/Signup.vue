@@ -132,7 +132,6 @@ export default {
               email: this.email,
               password: this.password
             },
-            // { params: { lang: this.$i18n.locale } }
           )
             .then((res) => {
               if (res.data.errors) {

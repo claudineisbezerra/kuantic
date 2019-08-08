@@ -216,8 +216,12 @@ export const breadcrumbs = {
           displayName: 'menu.configurations',
         },
         {
-          name: 'indicator',
-          displayName: 'menu.indicator',
+          name: 'dailyindicators',
+          displayName: 'menu.dailyindicators',
+        },
+        {
+          name: 'summaryindicators',
+          displayName: 'menu.summaryindicators',
         },
       ],
     },

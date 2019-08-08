@@ -287,7 +287,8 @@
     "bestSellers": "Best Sellers",
     "settings": "Settings",
     "configurations": "Configurations",
-    "indicator": "Indicators",
+    "dailyindicators": "Daily indicators",
+    "summaryindicators": "Summary indicators",
     "statistics": "Statistics",
     "tables": "Tables",
     "tags": "Tags",
@@ -427,17 +428,21 @@
     "header_by_collection_product_type": "by collection and category",
     "header_by_collection_product_type_summary": "Summary by collection and category"
   },
-  "coverage": {
-    "title_by_collection": "Coverages",
-    "title_by_product_type": "Coverages"
-  },
-  "indicator": {
-    "title_by_collection": "Indicators by division",
-    "title_by_product_type": "Indicators by category"
-  },
   "settings": {
-    "title_by_collection": "Settings by division",
-    "title_by_product_type": "Settings by category"
+    "coverages_params_title": "Coverage parameters",
+    "calculation_params_title": "Calculation parameters",
+    "title": "Title",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "number_of_days": "Number of days",
+    "date_of_calculation": "Calculation date",
+    "filter_label": "Search"
+  },
+  "dailyindicators": {
+    "dailyindicators_title": "Daily indicators"
+  },
+  "summaryindicators": {
+    "summaryindicators_title": "Summary indicators"
   },
   "spinners": {
     "title": "Spinners",

@@ -6,8 +6,10 @@ import Chat from './kuantic-components/kuantic-chat/KuanticChat.vue'
 import Checkbox from './kuantic-components/kuantic-checkbox/KuanticCheckbox.vue'
 import DataTable
   from './kuantic-components/kuantic-datatable/KuanticDataTable.vue'
-import EditableDataTable
-  from './kuantic-components/kuantic-editable-datatable/KuanticEditableDataTable.vue'
+import DatatableCoverage
+  from './kuantic-components/kuantic-datatable-coverage/KuanticDatatableCoverage.vue'
+import DatatableRange
+  from './kuantic-components/kuantic-datatable-range/KuanticDatatableRange.vue'
 import Feed from './kuantic-components/kuantic-feed/KuanticFeed.vue'
 import MediumEditor
   from './kuantic-components/kuantic-medium-editor/KuanticMediumEditor.vue'
@@ -85,7 +87,8 @@ const KuanticPlugin = {
       Chat,
       Checkbox,
       DataTable,
-      EditableDataTable,
+      DatatableCoverage,
+      DatatableRange,
       Feed,
       Modal,
       MultiSelect,

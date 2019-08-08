@@ -25,6 +25,7 @@
 	"collections_error_NOTFOUND": "No Collections found",
 	"configurations_error_NOTFOUND": "No Settings found",
 	"settings_error_NOTNUMERIC": "Field is not numeric",
+	"settings_error_NOTDATE": "Invalid date",
 	"settings_error_UPDATE": "Unable to update settings",
 	"settings_error_REMOVE": "Unable to remove settings",
 	"coverage_error_NOTFOUND": "No Settings found",
@@ -40,5 +41,7 @@
 	"purchase_header_by_collection_product_type": "Purchase by collection and category",
 	"purchase_header_by_collection_product_type_summary": "Summary by collection and category",
 	"purchase_default_name": "Purchase list",
-	"indicator_error_NOTFOUND": "indicator_error_NOTFOUND"
+	"indicator_error_NOTFOUND": "No ndicator found",
+	"dailyIndicator_error_NOTFOUND": "No daily indicator found",
+	"summaryIndicator_error_NOTFOUND": "No summary indicator found"
 }

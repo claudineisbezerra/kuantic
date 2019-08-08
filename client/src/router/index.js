@@ -442,12 +442,21 @@ export default new Router({
               },
             },
             {
-              path: 'indicator',
-              name: 'indicator',
-              component: lazyLoading('settings/indicator/Indicator'),
+              path: 'dailyindicators',
+              name: 'dailyindicators',
+              component: lazyLoading('settings/indicators/DailyIndicator'),
               meta: {
                 requiresAuth: false,
-                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/indicator',
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/indicators',
+              },
+            },
+            {
+              path: 'summaryindicators',
+              name: 'summaryindicators',
+              component: lazyLoading('settings/indicators/SummaryIndicator'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/settings/indicators',
               },
             },
           ],

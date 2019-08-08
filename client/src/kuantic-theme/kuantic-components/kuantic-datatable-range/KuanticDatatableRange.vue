@@ -48,8 +48,53 @@
       :noDataTemplate="noDataTemplate"
       @vuetable:pagination-data="onPaginationData"
       @vuetable:loading="onLoading"
-      @vuetable:loaded="onLoaded"
-    />
+      @vuetable:loaded="onLoaded">
+      <template slot="start_date" slot-scope="props">
+        <div class="flex md6">
+          <div class="form-group">
+            <div class="input-group">
+              <kuantic-date-picker
+                :id="'start_date_'+props.rowIndex"
+                v-model="props.rowData.start_date"
+                @on-change="onCellChange(props.rowData)"
+              />
+              <i class="bar"></i>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template slot="end_date" slot-scope="props">
+        <div class="flex md6">
+          <div class="form-group">
+            <div class="input-group">
+              <kuantic-date-picker
+                :id="'end_date_'+props.rowIndex"
+                v-model="props.rowData.end_date"
+                @on-change="onCellChange(props.rowData)"
+              />
+              <i class="bar"></i>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template slot="days_of_calculation" slot-scope="props">
+        <div class="flex md6">
+          <div class="form-group">
+            <div class="input-group">
+              <input  :name="'days_of_calculation_'+props.rowIndex"
+                      v-model="props.rowData.days_of_calculation"
+                      @change="onCellChange(props.rowData)"
+                      v-validate="'numeric'"/>
+              <i class="bar"></i>
+              <small v-show="veeErrors.has('days_of_calculation_'+props.rowIndex)" class="help text-danger">
+                {{ veeErrors.first('days_of_calculation_'+props.rowIndex) }}
+              </small>
+            </div>
+          </div>
+        </div>
+      </template>
+
+    </vuetable>
     <div class="flex-center">
       <vuetable-pagination
         ref="pagination"
@@ -60,7 +105,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import Vuetable from 'vuetable-2/src/components/Vuetable'
 import VuetablePagination from 'vuetable-2/src/components/VuetablePagination'
@@ -68,12 +112,12 @@ import FilterBar from './datatable-components/FilterBar.vue'
 import ItemsPerPage from './datatable-components/ItemsPerPage.vue'
 import DefaultPerPageDefinition from './data/items-per-page-definition'
 import QueryParams from './data/query-params'
+import DataTableStyles from './data/data-table-styles'
 import Vue from 'vue'
-import DataTableStyles from '../kuantic-datatable/data/data-table-styles'
 import SpringSpinner from 'epic-spinners/src/components/lib/SpringSpinner'
 
 export default {
-  name: 'kuantic-data-table',
+  name: 'kuantic-datatable-range',
   components: {
     SpringSpinner,
     FilterBar,
@@ -176,7 +220,7 @@ export default {
       },
     },
   },
-  data () {
+  data() {
     return {
       perPage: 0,
       colorClasses: {},
@@ -184,7 +228,7 @@ export default {
       dataCount: 0,
       css: DataTableStyles,
       loading: false,
-      noDataTemplate: '',
+      noDataTemplate: ''
     }
   },
   watch: {
@@ -225,6 +269,7 @@ export default {
     },
     filteredTableData () {
       const txt = new RegExp(this.filterText, 'i')
+
       let filteredData = this.tableData.data.slice()
       filteredData = this.tableData.data.filter((item) => {
         return this.dataModeFilterableFieldsComputed.some(field => {
@@ -254,14 +299,10 @@ export default {
       this.tableData.data = this.data
     }
     this.perPage = this.defaultPerPageComputed
-    console.log('KuanticDataTable created() data', this.data)
-    console.log('KuanticDataTable created() this.tableData', this.tableData)
   },
-
   mounted () {
     this.$emit('initialized', this.$refs.vuetable)
   },
-
   methods: {
     onFilterSet (filterText) {
       this.filterText = filterText
@@ -280,7 +321,6 @@ export default {
     dataManager (sortOrder, pagination) {
       let data = this.filteredTableData.data
       let sortFunctions = this.sortFunctions
-
       if (sortOrder.length > 0) {
         data.sort(function (item1, item2) {
           const sortField = sortOrder[0].sortField
@@ -296,7 +336,6 @@ export default {
       }
 
       pagination = this.$refs.vuetable.makePagination(data.length)
-
       return {
         pagination: pagination,
         data: data.slice(pagination.from - 1, pagination.to),
@@ -312,52 +351,57 @@ export default {
       this.loading = false
       this.$emit('kuantic:loaded')
     },
-  },
+    onCellChange (data) {
+      this.$emit('kuantic:cell-changed', data)
+    },
+    onAction (action, _id) {
+      this.$emit('kuantic:delete-item', _id)
+    },
+  }
 }
 </script>
 
 <style lang="scss">
-.kuantic-data-table {
-  min-height: 24rem;
+  .kuantic-data-table {
+    min-height: 24rem;
 
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  @media (max-width: 1258px) {
-    .pagination-link-btn:first-child, .pagination-link-btn:last-child {
-      display: none;
+    .form-group {
+      margin-bottom: 1rem;
     }
 
-    .pagination-link-btn:nth-child(2) {
-      border-top-left-radius: $btn-border-radius !important;
-      border-bottom-left-radius: $btn-border-radius !important;
+    @media (max-width: 1258px) {
+      .pagination-link-btn:first-child, .pagination-link-btn:last-child {
+        display: none;
+      }
+
+      .pagination-link-btn:nth-child(2) {
+        border-top-left-radius: $btn-border-radius !important;
+        border-bottom-left-radius: $btn-border-radius !important;
+      }
+
+      .pagination-link-btn:nth-last-child(2) {
+        border-top-right-radius: $btn-border-radius !important;
+        border-bottom-right-radius: $btn-border-radius !important;
+      }
     }
 
-    .pagination-link-btn:nth-last-child(2) {
-      border-top-right-radius: $btn-border-radius !important;
-      border-bottom-right-radius: $btn-border-radius !important;
+    @media (max-width: 576px) {
+      .hide-not-focused-btn:not(.focus) {
+        display: none;
+      }
+    }
+
+    .data-table-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 40%;
+      left: 50%;
     }
   }
-
-  @media (max-width: 576px) {
-    .hide-not-focused-btn:not(.focus) {
-      display: none;
-    }
+  .data-loading {
+    opacity: .5;
+    pointer-events: none;
   }
-
-  .data-table-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-  }
-}
-
-.data-loading {
-  opacity: .5;
-  pointer-events: none;
-}
 </style>

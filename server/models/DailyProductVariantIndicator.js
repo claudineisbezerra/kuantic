@@ -18,16 +18,6 @@ const DailyProductVariantIndicatorSchema = new Schema(
             required: true,
             trim: true
         },
-        image_id: {
-            type: Number,
-            required: true,
-            trim: true
-        },
-        image_src: {
-            type: String,
-            trim: true,
-            default: null
-        },
         title: {
             type: String,
             trim: true,
@@ -54,6 +44,16 @@ const DailyProductVariantIndicatorSchema = new Schema(
             trim: true
         },
         collection_title: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        image_id: {
+            type: Number,
+            required: true,
+            trim: true
+        },
+        image_src: {
             type: String,
             trim: true,
             default: null
@@ -103,17 +103,12 @@ const DailyProductVariantIndicatorSchema = new Schema(
             trim: true,
             default: null
         },
-        inventory_optimal: {
+        coverage_min: {
             type: Number,
             trim: true,
             default: null
         },
-        sales_potential: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sales_potential_avg: {
+        coverage_optimal: {
             type: Number,
             trim: true,
             default: null
@@ -123,27 +118,7 @@ const DailyProductVariantIndicatorSchema = new Schema(
             trim: true,
             default: null
         },
-        sales_volume_avg: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sales_volume_optimal: {
-            type: Number,
-            trim: true,
-            default: null
-        },
         sales_value: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sales_value_avg: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        sales_value_optimal: {
             type: Number,
             trim: true,
             default: null
@@ -152,39 +127,6 @@ const DailyProductVariantIndicatorSchema = new Schema(
             type: Number,
             trim: true,
             default: null
-        },
-        pc1_percentage: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        pc1_potential: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        pc1_potential_percentage: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        pc1_optimal: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        pc1_optimal_percentage: {
-            type: Number,
-            trim: true,
-            default: null
-        },
-        created_at: {
-            type: Date,
-            default: Date.now
-        },
-        updated_at: {
-            type: Date,
-            default: Date.now
         }
     },
     {
@@ -202,5 +144,8 @@ DailyProductVariantIndicatorSchema.statics.findByFilter = function(filterObj) {
         .exec();
 };
 
-const DailyProductVariantIndicator = mongoose.model('DailyProductVariantIndicator', DailyProductVariantIndicatorSchema);
+const DailyProductVariantIndicator = mongoose.model(
+    'DailyProductVariantIndicator',
+    DailyProductVariantIndicatorSchema
+);
 module.exports = { DailyProductVariantIndicator };

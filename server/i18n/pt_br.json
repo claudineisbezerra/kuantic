@@ -25,6 +25,7 @@
   "collections_error_NOTFOUND": "Collections não encontrado",
 	"configurations_error_NOTFOUND": "Configuração não encontrada",
 	"settings_error_NOTNUMERIC": "O campo não é numérico",
+	"settings_error_NOTDATE": "Data inválida",
 	"settings_error_UPDATE": "Não foi possível atualizar a configuração",
 	"settings_error_REMOVE": "Não foi possível remover a configuração",
 	"coverage_error_NOTFOUND": "Configuração não encontrada",
@@ -39,5 +40,8 @@
 	"purchase_header_by_product_type_summary": "Resumo por categoria",
 	"purchase_header_by_collection_product_type": "Compra por divisão e categoria",
 	"purchase_header_by_collection_product_type_summary": "Resumo por divisão e categoria",
-	"purchase_default_name": "Lista de compras"
+	"purchase_default_name": "Lista de compras",
+	"indicator_error_NOTFOUND": "Indicador não encontrado",
+	"dailyIndicator_error_NOTFOUND": "Indicador diário não encontrado",
+	"summaryIndicator_error_NOTFOUND": "Indicador resumo não encontrado"
 }

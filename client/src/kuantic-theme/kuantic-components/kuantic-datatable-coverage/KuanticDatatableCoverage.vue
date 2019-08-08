@@ -109,12 +109,12 @@ import FilterBar from './datatable-components/FilterBar.vue'
 import ItemsPerPage from './datatable-components/ItemsPerPage.vue'
 import DefaultPerPageDefinition from './data/items-per-page-definition'
 import QueryParams from './data/query-params'
+import DataTableStyles from './data/data-table-styles'
 import Vue from 'vue'
-import DataTableStyles from '../kuantic-datatable/data/data-table-styles'
 import SpringSpinner from 'epic-spinners/src/components/lib/SpringSpinner'
 
 export default {
-  name: 'kuantic-editable-data-table',
+  name: 'kuantic-datatable-coverage',
   components: {
     SpringSpinner,
     FilterBar,

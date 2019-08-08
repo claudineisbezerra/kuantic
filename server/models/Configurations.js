@@ -36,7 +36,43 @@ const ConfigurationsSchema = new Schema(
                     default: null
                 }
             }
-        ]
+        ],
+        calculation: {
+            days_of_calculation: {
+                title: {
+                    type: String,
+                    trim: true,
+                    default: null
+                },
+                start_date: {
+                    type: Date,
+                    required: true,
+                    trim: true
+                },
+                end_date: {
+                    type: Date,
+                    required: true,
+                    trim: true
+                },
+                number_of_days: {
+                    type: Number,
+                    trim: true,
+                    default: null
+                }
+            },
+            date_of_calculation: {
+                title: {
+                    type: String,
+                    trim: true,
+                    default: null
+                },
+                at_date: {
+                    type: Date,
+                    required: true,
+                    trim: true
+                }
+            }
+        }
     },
     {
         timestamps: {
