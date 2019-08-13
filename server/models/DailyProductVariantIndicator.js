@@ -18,7 +18,12 @@ const DailyProductVariantIndicatorSchema = new Schema(
             required: true,
             trim: true
         },
-        title: {
+        product_title: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        variant_title: {
             type: String,
             trim: true,
             default: null
@@ -96,7 +101,7 @@ const DailyProductVariantIndicatorSchema = new Schema(
         inventory_quantity: {
             type: Number,
             trim: true,
-            default: null
+            default: 0
         },
         inventory_unit_cost: {
             type: Number,
@@ -116,12 +121,12 @@ const DailyProductVariantIndicatorSchema = new Schema(
         sales_volume: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_value: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         pc1: {
             type: Number,

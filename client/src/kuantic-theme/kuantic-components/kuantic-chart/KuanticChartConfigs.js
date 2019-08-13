@@ -17,6 +17,18 @@ export const defaultConfig = {
     bodyFontSize: 14,
     bodyFontFamily: 'sans-serif',
   },
+  scales: {
+    yAxes: [{
+        ticks: {
+            beginAtZero: true
+        }
+    }],
+    yAxes: [{
+      ticks: {
+          beginAtZero: true
+      }
+    }]
+  },
   responsive: true,
   maintainAspectRatio: false,
 }

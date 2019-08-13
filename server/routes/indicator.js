@@ -2,17 +2,14 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const { Product } = require('../models/Product');
-const { ProductVariant } = require('../models/ProductVariant');
-const { ProductImage } = require('../models/ProductImage');
 const { Configurations } = require('../models/Configurations');
-const { ProductVariantIndicator } = require('../models/ProductVariantIndicator');
+const { SummaryProductVariantIndicator } = require('../models/SummaryProductVariantIndicator');
 const { DailyProductVariantIndicator } = require('../models/DailyProductVariantIndicator');
 const { InventoryItem } = require('../models/InventoryItem');
 const { InventoryLevel } = require('../models/InventoryLevel');
-const { Indicator } = require('../models/Indicator');
+const { Collect } = require('../models/Collect');
 const { Order } = require('../models/Order');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
-const CONSTANT = require('../utils/serverConstants');
 
 /**
  * @description GET /api/admin/indicator/composeDailyIndicators
@@ -21,22 +18,13 @@ router.get(
     '/composeDailyIndicators',
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
-        // 1. Get ALL Variant data
-        // 2. Get Inventory data of all productVariants (ITEM)
-        // 3. Get Inventory daily balance (Quantidade de estoque no dia. Será usado como histórico de estoques)
-        // 4. Configurar CRUD para CONFIG coverage properties
-        // 5. onfigurar CRUD para CONFIG de INTERVALO DE PROCESSAMENTO DE INFORMAÇÕES
-        // 6. Get and distribute coverage properties over Variants
-        // 7. Calcular quantidade de productVariants (QUANTIDADE DE ITENS VENDIDOS POR DIA)
-        // 8. Calcular valor de productVariants (VALOR DE ITENS VENDIDOS POR DIA)
         let dailyIndicators = await composeDailyIndicators();
-        console.log('/summaryIndicators dailyIndicators.length:', dailyIndicators.length);
 
         let results = {};
         if (dailyIndicators) {
             results.indicators = dailyIndicators;
         } else {
-            return res.status(404).json({ error: res.$t('summaryIndicator_error_NOTFOUND') });
+            return res.status(404).json({ error: res.$t('dailyIndicator_error_NOTFOUND') });
         }
 
         return res.status(200).json(results);
@@ -50,14 +38,7 @@ router.get(
     '/composeSummaryIndicators',
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
-        // TODOS OS DADOS DEVEM SER CALCULADOS POR DIA (Mesmo se não houver movimento, deverá haver registro com indicações zeradas)
-        // 9. Calcular PERIODO COM ESTOQUE
-        // 10. Calcular indicador diário de POTENCIAL DE VENDA
-        // 11. Calcular indicador diário de ESTOQUE IDEAL
-        // 12. Calcular indicador diário de PC1
-        // 13. Calcular indicador diário de PC1 / ITEM
-        let summaryIndicators = await composeDailyIndicators();
-        console.log('/summaryIndicators summaryIndicators.length:', summaryIndicators.length);
+        let summaryIndicators = await composeSummaryIndicators();
 
         let results = {};
         if (summaryIndicators) {
@@ -71,101 +52,29 @@ router.get(
 );
 
 /**
- * @description GET Compose Indicators collection
- * @returns { indicators } Indicators collection model
+ * @description GET Compose dailyIndicators
+ *              Variants -> InventoryItems -> Coverages -> Orders
+ *              await composeDailyOrders(
+ *                await composeDailyVariants()
+ *              );
+ * @returns { dailyIndicators } dailyIndicators collection
  */
 async function composeDailyIndicators() {
-    let startDateKey = computeDaysToDateKey(new Date(), -Math.abs(days_of_calculation));
-    let currentDateKey = getCurrentDateKey();
-
-    // Obter quantidade de dias com estoque
-    // SERÁ NECESSÁRIO MONTAR UM SELECT DISTINCT POR DATA
-    // RESPEITANDO O RANGE DE BUSCA a partir de dailyIndicators
-
-    // 1. Selecionar TODOS OS dailyIndicators contidos no RANGE DE DATAS (indicator_at)
-    //    que possuam (inventory_quantity) maior que ZEROS
-    // 2. Agrupar por (indicator_at, product_id, variant_id) e fazer COUNT dos registros
-
-    // let days_of_inventory = 0;
-    // dailyIndicators.forEach(async function(dailyIndicator) {
-    //     if (
-    //         parseInt(dailyIndicator.indicator_at) <= parseInt(currentDateKey) &&
-    //         parseInt(dailyIndicator.indicator_at) >= parseInt(startDateKey)
-    //     ) {
-    //         days_of_inventory = days_of_inventory + 1;
-    //     }
-    // });
-
-    return [];
-}
-/**
- * @description GET Compose dailyIndicators collection
- * @returns { dailyIndicators } dailyIndicators collection model
- */
-async function composeDailyIndicators() {
-    // Compose dailyIndicators
-    let dailyIndicators_0 = await composeDailyVariants();
-    let dailyIndicators_1 = await composeDailyInventoryItems(dailyIndicators_0);
-    let dailyIndicators_2 = await composeDailyCoverages(dailyIndicators_1);
-    let dailyIndicators = await composeDailyOrders(dailyIndicators_2);
-
-    // Persist dailyIndicators
-    dailyIndicators.forEach(async function(dailyIndicator) {
-        let filter = {
-            indicator_at: dailyIndicator.indicator_at,
-            product_id: dailyIndicator.product_id,
-            variant_id: dailyIndicator.variant_id
-        };
-        let update = {
-            $set: {
-                indicator_at: dailyIndicator.indicator_at,
-                product_id: dailyIndicator.product_id,
-                variant_id: dailyIndicator.variant_id,
-                title: dailyIndicator.title,
-                handle: dailyIndicator.handle,
-                product_type_id: dailyIndicator.product_type_id,
-                product_type_title: dailyIndicator.product_type_title,
-                collection_id: dailyIndicator.collection_id,
-                collection_title: dailyIndicator.collection_title,
-                image_id: dailyIndicator.image_id,
-                image_src: dailyIndicator.image_src,
-                sku: dailyIndicator.sku,
-                price: dailyIndicator.price,
-                size: dailyIndicator.size,
-                color: dailyIndicator.color,
-                material: dailyIndicator.material,
-                vendor: dailyIndicator.vendor,
-                inventory_item_id: dailyIndicator.inventory_item_id,
-                inventory_quantity: dailyIndicator.inventory_quantity,
-                inventory_unit_cost: dailyIndicator.inventory_unit_cost,
-                coverage_min: dailyIndicator.coverage_min,
-                coverage_optimal: dailyIndicator.coverage_optimal,
-                sales_volume: dailyIndicator.sales_volume,
-                sales_value: dailyIndicator.sales_value,
-                pc1: dailyIndicator.pc1
-            }
-        };
-        let options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        await DailyProductVariantIndicator.updateOne(filter, update, options, function(err, res) {
-            if (error) {
-                console.log(error);
-            }
-        });
-    });
-
+    let dailyIndicators = await composeDailyOrders(await composeDailyVariants());
+    saveDailyIndicators(dailyIndicators);
     return dailyIndicators;
 }
-
 /**
  * @description ADD ProductVariants data to dailyIndicators
- * @returns { dailyIndicators } dailyIndicators collection model
+ * @returns { dailyIndicators } dailyIndicators collection
  */
 async function composeDailyVariants() {
-    let paramObj = await getCalcParams();
+    let paramObj = await getCalculationParams();
     let at_date = paramObj.date_of_calculation.at_date
         ? paramObj.date_of_calculation.at_date
         : new Date();
     let indicator_at = parseToDateKey(at_date);
+    let collections = await getCollections();
 
     try {
         return Product.find({})
@@ -173,27 +82,39 @@ async function composeDailyVariants() {
             .then(products => {
                 let dailyIndicators = [];
                 products.forEach(async function(product) {
+                    let product_id = product.id;
                     let product_type = product.product_type;
+                    let product_title = product.title;
                     let variants = product.variants;
+                    let coverageParam = await getCoverageParams(product_type);
                     variants.forEach(async productVariant => {
                         let dailyIndicator = new DailyProductVariantIndicator();
                         dailyIndicator.indicator_at = indicator_at;
                         dailyIndicator.product_id = productVariant.product_id;
                         dailyIndicator.variant_id = productVariant.id;
                         dailyIndicator.image_id = productVariant.image_id;
-                        // Get image_src from images collection
+
                         let images = product.images;
                         let image_src = null;
                         images.forEach(async function(image) {
                             image_src = image['src'];
                         });
                         dailyIndicator.image_src = image_src;
-                        dailyIndicator.title = productVariant.product_title;
+                        dailyIndicator.product_title = product_title;
+                        dailyIndicator.variant_title = productVariant.title;
                         dailyIndicator.handle = productVariant.product_handle;
                         dailyIndicator.product_type_id = null;
                         dailyIndicator.product_type_title = product_type;
-                        dailyIndicator.collection_id = null;
-                        dailyIndicator.collection_title = null;
+                        dailyIndicator.collection_id = findPropertyValueByProductId(
+                            collections,
+                            product_id,
+                            'collection_id'
+                        );
+                        dailyIndicator.collection_title = findPropertyValueByProductId(
+                            collections,
+                            product_id,
+                            'collection_title'
+                        );
                         dailyIndicator.sku = productVariant.sku;
                         dailyIndicator.price = productVariant.price ? productVariant.price : 0.0;
                         dailyIndicator.size = productVariant.size ? productVariant.size : null;
@@ -208,6 +129,20 @@ async function composeDailyVariants() {
                         dailyIndicator.inventory_quantity = productVariant.inventory_quantity
                             ? productVariant.inventory_quantity
                             : 0.0;
+                        let inventoryItem = await getInventoryItem(
+                            productVariant.inventory_item_id
+                        );
+                        dailyIndicator.inventory_unit_cost = inventoryItem
+                            ? inventoryItem.cost
+                            : null;
+
+                        dailyIndicator.coverage_min = coverageParam.coverage_min
+                            ? coverageParam.coverage_min
+                            : 0;
+                        dailyIndicator.coverage_optimal = coverageParam.coverage_optimal
+                            ? coverageParam.coverage_optimal
+                            : 0;
+
                         dailyIndicators.push(dailyIndicator);
                     });
                 });
@@ -217,75 +152,18 @@ async function composeDailyVariants() {
         console.log(error);
     }
 }
-
 /**
- * @description ADD InventoryItem data to dailyIndicators
- * @param dailyIndicators dailyIndicators collection model
- * @returns { dailyIndicators } dailyIndicators collection model
+ * @description Get InventoryItem
+ * @param itemId ID of the item to get
+ * @returns { inventoryItem } inventoryItem object
  */
-async function composeDailyInventoryItems(dailyIndicators) {
-    if (!dailyIndicators) return;
-    try {
-        return InventoryItem.find({})
-            .exec()
-            .then(inventoryItems => {
-                inventoryItems.forEach(async function(inventoryItem) {
-                    dailyIndicators.forEach(async function(dailyIndicator) {
-                        if (dailyIndicator.inventory_item_id === inventoryItem.id) {
-                            dailyIndicator.inventory_unit_cost = inventoryItem.cost
-                                ? inventoryItem.cost
-                                : 0.0;
-                        }
-                    });
-                });
-                return dailyIndicators;
-            });
-    } catch (error) {
-        console.log(error);
-    }
-}
+async function getInventoryItem(itemId) {
+    if (!itemId) return;
 
-/**
- * @description ADD Coverages data to dailyIndicators
- * @param dailyIndicators dailyIndicators collection model
- * @returns { dailyIndicators } dailyIndicators collection model
- */
-async function composeDailyCoverages(dailyIndicators) {
-    if (!dailyIndicators) return;
-    try {
-        return Configurations.find({})
-            .exec()
-            .then(configurations => {
-                configurations.forEach(async function(configuration) {
-                    configuration.coverages.forEach(async function(coverage) {
-                        dailyIndicators.forEach(async function(dailyIndicator) {
-                            if (dailyIndicator.product_type_title === coverage.product_type_title) {
-                                dailyIndicator.coverage_min = coverage.coverage_min;
-                                dailyIndicator.coverage_optimal = coverage.coverage_optimal;
-                            }
-                        });
-                    });
-                });
-                return dailyIndicators;
-            });
-    } catch (error) {
-        console.log(error);
-    }
+    let filter = { id: itemId };
+    let inventoryItem = await InventoryItem.findOne(filter).exec();
+    return inventoryItem;
 }
-
-/**
- * @description GET configuration parameters to execute general calculations
- * @returns { paramObj } Calculation configurations
- */
-async function getCalcParams() {
-    let configurations = await Configurations.find({}).exec();
-    let paramObj = {};
-    configurations.forEach(function(configuration) {
-        paramObj = configuration.calculation;
-    });
-    return paramObj;
-}
-
 /**
  * @description ADD Orders data to dailyIndicators
  * @param dailyIndicators dailyIndicators collection model
@@ -294,7 +172,7 @@ async function getCalcParams() {
 async function composeDailyOrders(dailyIndicators) {
     if (!dailyIndicators) return;
 
-    let paramObj = await getCalcParams();
+    let paramObj = await getCalculationParams();
     let at_date = paramObj.date_of_calculation.at_date;
     let startDate = parseDatetimeToDate(at_date);
     let endDate = parseDatetimeToDate(computeDaysToDate(at_date, 1));
@@ -355,26 +233,429 @@ async function composeDailyOrders(dailyIndicators) {
         console.log(error);
     }
 }
+/**
+ * @description Persist dailyIndicators to database
+ * @param dailyIndicators dailyIndicators collection model
+ */
+async function saveDailyIndicators(dailyIndicators) {
+    if (!dailyIndicators) return;
+
+    dailyIndicators.forEach(async function(indicator) {
+        let filter = {
+            indicator_at: indicator.indicator_at,
+            product_id: indicator.product_id,
+            variant_id: indicator.variant_id
+        };
+        let update = {
+            $set: {
+                indicator_at: indicator.indicator_at,
+                product_id: indicator.product_id,
+                variant_id: indicator.variant_id,
+                product_title: indicator.product_title,
+                variant_title: indicator.variant_title,
+                handle: indicator.handle,
+                product_type_id: indicator.product_type_id,
+                product_type_title: indicator.product_type_title,
+                collection_id: indicator.collection_id,
+                collection_title: indicator.collection_title,
+                image_id: indicator.image_id,
+                image_src: indicator.image_src,
+                sku: indicator.sku,
+                price: indicator.price,
+                size: indicator.size,
+                color: indicator.color,
+                material: indicator.material,
+                vendor: indicator.vendor,
+                inventory_item_id: indicator.inventory_item_id,
+                inventory_quantity: indicator.inventory_quantity,
+                inventory_unit_cost: indicator.inventory_unit_cost,
+                coverage_min: indicator.coverage_min,
+                coverage_optimal: indicator.coverage_optimal,
+                sales_volume: indicator.sales_volume,
+                sales_value: indicator.sales_value,
+                pc1: indicator.pc1
+            }
+        };
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        await DailyProductVariantIndicator.updateOne(filter, update, options, function(error, res) {
+            if (error) {
+                console.log(error);
+            }
+        });
+    });
+}
 
 /**
- * @description GET ProductVariants
- * @returns { productVariants } ProductVariants collection model
+ * @description GET Compose summaryIndicators
+ *              Variants ->InventoryItems -> Coverages -> Orders
+ *              await composeSummaryOrders(
+ *                await composeSummaryVariants()
+ *              );
+ * @returns { indicators } summaryIndicators collection
  */
-function getProductVariants() {
-    let variantProjection = {
-        created_at: false,
-        updated_at: false,
-        __v: false,
-        _id: false
-    };
+async function composeSummaryIndicators() {
+    let summaryIndicators = await composeSummaryAggregated(await composeSummaryVariants());
+    saveSummaryIndicators(summaryIndicators);
+    return summaryIndicators;
+}
+/**
+ * @description ADD ProductVariants data to summaryIndicators
+ * @returns { summaryIndicators } summaryIndicators collection
+ */
+async function composeSummaryVariants() {
+    let collections = await getCollections();
 
-    ProductVariant.find({}, variantProjection)
-        .then(productVariants => {
-            return productVariants;
-        })
-        .catch(error => {
-            console.log(error);
+    try {
+        return Product.find({})
+            .exec()
+            .then(products => {
+                let summaryIndicators = [];
+                products.forEach(async function(product) {
+                    let product_id = product.id;
+                    let product_type = product.product_type;
+                    let product_title = product.title;
+                    let variants = product.variants;
+                    let coverageParam = await getCoverageParams(product_type);
+                    variants.forEach(async productVariant => {
+                        let summaryIndicator = new SummaryProductVariantIndicator();
+                        summaryIndicator.product_id = productVariant.product_id;
+                        summaryIndicator.variant_id = productVariant.id;
+                        summaryIndicator.image_id = productVariant.image_id;
+
+                        let images = product.images;
+                        let image_src = null;
+                        images.forEach(async function(image) {
+                            image_src = image['src'];
+                        });
+                        summaryIndicator.image_src = image_src;
+
+                        summaryIndicator.product_title = product_title;
+                        summaryIndicator.variant_title = productVariant.title;
+                        summaryIndicator.handle = productVariant.product_handle;
+                        summaryIndicator.product_type_id = null;
+                        summaryIndicator.product_type_title = product_type;
+                        summaryIndicator.collection_id = findPropertyValueByProductId(
+                            collections,
+                            product_id,
+                            'collection_id'
+                        );
+                        summaryIndicator.collection_title = findPropertyValueByProductId(
+                            collections,
+                            product_id,
+                            'collection_title'
+                        );
+                        summaryIndicator.sku = productVariant.sku;
+                        summaryIndicator.price = productVariant.price ? productVariant.price : 0.0;
+                        summaryIndicator.size = productVariant.size ? productVariant.size : null;
+                        summaryIndicator.color = productVariant.color ? productVariant.color : null;
+                        summaryIndicator.material = productVariant.material
+                            ? productVariant.material
+                            : null;
+                        summaryIndicator.vendor = productVariant.vendor
+                            ? productVariant.vendor
+                            : null;
+                        summaryIndicator.inventory_item_id = productVariant.inventory_item_id;
+                        summaryIndicator.inventory_quantity = productVariant.inventory_quantity
+                            ? productVariant.inventory_quantity
+                            : 0.0;
+                        let inventoryItem = await getInventoryItem(
+                            productVariant.inventory_item_id
+                        );
+                        summaryIndicator.inventory_unit_cost = inventoryItem
+                            ? inventoryItem.cost
+                            : null;
+
+                        summaryIndicator.coverage_min = coverageParam.coverage_min
+                            ? coverageParam.coverage_min
+                            : 0;
+                        summaryIndicator.coverage_optimal = coverageParam.coverage_optimal
+                            ? coverageParam.coverage_optimal
+                            : 0;
+
+                        summaryIndicators.push(summaryIndicator);
+                    });
+                });
+                return summaryIndicators;
+            });
+    } catch (error) {
+        console.log(error);
+    }
+}
+/**
+ * @description Computes all aggregated indicators
+ * @returns { aggregatedIndicators } aggregatedIndicators object
+ */
+async function composeSummaryAggregated(summaryIndicators) {
+    if (!summaryIndicators) return;
+
+    let paramObj = await getCalculationParams();
+    let number_of_days = paramObj.days_of_calculation.number_of_days;
+    let startDateKey = computeDaysToDateKey(new Date(), -Math.abs(number_of_days));
+    let endDateKey = computeDaysToDateKey(new Date(), 1);
+
+    let pipes = [
+        {
+            $match: {
+                $and: [
+                    { indicator_at: { $gte: startDateKey } },
+                    { indicator_at: { $lt: endDateKey } },
+                    { inventory_quantity: { $gt: 0 } }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    variant_id: '$variant_id'
+                },
+                sales_volume: { $sum: '$sales_volume' },
+                avg_sales_volume: { $avg: '$sales_volume' },
+                sales_value: { $sum: '$sales_value' },
+                avg_sales_value: { $avg: '$sales_value' },
+                inventory_available_days: { $sum: 1 }
+            }
+        },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    variant_id: '$_id.variant_id',
+                    sales_volume: '$sales_volume',
+                    avg_sales_volume: '$avg_sales_volume',
+                    sales_value: '$sales_value',
+                    inventory_available_days: '$inventory_available_days'
+                }
+            }
+        },
+        {
+            $sort: {
+                variant_id: 1
+            }
+        }
+    ];
+    let aggregatedIndicators = [];
+    let cursor = DailyProductVariantIndicator.aggregate(pipes)
+        .cursor({ batchSize: 1000 })
+        .exec();
+    while ((aggregatedIndicator = await cursor.next())) {
+        aggregatedIndicators.push(aggregatedIndicator);
+    }
+
+    aggregatedIndicators.forEach(async function(aggregatedIndicator) {
+        summaryIndicators.forEach(async function(summaryIndicator) {
+            if (aggregatedIndicator.variant_id === summaryIndicator.variant_id) {
+                summaryIndicator.inventory_available_days =
+                    aggregatedIndicator.inventory_available_days;
+                summaryIndicator.sales_volume = aggregatedIndicator.sales_volume;
+
+                let salesPotential = computeSalesPotential(
+                    aggregatedIndicator.sales_volume,
+                    aggregatedIndicator.inventory_available_days
+                );
+
+                let inventoryOptimal = computeInventoryOptimal(
+                    summaryIndicator.coverage_optimal,
+                    salesPotential
+                );
+                summaryIndicator.inventory_optimal = inventoryOptimal;
+                summaryIndicator.sales_potential = salesPotential;
+                summaryIndicator.sales_volume_avg = aggregatedIndicator.sales_volume_avg;
+                summaryIndicator.sales_value = aggregatedIndicator.sales_value;
+                summaryIndicator.sales_value_avg = aggregatedIndicator.sales_value_avg;
+            }
         });
+    });
+
+    return summaryIndicators;
+}
+/**
+ * @description Compute sales potential
+ * @param summaryIndicators salesPotential
+ */
+function computeSalesPotential(salesVolume, inventoryAvailableDays) {
+    let salesPotential = parseFloat(0.0).toFixed(2);
+    if (parseFloat(inventoryAvailableDays) <= parseFloat(0)) {
+        return salesPotential;
+    }
+
+    salesPotential = parseFloat(salesVolume / inventoryAvailableDays).toFixed(2);
+    return salesPotential;
+}
+/**
+ * @description Compute inventory optimal
+ * @param summaryIndicators inventoryOptimal
+ */
+function computeInventoryOptimal(coverageOptimal, salesPotential) {
+    let inventoryOptimal = parseInt(0);
+    if (parseInt(salesPotential) <= parseInt(0)) {
+        return inventoryOptimal;
+    }
+
+    inventoryOptimal = parseInt(coverageOptimal * salesPotential);
+    return inventoryOptimal;
+}
+/**
+ * @description Persist summaryIndicators to database
+ * @param summaryIndicators summaryIndicators collection
+ */
+async function saveSummaryIndicators(summaryIndicators) {
+    if (!summaryIndicators) return;
+
+    summaryIndicators.forEach(async function(indicator) {
+        let filter = {
+            product_id: indicator.product_id,
+            variant_id: indicator.variant_id
+        };
+        let update = {
+            $set: {
+                product_id: indicator.product_id,
+                variant_id: indicator.variant_id,
+                product_title: indicator.product_title,
+                variant_title: indicator.variant_title,
+                handle: indicator.handle,
+                product_type_id: indicator.product_type_id,
+                product_type_title: indicator.product_type_title,
+                collection_id: indicator.collection_id,
+                collection_title: indicator.collection_title,
+                image_id: indicator.image_id,
+                image_src: indicator.image_src,
+                sku: indicator.sku,
+                price: indicator.price,
+                size: indicator.size,
+                color: indicator.color,
+                material: indicator.material,
+                vendor: indicator.vendor,
+                inventory_available_days: indicator.inventory_available_days,
+                inventory_item_id: indicator.inventory_item_id,
+                inventory_quantity: indicator.inventory_quantity,
+                inventory_unit_cost: indicator.inventory_unit_cost,
+                inventory_optimal: indicator.inventory_optimal,
+                coverage_min: indicator.coverage_min,
+                coverage_optimal: indicator.coverage_optimal,
+                sales_potential: indicator.sales_potential,
+                sales_potential_avg: indicator.sales_potential_avg,
+                sales_volume: indicator.sales_volume,
+                sales_volume_avg: indicator.sales_volume_avg,
+                sales_volume_optimal: indicator.sales_volume_optimal,
+                sales_value: indicator.sales_value,
+                sales_value_avg: indicator.sales_value_avg,
+                sales_value_optimal: indicator.sales_value_optimal,
+                pc1: indicator.pc1,
+                pc1_percentage: indicator.pc1_percentage,
+                pc1_potential: indicator.pc1_potential,
+                pc1_potential_percentage: indicator.pc1_potential_percentage,
+                pc1_optimal: indicator.pc1_optimal,
+                pc1_optimal_percentage: indicator.pc1_optimal_percentage
+            }
+        };
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        await SummaryProductVariantIndicator.updateOne(filter, update, options, function(
+            error,
+            res
+        ) {
+            if (error) {
+                console.log(error);
+            }
+        });
+    });
+}
+/**
+ * @description Compose Collects array of objects using ( Collect + SmartCollection  | CustomCollection)
+ * @returns { collects } Formated <Array>collects[<collect>]
+ */
+async function getCollections() {
+    let pipes = [
+        {
+            $lookup: {
+                from: 'customCollections',
+                localField: 'collection_id',
+                foreignField: 'id',
+                as: 'custom_collections'
+            }
+        },
+        {
+            $lookup: {
+                from: 'smartCollections',
+                localField: 'collection_id',
+                foreignField: 'id',
+                as: 'smart_collections'
+            }
+        },
+        { $unwind: { path: '$custom_collections', preserveNullAndEmptyArrays: true } },
+        { $unwind: { path: '$smart_collections', preserveNullAndEmptyArrays: true } },
+        {
+            $replaceRoot: {
+                newRoot: {
+                    $mergeObjects: [
+                        { collection_id: '$collection_id', product_id: '$product_id' },
+                        { collection_title: '$custom_collections.title' },
+                        { collection_title: '$smart_collections.title' }
+                    ]
+                }
+            }
+        },
+        {
+            $sort: {
+                collection_id: 1,
+                product_id: 1
+            }
+        }
+    ];
+
+    let collects = [];
+    let cursor = Collect.aggregate(pipes)
+        .cursor({ batchSize: 1000 })
+        .exec();
+    while ((collect = await cursor.next())) {
+        collects.push(collect);
+    }
+
+    return collects;
+}
+/**
+ * @description Find property value in a collection based in product_id
+ * @returns { value }Value of the property
+ */
+function findPropertyValueByProductId(collection, product_id, propertyName) {
+    if (!collection || !product_id || !propertyName) return;
+    let result;
+    collection.forEach(function(obj) {
+        if (parseInt(obj.product_id) === parseInt(product_id)) {
+            result = obj[propertyName];
+        }
+    });
+    return result;
+}
+/**
+ * @description GET configuration parameters for calculation
+ * @returns { paramObj } Calculation configurations
+ */
+async function getCalculationParams() {
+    let configurations = await Configurations.find({}).exec();
+    let paramObj = {};
+    configurations.forEach(function(configuration) {
+        paramObj = configuration.calculation;
+    });
+    return paramObj;
+}
+/**
+ * @description GET configuration parameters for coverage distribution
+ * @returns { paramObj } Coverages configurations
+ */
+async function getCoverageParams(productTypeTitle) {
+    if (!productTypeTitle) return;
+
+    let coverage = {};
+    let cursor = Configurations.aggregate()
+        .cursor({ batchSize: 1000 })
+        .exec();
+    while ((configuration = await cursor.next())) {
+        for (let i = 0; i < configuration.coverages.length; i++) {
+            if (configuration.coverages[i].product_type_title === productTypeTitle) {
+                coverage = configuration.coverages[i];
+            }
+        }
+    }
+    return coverage;
 }
 /**
  * @description Convert string date to dateKey format
@@ -403,7 +684,7 @@ function parseDatetimeToDate(stringDate) {
 }
 /**
  * @description GET Formatted date key
- * @returns { Date } Format date YYYYMMDD
+ * @returns { Date } Cast to integer in format YYYYMMDD
  */
 function getCurrentDateKey() {
     let today = new Date();
@@ -417,11 +698,11 @@ function getCurrentDateKey() {
         mm = `0${mm}`;
     }
     let formattedDate = `${yyyy}${mm}${dd}`;
-    return formattedDate;
+    return parseInteger(formattedDate);
 }
 /**
  * @description GET Compute days to Date() and return formattedDate
- * @returns { formattedDate } Format date YYYYMMDD
+ * @returns { formattedDate } Cast to integer in format YYYYMMDD
  */
 function computeDaysToDateKey(date, days) {
     if (!days) return;
@@ -437,7 +718,7 @@ function computeDaysToDateKey(date, days) {
         mm = `0${mm}`;
     }
     let formattedDate = `${yyyy}${mm}${dd}`;
-    return formattedDate;
+    return parseInt(formattedDate);
 }
 /**
  * @description GET Compute days to Date()
@@ -446,17 +727,6 @@ function computeDaysToDateKey(date, days) {
 function computeDaysToDate(date, days) {
     if (!days) return;
     date.setDate(date.getDate() + parseInt(days));
-
-    // let dd = date.getDate();
-    // let mm = date.getMonth() + 1;
-    // let yyyy = date.getFullYear();
-    // if (dd < 10) {
-    //     dd = `0${dd}`;
-    // }
-    // if (mm < 10) {
-    //     mm = `0${mm}`;
-    // }
-    // let formattedDate = `${yyyy}${mm}${dd}`;
     return date;
 }
 /**

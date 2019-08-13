@@ -11,38 +11,33 @@ export default {
       sortField: 'indicator_at'
     },
     {
-      name: 'collection_title',
-      title: 'Divisão',
-      sortField: 'collection_title'
-    },
-    {
       name: 'product_type_title',
       title: 'Categoria',
       sortField: 'product_type_title'
     },
     {
-      name: 'title',
+      name: 'variant_title',
       title: 'Produto',
-      sortField: 'title'
+      sortField: 'variant_title'
     },
     {
       name: 'inventory_quantity',
-      title: 'Estoque',
+      title: 'Estoque atual',
       sortField: 'inventory_quantity'
     },
     {
       name: 'coverage_optimal',
-      title: 'Cobertura',
+      title: 'Cobertura ideal (Dias)',
       sortField: 'coverage_optimal'
     },
     {
       name: 'sales_volume',
-      title: 'Quantidade vendida',
+      title: 'Volume de vendas',
       sortField: 'sales_volume'
     },
     {
       name: 'sales_value',
-      title: 'Valor vendido',
+      title: 'Valor de vendas',
       sortField: 'sales_value'
     }
   ],

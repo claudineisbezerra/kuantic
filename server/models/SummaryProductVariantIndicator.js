@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ProductVariantIndicatorSchema = new Schema(
+const SummaryProductVariantIndicatorSchema = new Schema(
     {
         product_id: {
             type: Number,
@@ -13,7 +13,12 @@ const ProductVariantIndicatorSchema = new Schema(
             required: true,
             trim: true
         },
-        title: {
+        product_title: {
+            type: String,
+            trim: true,
+            default: null
+        },
+        variant_title: {
             type: String,
             trim: true,
             default: null
@@ -83,6 +88,11 @@ const ProductVariantIndicatorSchema = new Schema(
             trim: true,
             default: null
         },
+        inventory_available_days: {
+            type: Number,
+            trim: true,
+            default: null
+        },
         inventory_item_id: {
             type: Number,
             trim: true,
@@ -91,9 +101,9 @@ const ProductVariantIndicatorSchema = new Schema(
         inventory_quantity: {
             type: Number,
             trim: true,
-            default: null
+            default: 0
         },
-        inventory_cost: {
+        inventory_unit_cost: {
             type: Number,
             trim: true,
             default: null
@@ -101,47 +111,57 @@ const ProductVariantIndicatorSchema = new Schema(
         inventory_optimal: {
             type: Number,
             trim: true,
+            default: 0
+        },
+        coverage_min: {
+            type: Number,
+            trim: true,
+            default: null
+        },
+        coverage_optimal: {
+            type: Number,
+            trim: true,
             default: null
         },
         sales_potential: {
             type: Number,
             trim: true,
-            default: null
+            default: 0
         },
         sales_potential_avg: {
             type: Number,
             trim: true,
-            default: null
+            default: 0
         },
         sales_volume: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_volume_avg: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_volume_optimal: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_value: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_value_avg: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         sales_value_optimal: {
             type: Number,
             trim: true,
-            default: null
+            default: 0.0
         },
         pc1: {
             type: Number,
@@ -172,14 +192,6 @@ const ProductVariantIndicatorSchema = new Schema(
             type: Number,
             trim: true,
             default: null
-        },
-        created_at: {
-            type: Date,
-            default: Date.now
-        },
-        updated_at: {
-            type: Date,
-            default: Date.now
         }
     },
     {
@@ -190,15 +202,15 @@ const ProductVariantIndicatorSchema = new Schema(
     }
 );
 
-ProductVariantIndicatorSchema.set('collection', 'productVariantIndicators');
-ProductVariantIndicatorSchema.statics.findByFilter = function(filterObj) {
+SummaryProductVariantIndicatorSchema.set('collection', 'summaryProductVariantIndicators');
+SummaryProductVariantIndicatorSchema.statics.findByFilter = function(filterObj) {
     return this.find(filterObj)
         .sort({ sales_volume: 'desc', sales_potencial: 'desc' })
         .exec();
 };
 
-const ProductVariantIndicator = mongoose.model(
-    'ProductVariantIndicator',
-    ProductVariantIndicatorSchema
+const SummaryProductVariantIndicator = mongoose.model(
+    'SummaryProductVariantIndicator',
+    SummaryProductVariantIndicatorSchema
 );
-module.exports = { ProductVariantIndicator };
+module.exports = { SummaryProductVariantIndicator };

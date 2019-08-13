@@ -6,44 +6,49 @@ export default {
       width: '4%',
     },
     {
-      name: 'indicator_at',
-      title: 'Data',
-      sortField: 'indicator_at'
-    },
-    {
-      name: 'collection_title',
-      title: 'Divisão',
-      sortField: 'collection_title'
-    },
-    {
       name: 'product_type_title',
       title: 'Categoria',
       sortField: 'product_type_title'
     },
     {
-      name: 'title',
+      name: 'variant_title',
       title: 'Produto',
-      sortField: 'title'
+      sortField: 'variant_title'
+    },
+    {
+      name: 'inventory_available_days',
+      title: 'Período com estoque (Dias)',
+      sortField: 'inventory_available_days'
     },
     {
       name: 'inventory_quantity',
-      title: 'Estoque',
+      title: 'Estoque atual',
       sortField: 'inventory_quantity'
     },
     {
-      name: 'coverage_optimal',
-      title: 'Cobertura',
-      sortField: 'coverage_optimal'
+      name: 'inventory_optimal',
+      title: 'Estoque ideal',
+      sortField: 'inventory_optimal'
     },
     {
       name: 'sales_volume',
-      title: 'Quantidade vendida',
+      title: 'Volume de vendas',
       sortField: 'sales_volume'
     },
     {
       name: 'sales_value',
-      title: 'Valor vendido',
+      title: 'Valor de vendas',
       sortField: 'sales_value'
+    },
+    {
+      name: 'sales_potential',
+      title: 'Potencial de venda (Unidade / Dia)',
+      sortField: 'sales_potential'
+    },
+    {
+      name: 'coverage_optimal',
+      title: 'Cobertura ideal (Dias)',
+      sortField: 'coverage_optimal'
     }
   ],
   sortFunctions: {

@@ -58,12 +58,17 @@ const PurchaseSchema = new Schema(
                         required: true,
                         trim: true
                     },
+                    product_title: {
+                        type: String,
+                        trim: true,
+                        default: null
+                    },
                     variant_id: {
                         type: String,
                         required: true,
                         trim: true
                     },
-                    title: {
+                    variant_title: {
                         type: String,
                         trim: true,
                         default: null
@@ -133,7 +138,7 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    inventory_cost: {
+                    inventory_unit_cost: {
                         type: String,
                         trim: true,
                         default: null
@@ -172,12 +177,17 @@ const PurchaseSchema = new Schema(
                         required: true,
                         trim: true
                     },
+                    product_title: {
+                        type: String,
+                        trim: true,
+                        default: null
+                    },
                     variant_id: {
                         type: String,
                         required: true,
                         trim: true
                     },
-                    title: {
+                    variant_title: {
                         type: String,
                         trim: true,
                         default: null
@@ -247,7 +257,7 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    inventory_cost: {
+                    inventory_unit_cost: {
                         type: String,
                         trim: true,
                         default: null

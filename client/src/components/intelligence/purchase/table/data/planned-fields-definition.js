@@ -7,9 +7,9 @@ export default {
       width: '4%',
     },
     {
-      name: 'title',
+      name: 'variant_title',
       title: 'Produto',
-      sortField: 'title',
+      sortField: 'variant_title',
       width: '25%',
     },
     {
@@ -32,26 +32,32 @@ export default {
     },
     {
       name: 'inventory_quantity',
-      title: 'Quantidade estoque',
+      title: 'Quantidade em estoque',
       sortField: 'inventory_quantity',
       width: '10%',
     },
     {
-      name: 'inventory_cost',
+      name: 'inventory_optimal',
+      title: 'Estoque ideal',
+      sortField: 'inventory_optimal',
+      width: '10%',
+    },
+    {
+      name: 'inventory_unit_cost',
       title: 'Custo unitário',
-      sortField: 'inventory_cost',
+      sortField: 'inventory_unit_cost',
       width: '10%',
     },
     {
       name: 'purchase_planned_quantity_to_buy',
-      title: 'Quantidade total',
-      sortField: 'purchase_planned_quantity_to_buy',
+      title: 'Quantidade da compra',
+      sortField: 'purchase_executed_quantity_to_buy',
       width: '10%',
     },
     {
       name: 'purchase_planned_value_to_buy',
-      title: 'Custo total',
-      sortField: 'purchase_planned_value_to_buy',
+      title: 'Valor da compra',
+      sortField: 'purchase_executed_value_to_buy',
       width: '10%',
     }
   ],

@@ -7,16 +7,19 @@ const PurchasePlannedItemSchema = new Schema(
         product_id: {
             type: String,
             required: true,
+            trim: true
+        },
+        product_title: {
+            type: String,
             trim: true,
-            unique: true
+            default: null
         },
         variant_id: {
             type: String,
             required: true,
-            trim: true,
-            unique: true
+            trim: true
         },
-        title: {
+        variant_title: {
             type: String,
             trim: true,
             default: null
@@ -88,7 +91,7 @@ const PurchasePlannedItemSchema = new Schema(
             trim: true,
             default: null
         },
-        inventory_cost: {
+        inventory_unit_cost: {
             type: String,
             trim: true,
             default: null

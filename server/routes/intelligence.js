@@ -11,7 +11,7 @@ const { PriceRange } = require('../models/PriceRange');
 const { Purchase } = require('../models/Purchase');
 const { PurchasePlannedItem } = require('../models/PurchasePlannedItem');
 const { PurchaseExecutedItem } = require('../models/PurchaseExecutedItem');
-const { ProductVariantIndicator } = require('../models/ProductVariantIndicator');
+const { SummaryProductVariantIndicator } = require('../models/SummaryProductVariantIndicator');
 
 /**
  * @description GET /api/admin/intelligence/purchase
@@ -159,10 +159,16 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         executed_budget_not_used: executed_budget_not_used
     };
 
-    let variantIndicators = await ProductVariantIndicator.findByFilter(filterObj);
-    if (params && variantIndicators) {
-        let filter = { 'params.purchase_id': params.purchase_id };
-        let update = computeRepurchase(params, variantIndicators);
+    let summaryProductVariantIndicators = await SummaryProductVariantIndicator.findByFilter(
+        filterObj
+    );
+
+    if (params && summaryProductVariantIndicators) {
+        let filter = {};
+        if (params.purchase_id) {
+            filter = { 'params.purchase_id': params.purchase_id };
+        }
+        let update = computeRepurchase(params, summaryProductVariantIndicators);
         let options = { upsert: true, new: true, setDefaultsOnInsert: true };
         let purchase = await Purchase.findOneAndUpdate(filter, update, options);
 
@@ -175,11 +181,13 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
                 'purchase_planned_quantity_to_buy',
                 'purchase_executed_quantity_to_buy'
             ];
+
             let objParam = {};
             objParam.budgetType = CONSTANT.BUDGET.TYPE.PLANNED;
             objParam.groupByData = purchase.purchases;
             objParam.groupByFields = groupByFields_plannedBudget;
             objParam.sumByFields = sumByFields_plannedBudget;
+
             purchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
                 objParam
             );
@@ -201,7 +209,6 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
             objParam.sumByFields = sumByFields_plannedBudget;
             purchasePlannedBudgetGroupedByProductType = groupBySumProductType(objParam);
         }
-
         let purchaseExecutedBudgetGroupedByCollectionProductType = [];
         if (executedBudget && parseFloat(executedBudget) > 0) {
             let groupByFields_executedBudget = ['collection_title', 'product_type_title'];
@@ -243,12 +250,11 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         results.purchase = purchase;
         results.purchasePlannedBudgetGroupedByCollectionProductType = purchasePlannedBudgetGroupedByCollectionProductType;
         results.purchasePlannedBudgetGroupedByProductType = purchasePlannedBudgetGroupedByProductType;
-
         results.purchaseExecutedBudgetGroupedByCollectionProductType = purchaseExecutedBudgetGroupedByCollectionProductType;
         results.purchaseExecutedBudgetGroupedByProductType = purchaseExecutedBudgetGroupedByProductType;
         return res.status(200).json(results);
     } else {
-        return res.status(404).json({ error: res.$t('variantIndicators_error_NOTFOUND') });
+        return res.status(404).json({ error: res.$t('summaryIndicator_error_NOTFOUND') });
     }
 });
 
@@ -321,14 +327,15 @@ function prototypePurchase(params, plannedItems, executedItems) {
 
 /**
  * Prototype new object with parameter properties
- * @param variantIndicators List of object as of search result
+ * @param summaryProductVariantIndicators List of object as of search result
  * @param budgetType Type of budget to be processed I.E.: 'planned' or 'executed'
  * @param qtyBuyIn Qty of products to buy
  * @param valueBuyIn Value of products to buy
  * @returns {Purchase} Purchase object model
  */
-function prototypePurchaseItem(variantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
-    if (!variantIndicator || !qtyBuyIn || !valueBuyIn) return purchaseItem;
+function prototypePurchaseItem(summaryProductVariantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
+    if (!summaryProductVariantIndicator || !budgetType) return;
+    if (qtyBuyIn <= 0 || valueBuyIn <= 0) return;
 
     let purchaseItem = null;
     if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
@@ -338,24 +345,26 @@ function prototypePurchaseItem(variantIndicator, budgetType, qtyBuyIn, valueBuyI
         purchaseItem = new PurchaseExecutedItem();
     }
 
-    purchaseItem.product_id = variantIndicator.product_id;
-    purchaseItem.variant_id = variantIndicator.variant_id;
-    purchaseItem.title = variantIndicator.title;
-    purchaseItem.handle = variantIndicator.handle;
-    purchaseItem.collection_id = variantIndicator.collection_id;
-    purchaseItem.collection_title = variantIndicator.collection_title;
-    purchaseItem.product_type_id = variantIndicator.product_type_id;
-    purchaseItem.product_type_title = variantIndicator.product_type_title;
-    purchaseItem.image_src = variantIndicator.image_src;
-    purchaseItem.sku = variantIndicator.sku;
-    purchaseItem.price = variantIndicator.price;
-    purchaseItem.size = variantIndicator.size;
-    purchaseItem.color = variantIndicator.color;
-    purchaseItem.material = variantIndicator.material;
-    purchaseItem.vendor = variantIndicator.vendor;
-    purchaseItem.inventory_quantity = variantIndicator.inventory_quantity;
-    purchaseItem.inventory_cost = variantIndicator.inventory_cost;
-    purchaseItem.inventory_optimal = variantIndicator.inventory_optimal;
+    purchaseItem.product_id = summaryProductVariantIndicator.product_id;
+    purchaseItem.product_title = summaryProductVariantIndicator.product_title;
+    purchaseItem.variant_id = summaryProductVariantIndicator.variant_id;
+    purchaseItem.variant_title = summaryProductVariantIndicator.variant_title;
+    purchaseItem.title = summaryProductVariantIndicator.title;
+    purchaseItem.handle = summaryProductVariantIndicator.handle;
+    purchaseItem.collection_id = summaryProductVariantIndicator.collection_id;
+    purchaseItem.collection_title = summaryProductVariantIndicator.collection_title;
+    purchaseItem.product_type_id = summaryProductVariantIndicator.product_type_id;
+    purchaseItem.product_type_title = summaryProductVariantIndicator.product_type_title;
+    purchaseItem.image_src = summaryProductVariantIndicator.image_src;
+    purchaseItem.sku = summaryProductVariantIndicator.sku;
+    purchaseItem.price = summaryProductVariantIndicator.price;
+    purchaseItem.size = summaryProductVariantIndicator.size;
+    purchaseItem.color = summaryProductVariantIndicator.color;
+    purchaseItem.material = summaryProductVariantIndicator.material;
+    purchaseItem.vendor = summaryProductVariantIndicator.vendor;
+    purchaseItem.inventory_quantity = summaryProductVariantIndicator.inventory_quantity;
+    purchaseItem.inventory_unit_cost = summaryProductVariantIndicator.inventory_unit_cost;
+    purchaseItem.inventory_optimal = summaryProductVariantIndicator.inventory_optimal;
 
     purchaseItem.purchase_planned_quantity_to_buy = 0;
     purchaseItem.purchase_planned_value_to_buy = 0.0;
@@ -609,11 +618,11 @@ const groupBySumProductType = objParam => {
 /**
  * Calculate and prototype new object result
  * @param params Parameters used to filter data for purchase
- * @param variantIndicators List of object as of search result
+ * @param summaryProductVariantIndicators List of object as of search result
  * @returns {purchase} Purchase object model
  */
-const computeRepurchase = (params, variantIndicators) => {
-    if (!params || !variantIndicators) return;
+const computeRepurchase = (params, summaryProductVariantIndicators) => {
+    if (!params || !summaryProductVariantIndicators) return;
 
     // Execute Planned Budget
     let planned_items = [];
@@ -622,42 +631,57 @@ const computeRepurchase = (params, variantIndicators) => {
         budgetToExecute = parseFloat(params.planned_budget);
     }
 
-    for (let i in variantIndicators) {
-        let variantIndicator = variantIndicators[i];
-        let itemCost =
-            variantIndicator.inventory_cost > 0 ? parseFloat(variantIndicator.inventory_cost) : 0;
-        let qtyBuyIn = parseFloat(
-            variantIndicator.inventory_optimal - variantIndicator.inventory_quantity
-        );
-        let valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+    for (let i in summaryProductVariantIndicators) {
+        let summaryProductVariantIndicator = summaryProductVariantIndicators[i];
 
-        if (budgetToExecute >= 0 && budgetToExecute >= itemCost) {
+        let itemUnitCost = 0.0;
+        if (summaryProductVariantIndicator.inventory_unit_cost > 0) {
+            itemUnitCost = parseFloat(summaryProductVariantIndicator.inventory_unit_cost);
+        }
+
+        let qtyBuyIn = 0;
+        if (
+            summaryProductVariantIndicator.inventory_optimal > 0 &&
+            summaryProductVariantIndicator.inventory_optimal >
+                summaryProductVariantIndicator.inventory_quantity
+        ) {
+            qtyBuyIn = parseInt(
+                summaryProductVariantIndicator.inventory_optimal -
+                    summaryProductVariantIndicator.inventory_quantity
+            );
+        }
+        let valueBuyIn = parseFloat(itemUnitCost * qtyBuyIn);
+
+        if (budgetToExecute >= 0 && budgetToExecute >= itemUnitCost) {
             if (budgetToExecute >= 0 && budgetToExecute >= valueBuyIn) {
                 budgetToExecute = budgetToExecute - valueBuyIn;
             } else {
                 while (
                     budgetToExecute >= 0 &&
-                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= itemUnitCost &&
                     budgetToExecute < valueBuyIn
                 ) {
                     qtyBuyIn = qtyBuyIn - 1;
-                    valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+                    valueBuyIn = parseFloat(itemUnitCost * qtyBuyIn);
                 }
                 if (
                     budgetToExecute >= 0 &&
-                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= itemUnitCost &&
                     budgetToExecute >= valueBuyIn
                 ) {
                     budgetToExecute = budgetToExecute - valueBuyIn;
                 }
             }
+
             let planned_item = prototypePurchaseItem(
-                variantIndicator,
+                summaryProductVariantIndicator,
                 CONSTANT.BUDGET.TYPE.PLANNED,
                 qtyBuyIn,
                 valueBuyIn
             );
-            planned_items.push(planned_item);
+            if (planned_item) {
+                planned_items.push(planned_item);
+            }
         }
     }
     params.planned_budget_not_used = budgetToExecute;
@@ -673,42 +697,56 @@ const computeRepurchase = (params, variantIndicators) => {
         }
     }
 
-    for (let i in variantIndicators) {
-        let variantIndicator = variantIndicators[i];
-        let itemCost =
-            variantIndicator.inventory_cost > 0 ? parseFloat(variantIndicator.inventory_cost) : 0;
-        let qtyBuyIn = parseFloat(
-            variantIndicator.inventory_optimal - variantIndicator.inventory_quantity
-        );
-        let valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+    for (let i in summaryProductVariantIndicators) {
+        let summaryProductVariantIndicator = summaryProductVariantIndicators[i];
 
-        if (budgetToExecute >= 0 && budgetToExecute >= itemCost) {
+        let itemUnitCost = 0.0;
+        if (summaryProductVariantIndicator.inventory_unit_cost > 0) {
+            itemUnitCost = parseFloat(summaryProductVariantIndicator.inventory_unit_cost);
+        }
+
+        let qtyBuyIn = 0;
+        if (
+            summaryProductVariantIndicator.inventory_optimal > 0 &&
+            summaryProductVariantIndicator.inventory_optimal >
+                summaryProductVariantIndicator.inventory_quantity
+        ) {
+            qtyBuyIn = parseInt(
+                summaryProductVariantIndicator.inventory_optimal -
+                    summaryProductVariantIndicator.inventory_quantity
+            );
+        }
+        let valueBuyIn = parseFloat(itemUnitCost * qtyBuyIn);
+
+        if (budgetToExecute >= 0 && budgetToExecute >= itemUnitCost) {
             if (budgetToExecute >= 0 && budgetToExecute >= valueBuyIn) {
                 budgetToExecute = budgetToExecute - valueBuyIn;
             } else {
                 while (
                     budgetToExecute >= 0 &&
-                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= itemUnitCost &&
                     budgetToExecute < valueBuyIn
                 ) {
                     qtyBuyIn = qtyBuyIn - 1;
-                    valueBuyIn = parseFloat(itemCost * qtyBuyIn);
+                    valueBuyIn = parseFloat(itemUnitCost * qtyBuyIn);
                 }
                 if (
                     budgetToExecute >= 0 &&
-                    budgetToExecute >= itemCost &&
+                    budgetToExecute >= itemUnitCost &&
                     budgetToExecute >= valueBuyIn
                 ) {
                     budgetToExecute = budgetToExecute - valueBuyIn;
                 }
             }
             let executed_item = prototypePurchaseItem(
-                variantIndicator,
+                summaryProductVariantIndicator,
                 CONSTANT.BUDGET.TYPE.EXECUTED,
                 qtyBuyIn,
                 valueBuyIn
             );
-            executed_items.push(executed_item);
+            if (executed_item) {
+                executed_items.push(executed_item);
+            }
         }
     }
     params.executed_budget_not_used = budgetToExecute;

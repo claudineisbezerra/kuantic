@@ -234,10 +234,12 @@
       </div>
     </div>
 
-    <div class="va-row">
+
+    <div class="va-row"
+         v-if="purchasePlannedBudgetGroupedByCollectionProductType && purchasePlannedBudgetGroupedByCollectionProductType.length > 0">
       <template v-for="(collectionProductType, id) in purchasePlannedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_suggested') +': '+ collectionProductType.product_type+' > '+collectionProductType.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_suggested') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
             <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
@@ -246,7 +248,7 @@
 
     <div class="va-row">
       <div class="flex md6 xs12"
-           v-if="purchasePlannedBudgetGroupedByProductType && Object.keys(purchasePlannedBudgetGroupedByProductType).length > 0">
+           v-if="purchasePlannedBudgetGroupedByProductType && purchasePlannedBudgetGroupedByProductType.length > 0">
         <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_suggested')">
           <kuantic-chart :data="setByProductTypeChartData(purchasePlannedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.PLANNED)" type="donut"/>
         </kuantic-widget>
@@ -330,7 +332,7 @@
     <div class="va-row">
       <template v-for="(collectionProductType, id) in purchaseExecutedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_todo') +': '+ collectionProductType.product_type+' > '+collectionProductType.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_todo') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
             <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
@@ -355,7 +357,6 @@ import ExecutedFields from './table/data/executed-fields-definition'
 import ItemsPerPage from './table/data/items-per-page-definition'
 import QueryParams from './table/data/query-params'
 import DataTableStyles from './table/data/data-table-styles'
-
 
 import { SpringSpinner } from 'epic-spinners'
 import { VMoney } from 'v-money'
@@ -393,7 +394,6 @@ export default {
   },
   data () {
     return {
-      test: true,
       purchaseId: null,
       purchaseTitle: null,
       collections: [],
@@ -614,6 +614,40 @@ export default {
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
+    setByCollectionProductTypeChartData (purchaseByCollectionProductType) {
+      if (!purchaseByCollectionProductType) return
+      if (purchaseByCollectionProductType.length <= 0) return
+
+      // Define ramdom background color
+      let palette = store.getters.palette
+      let backgroundColor = _.sample(_.omit(palette, ['transparent','success','white']));
+
+      let labels = []
+      labels.push(this.$t('purchase.inventory_actual'))
+      labels.push(this.$t('purchase.inventory_optimal'))
+      labels.push(this.$t('purchase.purchase_suggested'))
+      labels.push(this.$t('purchase.purchase_todo'))
+
+      let data = []
+      data.push(purchaseByCollectionProductType.inventory_quantity)
+      data.push(purchaseByCollectionProductType.inventory_optimal)
+      data.push(purchaseByCollectionProductType.purchase_planned_quantity_to_buy)
+      data.push(purchaseByCollectionProductType.purchase_executed_quantity_to_buy)
+
+      let chartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: purchaseByCollectionProductType.product_type_title,
+            backgroundColor: backgroundColor,
+            borderColor: palette.transparent,
+            data: data,
+          }
+        ]
+      }
+
+      return chartData
+    },
     setByProductTypeChartData (purchaseByProductType, budgetType) {
       if (!purchaseByProductType || !budgetType) return
       if (purchaseByProductType.length <= 0) return
@@ -626,7 +660,7 @@ export default {
       let data = []
       for (let i in purchaseByProductType) {
         let item = purchaseByProductType[i]
-        let label = item.product_type
+        let label = item.product_type_title
         labels.push(label)
 
         let qty = 0;
@@ -646,42 +680,8 @@ export default {
             backgroundColor: backgroundColor,
             borderColor: palette.transparent,
             data: data,
-          },
-        ],
-      }
-
-      return chartData
-    },
-    setByCollectionProductTypeChartData (purchaseByCollectionProductType) {
-      if (!purchaseByCollectionProductType) return
-      if (purchaseByCollectionProductType.length <= 0) return
-
-      // Define ramdom background color
-      let palette = store.getters.palette
-      let backgroundColor = _.sample(_.omit(palette, ['transparent','success','white']));
-
-      let labels = []
-      labels.push(this.$t('purchase.initial_stock'))
-      labels.push(this.$t('purchase.ideal_stock'))
-      labels.push(this.$t('purchase.purchase_suggested'))
-      labels.push(this.$t('purchase.purchase_todo'))
-
-      let data = []
-      data.push(purchaseByCollectionProductType.inventory_quantity)
-      data.push(purchaseByCollectionProductType.inventory_optimal)
-      data.push(purchaseByCollectionProductType.purchase_planned_quantity_to_buy)
-      data.push(purchaseByCollectionProductType.purchase_executed_quantity_to_buy)
-
-      let chartData = {
-        labels: labels,
-        datasets: [
-          {
-            label: purchaseByCollectionProductType.product_type,
-            backgroundColor: backgroundColor,
-            borderColor: palette.transparent,
-            data: data,
-          },
-        ],
+          }
+        ]
       }
 
       return chartData
@@ -702,7 +702,6 @@ export default {
   created () {
     this.$nextTick(() => {
       this.handlePurchaseInit ()
-      // this.$validator.validateAll()
     })
   },
 }

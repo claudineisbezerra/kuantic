@@ -34,7 +34,6 @@
 	"coverage_error_REMOVE": "Não foi possível remover a configuração",
   "productTypes_error_NOTFOUND": "ProductTypes não encontrado",
   "priceRanges_error_NOTFOUND": "PriceRanges não encontrado",
-	"variantIndicators_error_NOTFOUND": "ProductVariantIndicator não encontrado",
 	"will_redirect": "Você será redirecionado",
 	"purchase_header_by_product_type": "Compra por categoria",
 	"purchase_header_by_product_type_summary": "Resumo por categoria",

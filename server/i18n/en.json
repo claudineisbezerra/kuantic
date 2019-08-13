@@ -34,7 +34,6 @@
 	"coverage_error_REMOVE": "Unable to remove settings",
 	"productTypes_error_NOTFOUND": "No ProductTypes found",
 	"priceRanges_error_NOTFOUND": "No PriceRanges found",
-	"variantIndicators_error_NOTFOUND": "No ProductVariantIndicator found",
 	"will_redirect": "You will now be redirected",
 	"purchase_header_by_product_type": "Purchase by category",
 	"purchase_header_by_product_type_summary_suggested": "Summary by category",
