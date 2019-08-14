@@ -24,7 +24,6 @@ const {
  */
 router.post('/signup', [checkRegistrationFields], (req, res) => {
     let errors = [];
-
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
             errors.push({ param: 'email', msg: res.$t('email_error_EXISTS') });
@@ -39,7 +38,6 @@ router.post('/signup', [checkRegistrationFields], (req, res) => {
         } else {
             /** Assign Gravatar */
             const avatar = gravatar.url(req.body.email, { s: '220', r: 'pg', d: 'identicon' });
-
             const newUser = new User({
                 handle: req.body.handle,
                 username: req.body.username,

@@ -95,8 +95,8 @@ axios.interceptors.request.use(
   function (config) {
     return config
   },
-  function (err) {
-    return Promise.reject(err)
+  function (error) {
+    return Promise.reject(error)
   }
 )
 
@@ -105,7 +105,7 @@ axios.interceptors.response.use(
   function (response) {
     return response
   },
-  function (err) {
+  function (error) {
     if (err.response.status === 401) {
       localStorage.removeItem('authToken')
       store.dispatch('app/toggleAuthState', false)
@@ -114,7 +114,7 @@ axios.interceptors.response.use(
         params: { message: Vue.i18n.translate('auth.401_ErrorMessage') }
       })
     }
-    return Promise.reject(err)
+    return Promise.reject(error)
   }
 )
 

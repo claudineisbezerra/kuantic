@@ -1,12 +1,21 @@
 const { app } = require('../server');
 const supertest = require('supertest');
 const { userSeedData } = require('./seed/seedData');
+const { populateData } = require('./seed/seedFunctions');
 const slugify = require('slugify');
+
+beforeEach(async () => {
+    jest.setTimeout(18000);
+});
+
+// afterAll(async () => {
+//     await populateData();
+// });
 
 describe('POST /auth', () => {
     let request = supertest(app);
 
-    it('should signup a user and return a token', async () => {
+    it('should signup a user and return a token', async done => {
         const response = await request.post('/api/auth/signup').send({
             handle: slugify('newUser100'),
             email: 'newUser@gmail.com',
@@ -14,46 +23,45 @@ describe('POST /auth', () => {
             password: 'newUserTest'
         });
 
-        expect(response.status).toEqual(200);
-        expect(response.body.user.session_id).not.toBeNull();
-        expect(response.body.token).not.toBeNull();
-        expect(response.body.auth).not.toBeNull();
+        await expect(response.status).toEqual(200);
+        await expect(response.body.user.session_id).not.toBeNull();
+        await expect(response.body.token).not.toBeNull();
+        await expect(response.body.auth).not.toBeNull();
+        done();
     });
 
-    it('shouldnt signup with invalid details', async () => {
+    it('shouldnt signup with invalid details', async done => {
         const response = await request.post('/api/auth/signup').send({
             email: 'test100@hotmail.com',
             username: 'test',
             password: 'testing100'
         });
 
-        expect(response.status).toEqual(200);
-        expect(typeof response.body).toBe('object');
-        expect(response.body).not.toBeNull();
+        await expect(response.status).toEqual(200);
+        await expect(typeof response.body).toBe('object');
+        await expect(response.body).not.toBeNull();
+        done();
     });
 
-    it('should login a user and return a token', async () => {
+    it('should login a user and return a token', async done => {
         const response = await request
             .post('/api/auth/login')
             .send({ email: userSeedData[0].email, password: userSeedData[0].password });
 
-        expect(response.status).toEqual(200);
-        expect(response.body.token).not.toBeNull();
-        expect(response.body.user.session_id).not.toBeNull();
-        expect(response.body.auth).not.toBeNull();
+        await expect(response.status).toEqual(200);
+        await expect(response.body.token).not.toBeNull();
+        await expect(response.body.user.session_id).not.toBeNull();
+        await expect(response.body.auth).not.toBeNull();
+        done();
     });
 
-    it('should return an object given the wrong login details', async () => {
+    it('should return an object given the wrong login details', async done => {
         const response = await request
             .post('/api/auth/login')
             .send({ email: 'testwrongemail@hotmail.com', password: 'testing123' });
 
-        expect(response.status).toEqual(200);
-        expect(typeof response.body).toBe('object');
+        await expect(response.status).toEqual(200);
+        await expect(typeof response.body).toBe('object');
+        done();
     });
 });
-
-/** Watch Mode: Repopulate UserData after auth tests finish running (Due to auth testing for registration) */
-// afterAll(async () => {
-//     await populateData();
-// })

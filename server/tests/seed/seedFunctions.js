@@ -64,43 +64,43 @@ const populateData = async () => {
         connect();
     }
 
-    // let userId;
-    // let roomId;
+    let userId;
+    let roomId;
 
-    // await User.deleteMany({}).exec();
-    // for (let user of userSeedData) {
-    //     const userData = await new User({
-    //         handle: slugify(user.username),
-    //         username: user.username,
-    //         email: user.email,
-    //         password: user.password,
-    //         image: gravatar.url(user.email, { s: '220', r: 'pg', d: 'identicon' })
-    //     }).save();
-    //     userId = userData._id;
-    // }
-    // console.log('[PROCESS:FIN] Completed Seeding User Data');
+    await User.deleteMany({}).exec();
+    for (let user of userSeedData) {
+        const userData = await new User({
+            handle: slugify(user.username),
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            image: gravatar.url(user.email, { s: '220', r: 'pg', d: 'identicon' })
+        }).save();
+        userId = userData._id;
+    }
+    console.log('[PROCESS:FIN] Completed Seeding User Data');
 
-    // await Room.deleteMany({}).exec();
-    // for (let room of roomSeedData) {
-    //     const roomData = await new Room({
-    //         name: room.name,
-    //         user: userId,
-    //         access: room.password ? false : true,
-    //         password: room.password
-    //     }).save();
-    //     roomId = roomData._id;
-    // }
-    // console.log('[PROCESS:FIN] Completed Seeding Room Data');
+    await Room.deleteMany({}).exec();
+    for (let room of roomSeedData) {
+        const roomData = await new Room({
+            name: room.name,
+            user: userId,
+            access: room.password ? false : true,
+            password: room.password
+        }).save();
+        roomId = roomData._id;
+    }
+    console.log('[PROCESS:FIN] Completed Seeding Room Data');
 
-    // await Message.deleteMany({}).exec();
-    // for (let message of messageSeedData) {
-    //     await new Message({
-    //         content: message.content,
-    //         user: userId,
-    //         room: roomId
-    //     }).save();
-    // }
-    // console.log('[PROCESS:FIN] Completed Seeding Message Data');
+    await Message.deleteMany({}).exec();
+    for (let message of messageSeedData) {
+        await new Message({
+            content: message.content,
+            user: userId,
+            room: roomId
+        }).save();
+    }
+    console.log('[PROCESS:FIN] Completed Seeding Message Data');
 
     // await ProductImage.deleteMany({}).exec();
     // for (let productImage of productImageSeedData) {
@@ -118,51 +118,51 @@ const populateData = async () => {
     // }
     // console.log('[PROCESS:FIN] Completed Seeding ProductImage Data');
 
-    await Product.deleteMany({}).exec();
-    for (let product of productSeedData) {
-        await new Product({
-            id: product.id,
-            title: product.title,
-            handle: product.handle,
-            product_type: product.product_type,
-            variants: product.variants,
-            images: product.images,
-            options: product.options,
-            vendor: product.vendor,
-            body_html: product.body_html,
-            tags: product.tags,
-            template_suffix: product.template_suffix,
-            metafields_global_title_tag: product.metafields_global_title_tag,
-            metafields_global_description_tag: product.metafields_global_description_tag,
-            published_at: product.published_at,
-            published_scope: product.published_scope
-        }).save();
-    }
-    console.log('[PROCESS:FIN] Completed Seeding Product Data');
+    // await Product.deleteMany({}).exec();
+    // for (let product of productSeedData) {
+    //     await new Product({
+    //         id: product.id,
+    //         title: product.title,
+    //         handle: product.handle,
+    //         product_type: product.product_type,
+    //         variants: product.variants,
+    //         images: product.images,
+    //         options: product.options,
+    //         vendor: product.vendor,
+    //         body_html: product.body_html,
+    //         tags: product.tags,
+    //         template_suffix: product.template_suffix,
+    //         metafields_global_title_tag: product.metafields_global_title_tag,
+    //         metafields_global_description_tag: product.metafields_global_description_tag,
+    //         published_at: product.published_at,
+    //         published_scope: product.published_scope
+    //     }).save();
+    // }
+    // console.log('[PROCESS:FIN] Completed Seeding Product Data');
 
-    await ProductVariant.deleteMany({}).exec();
-    for (let productVariant of productVariantSeedData) {
-        await new ProductVariant({
-            id: productVariant.id,
-            product_id: productVariant.product_id,
-            inventory_item_id: productVariant.inventory_item_id,
-            image_id: productVariant.image_id,
-            sku: productVariant.sku,
-            title: productVariant.title,
-            name: productVariant.name,
-            weight: productVariant.weight,
-            weight_unit: productVariant.weight_unit,
-            grams: productVariant.grams,
-            vendor: productVariant.vendor,
-            inventory_quantity: productVariant.inventory_quantity,
-            position: productVariant.position,
-            price: productVariant.price,
-            compare_at_price: productVariant.compare_at_price,
-            created_at: productVariant.created_at,
-            updated_at: productVariant.updated_at
-        }).save();
-    }
-    console.log('[PROCESS:FIN] Completed Seeding ProductVariant Data');
+    // await ProductVariant.deleteMany({}).exec();
+    // for (let productVariant of productVariantSeedData) {
+    //     await new ProductVariant({
+    //         id: productVariant.id,
+    //         product_id: productVariant.product_id,
+    //         inventory_item_id: productVariant.inventory_item_id,
+    //         image_id: productVariant.image_id,
+    //         sku: productVariant.sku,
+    //         title: productVariant.title,
+    //         name: productVariant.name,
+    //         weight: productVariant.weight,
+    //         weight_unit: productVariant.weight_unit,
+    //         grams: productVariant.grams,
+    //         vendor: productVariant.vendor,
+    //         inventory_quantity: productVariant.inventory_quantity,
+    //         position: productVariant.position,
+    //         price: productVariant.price,
+    //         compare_at_price: productVariant.compare_at_price,
+    //         created_at: productVariant.created_at,
+    //         updated_at: productVariant.updated_at
+    //     }).save();
+    // }
+    // console.log('[PROCESS:FIN] Completed Seeding ProductVariant Data');
 
     // await SummaryProductVariantIndicator.deleteMany({}).exec();
     // for (let variantIndicator of productVariantIndicatorSeedData) {

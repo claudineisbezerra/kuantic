@@ -1,31 +1,29 @@
 const passport = require('passport');
+const { check, validationResult } = require('express-validator');
 const { User } = require('../models/User');
-
 const createErrorObject = errors => {
     const errorObject = [];
     errors.forEach(error => {
         let err = {
             [error.param]: error.msg
         };
-        errorObject.push(err);
+        errorObject.push(error);
     });
 
     return errorObject;
 };
 
 const checkRegistrationFields = async (req, res, next) => {
-    req.check('email').isEmail();
-    req.check('username')
+    check('email').isEmail();
+    check('username')
         .isString()
-        .isLength({ min: 5, max: 15 })
+        .isLength({ min: 5, max: 30 })
         .withMessage(res.$t('username_error_LENGTH'));
-    req.check('password')
+    check('password')
         .isString()
-        .isLength({ min: 5, max: 15 })
+        .isLength({ min: 5, max: 30 })
         .withMessage(res.$t('password_error_LENGTH'));
-
-    let errors = req.validationErrors() || [];
-
+    let errors = validationResult(req).array() || [];
     const user = await User.findOne({ username: req.body.username });
 
     if (user) {
@@ -52,7 +50,7 @@ const checkLoginFields = async (req, res, next) => {
         }
     }
 
-    if (errors.length !== 0) {
+    if (errors.length > 0) {
         res.send({
             errors: createErrorObject(errors)
         });
@@ -75,7 +73,7 @@ const checkEditProfileFields = async (req, res, next) => {
             errors.push({ param: 'handle', msg: res.$t('handle_error_EXISTS') });
         }
     }
-    if (errors.length !== 0) {
+    if (errors.length > 0) {
         res.send({
             errors: createErrorObject(errors)
         });
@@ -86,28 +84,28 @@ const checkEditProfileFields = async (req, res, next) => {
 
 const checkCreateRoomFields = async (req, res, next) => {
     if (!req.body.room_name) {
-        req.check('room_name')
+        check('room_name')
             .not()
             .isEmpty()
             .withMessage(res.$t('room_error_REQUIRED'));
     } else {
-        req.check('room_name')
+        check('room_name')
             .isString()
             .isLength({ min: 3, max: 20 })
             .withMessage(res.$t('room_error_LENGTH'));
     }
 
     if (req.body.password) {
-        req.check('password')
+        check('password')
             .not()
             .isEmpty()
             .isLength({ min: 5, max: 15 })
             .withMessage(res.$t('password_error_LENGTH'));
     }
 
-    const errors = req.validationErrors();
+    const errors = validationResult(req).array() || [];
 
-    if (errors) {
+    if (errors.length > 0) {
         res.send({
             errors: createErrorObject(errors)
         });

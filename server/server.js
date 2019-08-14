@@ -28,7 +28,7 @@ const localeService = new LocaleService(i18n);
 /** Express */
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
+// const expressValidator = require('express-validator');
 const cors = require('cors');
 const helmet = require('helmet');
 const enforce = require('express-sslify');
@@ -76,7 +76,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use(expressValidator());
+// app.use(expressValidator());
 app.use(cors());
 app.set('io', io);
 

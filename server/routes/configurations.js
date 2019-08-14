@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const { check, validationResult } = require('express-validator');
 const { Configurations } = require('../models/Configurations');
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
 
@@ -33,13 +34,13 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         let results = {};
-        req.check('coverage_min')
+        check('coverage_min')
             .isNumeric()
             .withMessage(res.$t('coverage_error_NOTNUMERIC'));
-        req.check('coverage_optimal')
+        check('coverage_optimal')
             .isNumeric()
             .withMessage(res.$t('coverage_error_NOTNUMERIC'));
-        let errors = req.validationErrors();
+        let errors = validationResult(req).array() || [];
         if (errors.length > 0) {
             return res.send({
                 errors: createErrorObject(errors)
@@ -87,8 +88,8 @@ router.delete(
                     errors: `${res.$t('coverage_error_REMOVE')}`
                 });
             }
-        } catch (err) {
-            return res.status(500).json(err);
+        } catch (error) {
+            return res.status(500).json(error);
         }
     }
 );
@@ -101,10 +102,10 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         let results = {};
-        req.check('number_of_days')
+        check('number_of_days')
             .isNumeric()
             .withMessage(res.$t('settings_error_NOTNUMERIC'));
-        let errors = req.validationErrors();
+        let errors = validationResult(req).array() || [];
         if (errors.length > 0) {
             return res.send({
                 errors: createErrorObject(errors)
@@ -139,8 +140,8 @@ router.delete(
         try {
             console.log('to be created...');
             return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
-        } catch (err) {
-            return res.status(500).json(err);
+        } catch (error) {
+            return res.status(500).json(error);
         }
     }
 );
@@ -153,10 +154,10 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         let results = {};
-        req.check('at_date')
+        check('at_date')
             .isISO8601()
             .withMessage(res.$t('settings_error_NOTDATE'));
-        let errors = req.validationErrors();
+        let errors = validationResult(req).array() || [];
         if (errors.length > 0) {
             return res.send({
                 errors: createErrorObject(errors)
@@ -191,8 +192,8 @@ router.delete(
         try {
             console.log('to be created...');
             return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
-        } catch (err) {
-            return res.status(500).json(err);
+        } catch (error) {
+            return res.status(500).json(error);
         }
     }
 );

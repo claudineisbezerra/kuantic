@@ -78,7 +78,7 @@ module.exports = function(passport) {
                                 });
                         }
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => console.log(error));
             })
         );
 
@@ -122,7 +122,7 @@ module.exports = function(passport) {
                                 });
                         }
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => console.log(error));
             })
         );
     }

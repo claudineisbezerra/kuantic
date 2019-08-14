@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-
+const { check, validationResult } = require('express-validator');
 const { Room } = require('../models/Room');
-
 const { createErrorObject, checkCreateRoomFields } = require('../middleware/authenticate');
 
 /**
@@ -71,15 +70,15 @@ router.post(
             newRoom
                 .save()
                 .then(room => {
-                    Room.populate(room, { path: 'user', select: 'username' }, (err, room) => {
-                        if (err) {
-                            console.log(err);
+                    Room.populate(room, { path: 'user', select: 'username' }, (error, room) => {
+                        if (error) {
+                            console.log(error);
                         }
                         return res.status(200).json(room);
                     });
                 })
-                .catch(err => {
-                    return res.json(err);
+                .catch(error => {
+                    return res.json(error);
                 });
         }
     }
@@ -101,13 +100,17 @@ router.post('/verify', passport.authenticate('jwt', { session: false }), async (
     }
 
     const room = await Room.findOne({ name: req.body.room_name }).exec();
-
     if (room) {
         const verified = await room.isValidPassword(req.body.password);
-
         if (verified === true) {
             room.accessIds.push(req.user.id);
-            await room.save();
+            // await room.save();
+
+            await room.save((error, doc) => {
+                if (error) {
+                    console.log(error);
+                }
+            });
             return res.status(200).json({ success: true });
         } else {
             return res.json({
@@ -144,8 +147,8 @@ router.delete('/:room_name', passport.authenticate('jwt', { session: false }), a
                 ${req.params.room_name} ${res.$t('found')} + ',' + ${res.$t('will_redirect')}`
             });
         }
-    } catch (err) {
-        return res.status(404).json(err);
+    } catch (error) {
+        return res.status(404).json(error);
     }
 });
 
@@ -153,12 +156,12 @@ router.delete('/:room_name', passport.authenticate('jwt', { session: false }), a
  * @description PUT /api/room/update/name
  */
 router.post('/update/name', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    req.check('new_room_name')
+    check('new_room_name')
         .isString()
         .isLength({ min: 5, max: 20 })
         .withMessage(res.$t('room_error_LENGTH'));
 
-    let errors = req.validationErrors();
+    let errors = validationResult(req).array() || [];
 
     if (errors.length > 0) {
         return res.send({
@@ -192,7 +195,11 @@ router.post('/remove/users', passport.authenticate('jwt', { session: false }), a
     if (room) {
         if (room.users.find(user => user.lookup.toString() === req.user.id)) {
             room.users = room.users.filter(user => user.lookup.toString() !== req.user.id);
-            await room.save();
+            await room.save((error, doc) => {
+                if (error) {
+                    console.log(error);
+                }
+            });
         }
         const returnRoom = await Room.populate(room, {
             path: 'user users.lookup',
