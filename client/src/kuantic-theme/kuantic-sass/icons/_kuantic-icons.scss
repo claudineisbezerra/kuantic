@@ -29,6 +29,12 @@
   background: url('assets/icons/menu-collapsed.svg') no-repeat center center;
 }
 
+.i-profile-badge {
+  display: inline-block;
+  height: 21px;
+  width: 26px;
+  background: url('assets/icons/profile-badge.svg') no-repeat center center;
+}
 // Catchall baseclass
 .glyphicon {
   position: relative;

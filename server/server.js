@@ -54,7 +54,7 @@ const userRoutes = require('./routes/user');
 const profileRoutes = require('./routes/profile');
 const roomRoutes = require('./routes/room');
 const messageRoutes = require('./routes/messages');
-const intelligenceRoutes = require('./routes/intelligence');
+const purchaseRoutes = require('./routes/purchase');
 const configRoutes = require('./routes/configurations');
 const indicatorRoutes = require('./routes/indicator');
 
@@ -90,7 +90,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/room', roomRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/admin/intelligence', intelligenceRoutes);
+app.use('/api/admin/purchase', purchaseRoutes);
 app.use('/api/admin/config', configRoutes);
 app.use('/api/admin/indicator', indicatorRoutes);
 

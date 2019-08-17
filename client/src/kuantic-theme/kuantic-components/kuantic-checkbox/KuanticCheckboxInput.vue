@@ -4,18 +4,18 @@
          @click="toggleSelection(),
          focused = false"
          @mousedown="focused = true"
-         :class="{'active': value}"
-         >
+         :class="{'active': checkedProxy}"
+    >
 
       <input :id="id"
-        readonly
-        @focus="focused = true"
-        @mouseout="focused = false"
-        @blur="focused = false"
-        @keypress="toggleSelection()"
-        class="kuantic-checkbox__input"
-        :disabled="disabled"
-      />
+             readonly
+             @focus="focused = true"
+             @mouseout="focused = false"
+             @blur="focused = false"
+             @keypress="toggleSelection()"
+             class="kuantic-checkbox__input"
+             :disabled="disabled"
+             />
       <i class="ion ion-md-checkmark kuantic-checkbox__icon-selected" aria-hidden="true"/>
     </div>
     <div class="kuantic-checkbox__label-text"
@@ -36,12 +36,15 @@
 
 <script>
 export default {
-  name: 'kuantic-checkbox',
+  name: 'kuantic-checkbox-input',
   props: {
     label: String,
     value: {
-      type: Boolean,
+      type: [Boolean, String, Array],
       required: true
+    },
+    val: {
+      type: String
     },
     id: {
       type: String
@@ -70,20 +73,33 @@ export default {
   },
   data () {
     return {
-      isFocused: false
+      isFocused: false,
+      checkedProxy: false
     }
   },
-  created() {
-    console.log('create props value:', this.value)
-    console.log('create props id:', this.id)
-    console.log('create props name:', this.name)
-    console.log('create props valueProxy:', this.valueProxy)
-    console.log()
+  created () {
+    // set the checked proxy if we start with this value included.
+    if (this.val) {
+      if (this.value.includes(this.val)) {
+        this.checkedProxy = true
+      }
+    }
   },
   computed: {
+    checkedItems: {
+      get () {
+        return this.value
+      },
+      set (val) {
+        this.checkedProxy = val
+        if (!this.readonly && !this.disabled) {
+          this.checkedProxy = val
+        }
+      }
+    },
     computedClass () {
       return {
-        'kuantic-checkbox--selected': this.valueProxy,
+        'kuantic-checkbox--selected': this.checkedProxy,
         'kuantic-checkbox--readonly': this.readonly,
         'kuantic-checkbox--disabled': this.disabled,
         'kuantic-checkbox--error': this.showError,
@@ -109,18 +125,7 @@ export default {
         return this.isFocused
       }
     },
-    valueProxy: {
-      set (valueProxy) {
-        if (!this.readonly && !this.disabled) {
-          this.$emit('input', valueProxy)
-        }
-      },
-      get () {
-        return this.value
-      }
-    },
     showError () {
-      // We make error active, if the error-message is not empty and checkbox is not disabled
       if (!this.disabled) {
         if (!(this.errorMessages.length === 0) || this.error) {
           return true
@@ -132,15 +137,22 @@ export default {
   methods: {
     toggleSelection () {
       if (!this.disabled) {
-        this.valueProxy = !this.valueProxy
+        this.checkedProxy = !this.checkedProxy
+        console.log('toggleSelection checkedProxy', this.checkedProxy)
+        let value = [].concat(this.value) // copy so we dont mutate property directly
+        console.log('toggleSelection val', this.val)
+        console.log('toggleSelection value', this.value)
+
+        if (!this.checkedProxy && value.includes(this.val)) {
+          value.splice(value.indexOf(this.val), 1)
+        } else {
+          value.push(this.val)
+        }
+        console.log('toggleSelection EMITTED value', this.value)
+        this.$emit('input', value) // emit the new value.
       }
-      console.log('toggle props value:', this.value)
-      console.log('toggle props id:', this.id)
-      console.log('toggle props name:', this.name)
-      console.log('toggle props valueProxy:', this.valueProxy)
-      console.log()
     },
-  },
+  }
 }
 </script>
 

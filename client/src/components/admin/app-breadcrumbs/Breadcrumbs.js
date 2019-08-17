@@ -9,13 +9,36 @@ export const breadcrumbs = {
       displayName: 'menu.dashboard',
     },
     {
-      name: 'intelligence',
-      displayName: 'menu.intelligence',
+      name: 'planning',
+      displayName: 'menu.planning',
       disabled: true,
       children: [
         {
-          name: 'purchase',
-          displayName: 'menu.purchase',
+          name: 'sales-projection',
+          displayName: 'menu.salesProjection',
+        },
+      ],
+    },
+    {
+      name: 'purchase',
+      displayName: 'menu.purchase',
+      disabled: true,
+      children: [
+        {
+          name: 'best-sellers',
+          displayName: 'menu.bestSellers',
+        },
+        {
+          name: 'product-grids',
+          displayName: 'menu.productGrids',
+        },
+        {
+          name: 'competition-by-portfolio',
+          displayName: 'menu.competitionByPortfolio',
+        },
+        {
+          name: 'repurchase',
+          displayName: 'menu.repurchase',
         },
       ],
     },
@@ -36,16 +59,32 @@ export const breadcrumbs = {
           name: 'stock-pricing',
           displayName: 'menu.stockPricing',
         },
+        {
+          name: 'competition-by-product',
+          displayName: 'menu.competitionByProduct',
+        },
+        {
+          name: 'competition-by-portfolio',
+          displayName: 'menu.competitionByPortfolio',
+        },
       ],
     },
     {
-      name: 'reports',
-      displayName: 'menu.reports',
+      name: 'marketing',
+      displayName: 'menu.marketing',
       disabled: true,
       children: [
         {
-          name: 'best-sellers',
-          displayName: 'menu.bestSellers',
+          name: 'google-analytics',
+          displayName: 'menu.googleAnalytics',
+        },
+        {
+          name: 'facebook-twitter',
+          displayName: 'menu.facebookTwitter',
+        },
+        {
+          name: 'remarketing',
+          displayName: 'menu.remarketing',
         },
       ],
     },
@@ -231,7 +270,11 @@ export const breadcrumbs = {
     },
     {
       name: 'profile',
-      displayName: 'user.profile',
+      displayName: 'menu.profile',
+    },
+    {
+      name: 'my-profile',
+      displayName: 'menu.myProfile',
     },
   ],
 }

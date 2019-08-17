@@ -11,7 +11,7 @@
             :itemsPerPage="itemsPerPage"
             :defaultPerPage="defaultItemsPerPage"
             :tableFields="tableFields"
-            :filterInputLabel="$t('purchase.filter_label')"
+            :filterInputLabel="$t('repurchase.filter_label')"
             :sortFunctions="sortFunctions"
             :queryParams="queryParams"
             >

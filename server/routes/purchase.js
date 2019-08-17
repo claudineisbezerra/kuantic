@@ -8,13 +8,13 @@ const uidGenerator = require('node-unique-id-generator');
 const { Collection } = require('../models/Collection');
 const { ProductType } = require('../models/ProductType');
 const { PriceRange } = require('../models/PriceRange');
-const { Purchase } = require('../models/Purchase');
-const { PurchasePlannedItem } = require('../models/PurchasePlannedItem');
-const { PurchaseExecutedItem } = require('../models/PurchaseExecutedItem');
+const { Repurchase } = require('../models/Repurchase');
+const { RepurchasePlannedItem } = require('../models/RepurchasePlannedItem');
+const { RepurchaseExecutedItem } = require('../models/RepurchaseExecutedItem');
 const { SummaryProductVariantIndicator } = require('../models/SummaryProductVariantIndicator');
 
 /**
- * @description GET /api/admin/intelligence/purchase
+ * @description GET /api/admin/purchase/repurchase
  */
 router.get('/init', passport.authenticate('jwt', { session: false }), async (req, res) => {
     let results = {};
@@ -62,12 +62,12 @@ router.get('/init', passport.authenticate('jwt', { session: false }), async (req
 });
 
 /**
- * @description GET /api/admin/intelligence/purchase
+ * @description GET /api/admin/purchase/repurchase
  */
-router.get('/purchase', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/repurchase', passport.authenticate('jwt', { session: false }), async (req, res) => {
     let filterJsonStr = '{ ';
-    let purchaseID = req.query.purchase_id ? req.query.purchase_id : null;
-    let purchaseTitle = req.query.purchase_title ? req.query.purchase_title : null;
+    let repurchaseID = req.query.repurchase_id ? req.query.repurchase_id : null;
+    let repurchaseTitle = req.query.repurchase_title ? req.query.repurchase_title : null;
 
     let collections = req.query.collections ? JSON.parse(req.query.collections) : null;
     if (collections && collections.length > 0) {
@@ -148,8 +148,8 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
         : 0;
 
     let params = {
-        purchase_id: purchaseID,
-        purchase_title: purchaseTitle,
+        repurchase_id: repurchaseID,
+        repurchase_title: repurchaseTitle,
         collection: collections,
         product_type: productTypes,
         price_range: priceRanges,
@@ -165,93 +165,93 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
     if (params && summaryProductVariantIndicators) {
         let filter = {};
-        if (params.purchase_id) {
-            filter = { 'params.purchase_id': params.purchase_id };
+        if (params.repurchase_id) {
+            filter = { 'params.repurchase_id': params.repurchase_id };
         }
-        let update = computeRepurchase(params, summaryProductVariantIndicators);
+        let update = computeRerepurchase(params, summaryProductVariantIndicators);
         let options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        let purchase = await Purchase.findOneAndUpdate(filter, update, options);
+        let repurchase = await Repurchase.findOneAndUpdate(filter, update, options);
 
-        let purchasePlannedBudgetGroupedByCollectionProductType = [];
+        let repurchasePlannedBudgetGroupedByCollectionProductType = [];
         if (plannedBudget && parseFloat(plannedBudget) > 0) {
             let groupByFields_plannedBudget = ['collection_title', 'product_type_title'];
             let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_planned_quantity_to_buy',
-                'purchase_executed_quantity_to_buy'
+                'repurchase_planned_quantity_to_buy',
+                'repurchase_executed_quantity_to_buy'
             ];
 
             let objParam = {};
             objParam.budgetType = CONSTANT.BUDGET.TYPE.PLANNED;
-            objParam.groupByData = purchase.purchases;
+            objParam.groupByData = repurchase.repurchases;
             objParam.groupByFields = groupByFields_plannedBudget;
             objParam.sumByFields = sumByFields_plannedBudget;
 
-            purchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
+            repurchasePlannedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
                 objParam
             );
         }
 
-        let purchasePlannedBudgetGroupedByProductType = [];
+        let repurchasePlannedBudgetGroupedByProductType = [];
         if (plannedBudget && parseFloat(plannedBudget) > 0) {
             let groupByFields_plannedBudget = ['product_type_title'];
             let sumByFields_plannedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_planned_quantity_to_buy',
-                'purchase_executed_quantity_to_buy'
+                'repurchase_planned_quantity_to_buy',
+                'repurchase_executed_quantity_to_buy'
             ];
             let objParam = {};
             objParam.budgetType = CONSTANT.BUDGET.TYPE.PLANNED;
-            objParam.groupByData = purchase.purchases;
+            objParam.groupByData = repurchase.repurchases;
             objParam.groupByFields = groupByFields_plannedBudget;
             objParam.sumByFields = sumByFields_plannedBudget;
-            purchasePlannedBudgetGroupedByProductType = groupBySumProductType(objParam);
+            repurchasePlannedBudgetGroupedByProductType = groupBySumProductType(objParam);
         }
-        let purchaseExecutedBudgetGroupedByCollectionProductType = [];
+        let repurchaseExecutedBudgetGroupedByCollectionProductType = [];
         if (executedBudget && parseFloat(executedBudget) > 0) {
             let groupByFields_executedBudget = ['collection_title', 'product_type_title'];
             let sumByFields_executedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_planned_quantity_to_buy',
-                'purchase_executed_quantity_to_buy'
+                'repurchase_planned_quantity_to_buy',
+                'repurchase_executed_quantity_to_buy'
             ];
 
             let objParam = {};
             objParam.budgetType = CONSTANT.BUDGET.TYPE.EXECUTED;
-            objParam.groupByData = purchase.purchases;
+            objParam.groupByData = repurchase.repurchases;
             objParam.groupByFields = groupByFields_executedBudget;
             objParam.sumByFields = sumByFields_executedBudget;
-            purchaseExecutedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
+            repurchaseExecutedBudgetGroupedByCollectionProductType = groupBySumCollectionProductType(
                 objParam
             );
         }
 
-        let purchaseExecutedBudgetGroupedByProductType = [];
+        let repurchaseExecutedBudgetGroupedByProductType = [];
         if (executedBudget && parseFloat(executedBudget) > 0) {
             let groupByFields_executedBudget = ['product_type_title'];
             let sumByFields_executedBudget = [
                 'inventory_quantity',
                 'inventory_optimal',
-                'purchase_planned_quantity_to_buy',
-                'purchase_executed_quantity_to_buy'
+                'repurchase_planned_quantity_to_buy',
+                'repurchase_executed_quantity_to_buy'
             ];
             let objParam = {};
             objParam.budgetType = CONSTANT.BUDGET.TYPE.EXECUTED;
-            objParam.groupByData = purchase.purchases;
+            objParam.groupByData = repurchase.repurchases;
             objParam.groupByFields = groupByFields_executedBudget;
             objParam.sumByFields = sumByFields_executedBudget;
-            purchaseExecutedBudgetGroupedByProductType = groupBySumProductType(objParam);
+            repurchaseExecutedBudgetGroupedByProductType = groupBySumProductType(objParam);
         }
 
         let results = {};
-        results.purchase = purchase;
-        results.purchasePlannedBudgetGroupedByCollectionProductType = purchasePlannedBudgetGroupedByCollectionProductType;
-        results.purchasePlannedBudgetGroupedByProductType = purchasePlannedBudgetGroupedByProductType;
-        results.purchaseExecutedBudgetGroupedByCollectionProductType = purchaseExecutedBudgetGroupedByCollectionProductType;
-        results.purchaseExecutedBudgetGroupedByProductType = purchaseExecutedBudgetGroupedByProductType;
+        results.repurchase = repurchase;
+        results.repurchasePlannedBudgetGroupedByCollectionProductType = repurchasePlannedBudgetGroupedByCollectionProductType;
+        results.repurchasePlannedBudgetGroupedByProductType = repurchasePlannedBudgetGroupedByProductType;
+        results.repurchaseExecutedBudgetGroupedByCollectionProductType = repurchaseExecutedBudgetGroupedByCollectionProductType;
+        results.repurchaseExecutedBudgetGroupedByProductType = repurchaseExecutedBudgetGroupedByProductType;
         return res.status(200).json(results);
     } else {
         return res.status(404).json({ error: res.$t('summaryIndicator_error_NOTFOUND') });
@@ -260,69 +260,69 @@ router.get('/purchase', passport.authenticate('jwt', { session: false }), async 
 
 /**
  * Prototype new object with parameter properties
- * @param params Parameters used to filter data for purchase
+ * @param params Parameters used to filter data for repurchase
  * @param plannedItems List of object as result of Planned Budget
  * @param executedItems List of object as result of Compared Budget
- * @returns {Purchase} Purchase object model
+ * @returns {Repurchase} Repurchase object model
  */
-function prototypePurchase(params, plannedItems, executedItems) {
-    if (!params && !plannedItems) return purchase;
-    let purchases = {};
-    purchases.planned_items = [];
-    purchases.executed_items = [];
+function prototypeRepurchase(params, plannedItems, executedItems) {
+    if (!params && !plannedItems) return repurchase;
+    let repurchases = {};
+    repurchases.planned_items = [];
+    repurchases.executed_items = [];
     if (plannedItems && plannedItems.length > 0) {
-        purchases.planned_items = plannedItems;
+        repurchases.planned_items = plannedItems;
     }
     if (executedItems && executedItems.length > 0) {
-        purchases.executed_items = executedItems;
+        repurchases.executed_items = executedItems;
     }
 
-    let purchase = {
+    let repurchase = {
         params: {},
-        purchases: {
+        repurchases: {
             planned_items: [],
             executed_items: []
         }
     };
 
-    if (params.purchase_id) {
-        purchase.params.purchase_id = params.purchase_id;
+    if (params.repurchase_id) {
+        repurchase.params.repurchase_id = params.repurchase_id;
     } else {
-        purchase.params.purchase_id = uidGenerator.generateUniqueId();
+        repurchase.params.repurchase_id = uidGenerator.generateUniqueId();
     }
-    if (params.purchase_title) {
-        purchase.params.purchase_title = params.purchase_title;
+    if (params.repurchase_title) {
+        repurchase.params.repurchase_title = params.repurchase_title;
     } else {
-        let defaultName = `${i18n.__('purchase_default_name')} ${purchase.params.purchase_id}`;
-        purchase.params.purchase_title = defaultName;
+        let defaultName = `${i18n.__('repurchase_default_name')} ${repurchase.params.repurchase_id}`;
+        repurchase.params.repurchase_title = defaultName;
     }
     if (params.collection && params.collection.length > 0) {
-        purchase.params.collection = params.collection;
+        repurchase.params.collection = params.collection;
     }
     if (params.product_type && params.product_type.length > 0) {
-        purchase.params.product_type = params.product_type;
+        repurchase.params.product_type = params.product_type;
     }
     if (params.price_range && params.price_range.length > 0) {
-        purchase.params.price_range = params.price_range;
+        repurchase.params.price_range = params.price_range;
     }
     if (params.planned_budget && params.planned_budget > 0) {
-        purchase.params.planned_budget = params.planned_budget;
+        repurchase.params.planned_budget = params.planned_budget;
     }
     if (params.planned_budget_not_used && params.planned_budget_not_used >= 0) {
-        purchase.params.planned_budget_not_used = params.planned_budget_not_used;
+        repurchase.params.planned_budget_not_used = params.planned_budget_not_used;
     }
     if (params.executed_budget && params.executed_budget > 0) {
-        purchase.params.executed_budget = params.executed_budget;
+        repurchase.params.executed_budget = params.executed_budget;
     }
     if (params.executed_budget_not_used && params.executed_budget_not_used >= 0) {
-        purchase.params.executed_budget_not_used = params.executed_budget_not_used;
+        repurchase.params.executed_budget_not_used = params.executed_budget_not_used;
     }
 
-    if (purchases && Object.keys(purchases).length > 0) {
-        purchase.purchases = purchases;
+    if (repurchases && Object.keys(repurchases).length > 0) {
+        repurchase.repurchases = repurchases;
     }
 
-    return purchase;
+    return repurchase;
 }
 
 /**
@@ -331,62 +331,62 @@ function prototypePurchase(params, plannedItems, executedItems) {
  * @param budgetType Type of budget to be processed I.E.: 'planned' or 'executed'
  * @param qtyBuyIn Qty of products to buy
  * @param valueBuyIn Value of products to buy
- * @returns {Purchase} Purchase object model
+ * @returns {Repurchase} Repurchase object model
  */
-function prototypePurchaseItem(summaryProductVariantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
+function prototypeRepurchaseItem(summaryProductVariantIndicator, budgetType, qtyBuyIn, valueBuyIn) {
     if (!summaryProductVariantIndicator || !budgetType) return;
     if (qtyBuyIn <= 0 || valueBuyIn <= 0) return;
 
-    let purchaseItem = null;
+    let repurchaseItem = null;
     if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
-        purchaseItem = new PurchasePlannedItem();
+        repurchaseItem = new RepurchasePlannedItem();
     }
     if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
-        purchaseItem = new PurchaseExecutedItem();
+        repurchaseItem = new RepurchaseExecutedItem();
     }
 
-    purchaseItem.product_id = summaryProductVariantIndicator.product_id;
-    purchaseItem.product_title = summaryProductVariantIndicator.product_title;
-    purchaseItem.variant_id = summaryProductVariantIndicator.variant_id;
-    purchaseItem.variant_title = summaryProductVariantIndicator.variant_title;
-    purchaseItem.title = summaryProductVariantIndicator.title;
-    purchaseItem.handle = summaryProductVariantIndicator.handle;
-    purchaseItem.collection_id = summaryProductVariantIndicator.collection_id;
-    purchaseItem.collection_title = summaryProductVariantIndicator.collection_title;
-    purchaseItem.product_type_id = summaryProductVariantIndicator.product_type_id;
-    purchaseItem.product_type_title = summaryProductVariantIndicator.product_type_title;
-    purchaseItem.image_src = summaryProductVariantIndicator.image_src;
-    purchaseItem.sku = summaryProductVariantIndicator.sku;
-    purchaseItem.price = summaryProductVariantIndicator.price;
-    purchaseItem.size = summaryProductVariantIndicator.size;
-    purchaseItem.color = summaryProductVariantIndicator.color;
-    purchaseItem.material = summaryProductVariantIndicator.material;
-    purchaseItem.vendor = summaryProductVariantIndicator.vendor;
-    purchaseItem.inventory_quantity = summaryProductVariantIndicator.inventory_quantity;
-    purchaseItem.inventory_unit_cost = summaryProductVariantIndicator.inventory_unit_cost;
-    purchaseItem.inventory_optimal = summaryProductVariantIndicator.inventory_optimal;
+    repurchaseItem.product_id = summaryProductVariantIndicator.product_id;
+    repurchaseItem.product_title = summaryProductVariantIndicator.product_title;
+    repurchaseItem.variant_id = summaryProductVariantIndicator.variant_id;
+    repurchaseItem.variant_title = summaryProductVariantIndicator.variant_title;
+    repurchaseItem.title = summaryProductVariantIndicator.title;
+    repurchaseItem.handle = summaryProductVariantIndicator.handle;
+    repurchaseItem.collection_id = summaryProductVariantIndicator.collection_id;
+    repurchaseItem.collection_title = summaryProductVariantIndicator.collection_title;
+    repurchaseItem.product_type_id = summaryProductVariantIndicator.product_type_id;
+    repurchaseItem.product_type_title = summaryProductVariantIndicator.product_type_title;
+    repurchaseItem.image_src = summaryProductVariantIndicator.image_src;
+    repurchaseItem.sku = summaryProductVariantIndicator.sku;
+    repurchaseItem.price = summaryProductVariantIndicator.price;
+    repurchaseItem.size = summaryProductVariantIndicator.size;
+    repurchaseItem.color = summaryProductVariantIndicator.color;
+    repurchaseItem.material = summaryProductVariantIndicator.material;
+    repurchaseItem.vendor = summaryProductVariantIndicator.vendor;
+    repurchaseItem.inventory_quantity = summaryProductVariantIndicator.inventory_quantity;
+    repurchaseItem.inventory_unit_cost = summaryProductVariantIndicator.inventory_unit_cost;
+    repurchaseItem.inventory_optimal = summaryProductVariantIndicator.inventory_optimal;
 
-    purchaseItem.purchase_planned_quantity_to_buy = 0;
-    purchaseItem.purchase_planned_value_to_buy = 0.0;
+    repurchaseItem.repurchase_planned_quantity_to_buy = 0;
+    repurchaseItem.repurchase_planned_value_to_buy = 0.0;
     if (budgetType === CONSTANT.BUDGET.TYPE.PLANNED) {
-        purchaseItem.purchase_planned_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
-        purchaseItem.purchase_planned_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
+        repurchaseItem.repurchase_planned_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
+        repurchaseItem.repurchase_planned_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
     }
 
-    purchaseItem.purchase_executed_quantity_to_buy = 0;
-    purchaseItem.purchase_executed_value_to_buy = 0.0;
+    repurchaseItem.repurchase_executed_quantity_to_buy = 0;
+    repurchaseItem.repurchase_executed_value_to_buy = 0.0;
     if (budgetType === CONSTANT.BUDGET.TYPE.EXECUTED) {
-        purchaseItem.purchase_executed_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
-        purchaseItem.purchase_executed_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
+        repurchaseItem.repurchase_executed_quantity_to_buy = qtyBuyIn ? qtyBuyIn : 0;
+        repurchaseItem.repurchase_executed_value_to_buy = valueBuyIn ? valueBuyIn : 0.0;
     }
 
-    return purchaseItem;
+    return repurchaseItem;
 }
 
 /**
  * GroupBy and SumBy Collection and Category
  * @param objParam Object parameter
- * @returns [purchaseGroupedByCollectionProductType] Array of objects grouped by and summed up
+ * @returns [repurchaseGroupedByCollectionProductType] Array of objects grouped by and summed up
  */
 const groupBySumCollectionProductType = objParam => {
     let result = [];
@@ -411,12 +411,12 @@ const groupBySumCollectionProductType = objParam => {
                                 o.sku === item.sku
                             );
                         }),
-                        ['purchase_executed_quantity_to_buy', 'purchase_executed_value_to_buy']
+                        ['repurchase_executed_quantity_to_buy', 'repurchase_executed_value_to_buy']
                     )
                 );
                 _.defaults(item, {
-                    purchase_executed_quantity_to_buy: 0,
-                    purchase_executed_value_to_buy: 0.0
+                    repurchase_executed_quantity_to_buy: 0,
+                    repurchase_executed_value_to_buy: 0.0
                 });
             });
             groupByData = planned_items;
@@ -434,12 +434,12 @@ const groupBySumCollectionProductType = objParam => {
                                 o.sku === item.sku
                             );
                         }),
-                        ['purchase_planned_quantity_to_buy', 'purchase_planned_value_to_buy']
+                        ['repurchase_planned_quantity_to_buy', 'repurchase_planned_value_to_buy']
                     )
                 );
                 _.defaults(item, {
-                    purchase_planned_quantity_to_buy: 0,
-                    purchase_planned_value_to_buy: 0.0
+                    repurchase_planned_quantity_to_buy: 0,
+                    repurchase_planned_value_to_buy: 0.0
                 });
             });
             groupByData = executed_items;
@@ -476,23 +476,23 @@ const groupBySumCollectionProductType = objParam => {
         groupArray.forEach(function(item) {
             if (!this[item.collection_title] && !this[item.product_type_title]) {
                 this[item.collection_title] = {
-                    header: i18n.__('purchase_header_by_collection_product_type'),
+                    header: i18n.__('repurchase_header_by_collection_product_type'),
                     collection_title: item.collection_title,
                     product_type_title: item.product_type_title,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
-                    purchase_planned_quantity_to_buy: 0,
-                    purchase_executed_quantity_to_buy: 0
+                    repurchase_planned_quantity_to_buy: 0,
+                    repurchase_executed_quantity_to_buy: 0
                 };
                 result.push(this[item.collection_title]);
             }
             this[item.collection_title].inventory_quantity += parseFloat(item.inventory_quantity);
             this[item.collection_title].inventory_optimal += parseFloat(item.inventory_optimal);
-            this[item.collection_title].purchase_planned_quantity_to_buy += parseFloat(
-                item.purchase_planned_quantity_to_buy
+            this[item.collection_title].repurchase_planned_quantity_to_buy += parseFloat(
+                item.repurchase_planned_quantity_to_buy
             );
-            this[item.collection_title].purchase_executed_quantity_to_buy += parseFloat(
-                item.purchase_executed_quantity_to_buy
+            this[item.collection_title].repurchase_executed_quantity_to_buy += parseFloat(
+                item.repurchase_executed_quantity_to_buy
             );
         }, Object.create(null));
     }
@@ -502,7 +502,7 @@ const groupBySumCollectionProductType = objParam => {
 /**
  * GroupBy and SumBy Category
  * @param objParam Object parameter
- * @returns [purchaseGroupedByProductType] Array of objects grouped by and summed up
+ * @returns [repurchaseGroupedByProductType] Array of objects grouped by and summed up
  */
 const groupBySumProductType = objParam => {
     let result = [];
@@ -527,12 +527,12 @@ const groupBySumProductType = objParam => {
                                 o.sku === item.sku
                             );
                         }),
-                        ['purchase_executed_quantity_to_buy', 'purchase_executed_value_to_buy']
+                        ['repurchase_executed_quantity_to_buy', 'repurchase_executed_value_to_buy']
                     )
                 );
                 _.defaults(item, {
-                    purchase_executed_quantity_to_buy: 0,
-                    purchase_executed_value_to_buy: 0.0
+                    repurchase_executed_quantity_to_buy: 0,
+                    repurchase_executed_value_to_buy: 0.0
                 });
             });
             groupByData = planned_items;
@@ -550,12 +550,12 @@ const groupBySumProductType = objParam => {
                                 o.sku === item.sku
                             );
                         }),
-                        ['purchase_planned_quantity_to_buy', 'purchase_planned_value_to_buy']
+                        ['repurchase_planned_quantity_to_buy', 'repurchase_planned_value_to_buy']
                     )
                 );
                 _.defaults(item, {
-                    purchase_planned_quantity_to_buy: 0,
-                    purchase_planned_value_to_buy: 0.0
+                    repurchase_planned_quantity_to_buy: 0,
+                    repurchase_planned_value_to_buy: 0.0
                 });
             });
             groupByData = executed_items;
@@ -593,22 +593,22 @@ const groupBySumProductType = objParam => {
         groupArray.forEach(function(item) {
             if (!this[item.product_type_title] && !this[item.product_type_title]) {
                 this[item.product_type_title] = {
-                    header: i18n.__('purchase_header_by_product_type'),
+                    header: i18n.__('repurchase_header_by_product_type'),
                     product_type_title: item.product_type_title,
                     inventory_quantity: 0,
                     inventory_optimal: 0,
-                    purchase_planned_quantity_to_buy: 0,
-                    purchase_executed_quantity_to_buy: 0
+                    repurchase_planned_quantity_to_buy: 0,
+                    repurchase_executed_quantity_to_buy: 0
                 };
                 result.push(this[item.product_type_title]);
             }
             this[item.product_type_title].inventory_quantity += parseFloat(item.inventory_quantity);
             this[item.product_type_title].inventory_optimal += parseFloat(item.inventory_optimal);
-            this[item.product_type_title].purchase_planned_quantity_to_buy += parseFloat(
-                item.purchase_planned_quantity_to_buy
+            this[item.product_type_title].repurchase_planned_quantity_to_buy += parseFloat(
+                item.repurchase_planned_quantity_to_buy
             );
-            this[item.product_type_title].purchase_executed_quantity_to_buy += parseFloat(
-                item.purchase_executed_quantity_to_buy
+            this[item.product_type_title].repurchase_executed_quantity_to_buy += parseFloat(
+                item.repurchase_executed_quantity_to_buy
             );
         }, Object.create(null));
     }
@@ -617,11 +617,11 @@ const groupBySumProductType = objParam => {
 
 /**
  * Calculate and prototype new object result
- * @param params Parameters used to filter data for purchase
+ * @param params Parameters used to filter data for repurchase
  * @param summaryProductVariantIndicators List of object as of search result
- * @returns {purchase} Purchase object model
+ * @returns {repurchase} Repurchase object model
  */
-const computeRepurchase = (params, summaryProductVariantIndicators) => {
+const computeRerepurchase = (params, summaryProductVariantIndicators) => {
     if (!params || !summaryProductVariantIndicators) return;
 
     // Execute Planned Budget
@@ -673,7 +673,7 @@ const computeRepurchase = (params, summaryProductVariantIndicators) => {
                 }
             }
 
-            let planned_item = prototypePurchaseItem(
+            let planned_item = prototypeRepurchaseItem(
                 summaryProductVariantIndicator,
                 CONSTANT.BUDGET.TYPE.PLANNED,
                 qtyBuyIn,
@@ -738,7 +738,7 @@ const computeRepurchase = (params, summaryProductVariantIndicators) => {
                     budgetToExecute = budgetToExecute - valueBuyIn;
                 }
             }
-            let executed_item = prototypePurchaseItem(
+            let executed_item = prototypeRepurchaseItem(
                 summaryProductVariantIndicator,
                 CONSTANT.BUDGET.TYPE.EXECUTED,
                 qtyBuyIn,
@@ -751,9 +751,9 @@ const computeRepurchase = (params, summaryProductVariantIndicators) => {
     }
     params.executed_budget_not_used = budgetToExecute;
 
-    let purchase = prototypePurchase(params, planned_items, executed_items);
+    let repurchase = prototypeRepurchase(params, planned_items, executed_items);
 
-    return purchase;
+    return repurchase;
 };
 
 module.exports = router;

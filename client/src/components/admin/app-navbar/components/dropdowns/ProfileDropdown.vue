@@ -1,33 +1,33 @@
 <template>
   <div class="profile-dropdown flex-center">
-    <template v-if="isAuthorized">
+    <template v-if="isAuthorized && user && Object.keys(user).length > 0">
       <span class="profile-dropdown__avatar-container">
-        <img src="https://i.imgur.com/nfa5itq.png"/>
+        <img :src="user.image"/>
       </span>
-
       <kuantic-dropdown v-model="isShown" position="bottom">
-        <div v-for="option in options" :key="option.name"
-            class="dropdown-item plain-link-item">
-          <router-link v-if="user && Object.keys(user).length > 0"
-                      :to="{ name: option.redirectTo, params: { handle: user.handle } }"
-                      class="plain-link"
-                      href="#">
-            {{ $t(`user.${option.name}`) }}
-          </router-link>
-        </div>
+        <template v-for="option in options">
+          <template v-if="option.isSignedInLink">
+            <div :key="option.name" class="dropdown-item plain-link-item">
+              <router-link :to="{ name: option.redirectTo, params: { handle: user.handle } }"
+                           class="plain-link"
+                           href="#">
+                {{ $t(`user.${option.name}`) }}
+              </router-link>
+            </div>
+          </template>
+        </template>
       </kuantic-dropdown>
     </template>
-    <template v-if="!isAuthorized">
+
+    <template v-else>
       <span class="profile-dropdown__avatar-container">
-        <i class="fa fa-exclamation-triangle"></i>
+        <span class="i-profile-badge"></span>
       </span>
       <kuantic-dropdown v-model="isShown" position="bottom">
         <template v-for="option in options">
           <template v-if="!option.isSignedInLink">
             <div :key="option.name" class="dropdown-item plain-link-item">
-              <router-link :to="{ name: option.redirectTo }"
-                          class="plain-link"
-                          href="#">
+              <router-link :to="{ name: option.redirectTo }" class="plain-link" href="#">
                 {{ $t(`user.${option.name}`) }}
               </router-link>
             </div>
@@ -53,6 +53,11 @@ export default {
       type: Array,
       default: () => [
         {
+          name: 'myProfile',
+          redirectTo: 'my-profile',
+          isSignedInLink: true
+        },
+        {
           name: 'login',
           redirectTo: 'login',
           isSignedInLink: false
@@ -61,11 +66,6 @@ export default {
           name: 'signup',
           redirectTo: 'signup',
           isSignedInLink: false
-        },
-        {
-          name: 'profile',
-          redirectTo: 'profile',
-          isSignedInLink: true
         },
         {
           name: 'logout',
@@ -91,7 +91,6 @@ export default {
       }
     }
   },
-
   created () {
     if (localStorage.getItem('authToken')) {
       this.$store.dispatch('app/toggleAuthState', true)
@@ -99,6 +98,9 @@ export default {
       localStorage.clear()
       this.$store.dispatch('app/toggleAuthState', false)
     }
+    console.log('ProfileDropdown authToken: ', localStorage.getItem('authToken') )
+    console.log('ProfileDropdown isAuthorized: ', this.isAuthorized )
+    console.log('ProfileDropdown user: ', this.user )
   }
 
 }
@@ -123,6 +125,15 @@ export default {
       height: 100%;
       width: 100%;
     }
+
   }
+}
+
+.i-profile-badge {
+  position: relative;
+  right: -3px;
+  top: -7px;
+  height: 60px;
+  width: 40px;
 }
 </style>

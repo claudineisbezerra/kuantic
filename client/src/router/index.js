@@ -107,17 +107,51 @@ export default new Router({
           }
         },
         {
-          path: 'intelligence',
-          name: 'intelligence',
+          path: 'planning',
+          name: 'planning',
           component: EmptyParentComponent,
           children: [
             {
-              path: 'purchase',
-              name: 'purchase',
-              component: lazyLoading('intelligence/purchase/Purchase'),
+              path: 'sales-projection',
+              name: 'sales-projection',
+              component: lazyLoading('planning/sales/SalesProjection'),
               meta: {
                 requiresAuth: false,
-                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/purchase',
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/sales-projection',
+              },
+            },
+          ],
+        },
+        {
+          path: 'purchase',
+          name: 'purchase',
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'best-sellers',
+              name: 'best-sellers',
+              component: lazyLoading('purchase/best-sellers/BestSellers'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/best-sellers',
+              },
+            },
+            {
+              path: 'product-grids',
+              name: 'product-grids',
+              component: lazyLoading('purchase/product-grids/ProductGrids'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/product-grids',
+              },
+            },
+            {
+              path: 'repurchase',
+              name: 'repurchase',
+              component: lazyLoading('purchase/repurchase/Repurchase'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/repurchase',
               },
             },
           ],
@@ -154,20 +188,56 @@ export default new Router({
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/stock-pricing',
               },
             },
+            {
+              path: 'competition-by-product',
+              name: 'competition-by-product',
+              component: lazyLoading('pricing/competition-by-product/CompetitionByProduct'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/competition-by-product',
+              },
+            },
+            {
+              path: 'competition-by-portfolio',
+              name: 'competition-by-portfolio',
+              component: lazyLoading('pricing/competition-by-portfolio/CompetitionByPortfolio'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/competition-by-portfolio',
+              },
+            },
           ],
         },
         {
-          path: 'reports',
-          name: 'reports',
+          path: 'marketing',
+          name: 'marketing',
           component: EmptyParentComponent,
           children: [
             {
-              path: 'best-sellers',
-              name: 'best-sellers',
-              component: lazyLoading('reports/best-sellers/BestSellers'),
+              path: 'google-analytics',
+              name: 'google-analytics',
+              component: lazyLoading('marketing/google-analytics/GoogleAnalytics'),
               meta: {
                 requiresAuth: false,
-                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/best-sellers',
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/google-analytics',
+              },
+            },
+            {
+              path: 'facebook-twitter',
+              name: 'facebook-twitter',
+              component: lazyLoading('marketing/facebook-twitter/FacebookTwitter'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/facebook-twitter',
+              },
+            },
+            {
+              path: 'remarketing',
+              name: 'remarketing',
+              component: lazyLoading('marketing/remarketing/Remarketing'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/remarketing',
               },
             },
           ],
@@ -470,37 +540,56 @@ export default new Router({
           }
         },
         {
-          path: '/profile/:handle',
+          path: 'profile',
           name: 'profile',
-          component: lazyLoading('profile/Profile'),
-          meta: {
-            requiresAuth: false,
-            transitionName: 'router-anim',
-            enterActive: 'animated fadeIn'
-          }
+          component: EmptyParentComponent,
+          children: [
+            {
+              path: 'my-profile',
+              name: 'my-profile',
+              component: lazyLoading('profile/my-profile/MyProfile'),
+              props: true,
+              meta: {
+                requiresAuth: true
+              }
+            },
+            // {
+            //   path: '/profile/:handle',
+            //   name: 'profile',
+            //   component: lazyLoading('profile/Profile'),
+            //   meta: {
+            //     requiresAuth: false,
+            //     transitionName: 'router-anim',
+            //     enterActive: 'animated fadeIn'
+            //   },
+            // },
+
+            // {
+            //   path: '/user/:handle',
+            //   name: 'userProfile',
+            //   component: lazyLoading('profile/UserProfile'),
+            //   props: true,
+            //   meta: {
+            //     requiresAuth: false,
+            //     transitionName: 'router-anim',
+            //     enterActive: 'animated fadeIn'
+            //   }
+            // },
+
+            // {
+            //   path: '/user/:handle/edit',
+            //   name: 'editUserProfile',
+            //   component: lazyLoading('profile/EditUserProfile'),
+            //   props: true,
+            //   meta: {
+            //     requiresAuth: false,
+            //     transitionName: 'router-anim',
+            //     enterActive: 'animated fadeIn'
+            //   }
+            // }
+          ],
         },
-        {
-          path: '/user/:handle',
-          name: 'userProfile',
-          component: lazyLoading('profile/UserProfile'),
-          props: true,
-          meta: {
-            requiresAuth: false,
-            transitionName: 'router-anim',
-            enterActive: 'animated fadeIn'
-          }
-        },
-        {
-          path: '/user/:handle/edit',
-          name: 'editUserProfile',
-          component: lazyLoading('profile/EditUserProfile'),
-          props: true,
-          meta: {
-            requiresAuth: false,
-            transitionName: 'router-anim',
-            enterActive: 'animated fadeIn'
-          }
-        }
+
       ],
     },
   ],

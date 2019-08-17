@@ -12,7 +12,7 @@
         <div class="input-group">
           <input name="username"
                  v-model.trim="username"
-                 v-validate="'required|min:5|max:15'"
+                 v-validate="'required|min:5|max:50'"
                  type="text"
                  :class="{'input': true, 'is-danger': veeErrors.has('username') }"
                  />
@@ -69,19 +69,21 @@
         </div>
       </div>
 
-      <kuantic-checkbox name="agree-to-terms" v-model="agreedToTerms">
+      <kuantic-checkbox name="agree-to-terms"
+                        id="agree-to-terms"
+                        v-model="hasAgreedToTerms">
         <template slot="label">
           {{ $t('auth.agree') }}
           <a class="link" href="#">{{ $t('auth.termsOfUse') }}</a>
         </template>
       </kuantic-checkbox>
 
-    <error :errorMessage="errorMessage" />
-    <error :errors="errors" />
+      <error :errorMessage="errorMessage" />
+      <error :errors="errors" />
 
       <div class="d-flex align--center justify--space-between">
         <button class="btn btn-primary" type="submit">
-          {{'auth.signUp' | translate}}
+          {{'auth.signup' | translate}}
         </button>
         <router-link class='link flex-center pl-2 text-center' :to="{name: 'login'}">
           {{'auth.alreadyJoined' | translate}}
@@ -108,11 +110,13 @@ export default {
   data () {
     return {
       username: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
-      agreedToTerms: true,
+      hasAgreedToTerms: true,
       errorMessage: this.message,
-      errors: []
+      errors: [],
     }
   },
   computed: {
@@ -124,42 +128,53 @@ export default {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
+          if (this.username) {
+          this.firstName = this.username.split(' ')[0]
+          this.lastName = this.username.substring(this.firstName.length).trim()
+          }
+
           axios.post(
             '/api/auth/signup',
             {
-              handle: slugify(this.username.toLowerCase()),
               username: this.username,
+              first_name: this.firstName,
+              last_name: this.lastName,
+              handle: slugify(this.username.toLowerCase()),
               email: this.email,
-              password: this.password
+              password: this.password,
+              has_agreed_to_terms: this.hasAgreedToTerms
             },
           )
             .then((res) => {
               if (res.data.errors) {
+                if (typeof res.data.errors === 'object') {
+                    let errors = res.data.errors.errors
+                  for (let key in errors) {
+                    let value =  errors[key]
+                    this.errors.push({ key, value })
+                  }
+                }
                 for (const error of res.data.errors) {
                   const [key] = Object.keys(error)
                   const [value] = Object.values(error)
                   this.errors.push({ key, value })
+
                 }
               } else {
                 localStorage.setItem('authToken', res.data.token)
                 this.$store.dispatch('app/toggleAuthState', true)
-                this.$store.dispatch('app/saveUserData', true)
+                this.$store.dispatch('app/saveUserData', res.data.user)
 
                 setAuthToken(res.data.token)
 
                 this.$router.push({
-                  name: 'profile',
-                  params: {
-                    handle: res.data.user.handle,
-                    // lang: this.$i18n.locale
-                  }
+                  name: 'dashboard'
                 })
               }
             })
         }
       })
-
-      setTimeout(() => { this.errors = [] }, 1500)
+      setTimeout(() => { this.errors = [] }, 2000)
     }
   },
 }

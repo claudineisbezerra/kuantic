@@ -49,15 +49,15 @@ export default {
       width: '10%',
     },
     {
-      name: 'purchase_executed_quantity_to_buy',
+      name: 'repurchase_executed_quantity_to_buy',
       title: 'Quantidade da compra',
-      sortField: 'purchase_executed_quantity_to_buy',
+      sortField: 'repurchase_executed_quantity_to_buy',
       width: '10%',
     },
     {
-      name: 'purchase_executed_value_to_buy',
+      name: 'repurchase_executed_value_to_buy',
       title: 'Valor da compra',
-      sortField: 'purchase_executed_value_to_buy',
+      sortField: 'repurchase_executed_value_to_buy',
       width: '10%',
     }
   ],

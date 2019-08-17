@@ -112,8 +112,8 @@ export default [
     categoryName: 'Intelligence',
     items: [
       {
-        itemName: 'Purchase',
-        itemLink: '/admin/intelligence/purchase',
+        itemName: 'Repurchase',
+        itemLink: '/admin/purchase/repurchase',
       },
     ],
   },

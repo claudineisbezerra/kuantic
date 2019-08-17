@@ -4,6 +4,7 @@ import Breadcrumbs
 import Chart from './kuantic-components/kuantic-chart/KuanticChart.vue'
 import Chat from './kuantic-components/kuantic-chat/KuanticChat.vue'
 import Checkbox from './kuantic-components/kuantic-checkbox/KuanticCheckbox.vue'
+import CheckboxInput from './kuantic-components/kuantic-checkbox/KuanticCheckboxInput.vue'
 import DataTable
   from './kuantic-components/kuantic-datatable/KuanticDataTable.vue'
 import DatatableCoverage
@@ -86,6 +87,7 @@ const KuanticPlugin = {
       Chart,
       Chat,
       Checkbox,
+      CheckboxInput,
       DataTable,
       DatatableCoverage,
       DatatableRange,

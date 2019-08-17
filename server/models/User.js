@@ -5,18 +5,48 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
     {
+        username: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        first_name: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        last_name: {
+            type: String,
+            required: true,
+            trim: true
+        },
         handle: {
             type: String,
             required: true,
             trim: true,
             unique: true
         },
-        username: {
+        email: {
             type: String,
-            required: true,
             trim: true,
             unique: true,
-            maxlength: ['15', i18n.__('username_error_LENGTH')]
+            default: null
+        },
+        phone: {
+            type: String,
+            trim: true
+        },
+        password: {
+            type: String,
+            default: null
+        },
+        image: {
+            type: String,
+            default: null
+        },
+        location: {
+            type: String,
+            default: null
         },
         social: {
             id: {
@@ -32,23 +62,63 @@ const UserSchema = new Schema(
                 default: null
             }
         },
-        email: {
-            type: String,
-            trim: true,
-            unique: true,
-            default: null
+        default_address: {
+            address1: {
+                type: String,
+                trim: true
+            },
+            address2: {
+                type: String,
+                trim: true
+            },
+            city: {
+                type: String,
+                trim: true
+            },
+            province: {
+                type: String,
+                trim: true
+            },
+            province_code: {
+                type: String,
+                trim: true
+            },
+            country: {
+                type: String,
+                trim: true
+            },
+            country_code: {
+                type: String,
+                trim: true
+            },
+            zip: {
+                type: String,
+                trim: true
+            },
+            latitude: {
+                type: String,
+                trim: true
+            },
+            longitude: {
+                type: String,
+                trim: true
+            }
         },
-        password: {
-            type: String,
-            default: null
+        addresses: {
+            type: Schema.Types.Mixed,
+            trim: true
         },
-        image: {
-            type: String,
-            default: null
+        company: {
+            type: Object,
+            trim: true
         },
-        location: {
+        about: {
             type: String,
-            default: null
+            trim: true
+        },
+        has_agreed_to_terms: {
+            type: Boolean,
+            required: true
         }
     },
     {

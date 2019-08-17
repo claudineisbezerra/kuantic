@@ -1,40 +1,40 @@
 <template>
-  <div class="purchase">
+  <div class="repurchase">
     <div class="va-row">
       <div class="flex md12">
-        <kuantic-widget :headerText="'purchase.filter_title' | translate">
-          <form @submit.prevent="handlePurchaseSubmit" name="purchase">
+        <kuantic-widget :headerText="'repurchase.filter_title' | translate">
+          <form @submit.prevent="handleRepurchaseSubmit" name="repurchase">
             <div class="va-row">
               <div class="flex md6">
                 <fieldset>
                   <div class="form-group">
                     <div class="input-group">
                       <input
-                        id="purchase_title"
-                        name="purchase_title"
-                        v-model="purchaseTitle"
+                        id="repurchase_title"
+                        name="repurchase_title"
+                        v-model="repurchaseTitle"
                         />
-                      <label class="control-label" for="purchase_title">
-                        {{'purchase.purchase_title' | translate}}
+                      <label class="control-label" for="repurchase_title">
+                        {{'repurchase.repurchase_title' | translate}}
                       </label>
                       <i class="bar"></i>
                     </div>
                   </div>
                 </fieldset>
               </div>
-              <div v-if="purchaseId"
+              <div v-if="repurchaseId"
                    class="flex md4">
                 <fieldset>
                   <div class="form-group">
                     <div class="input-group">
                       <input
-                        id="purchase_id"
-                        name="purchase_id"
+                        id="repurchase_id"
+                        name="repurchase_id"
                         readonly="readonly"
-                        v-model="purchaseId"
+                        v-model="repurchaseId"
                         />
-                      <label class="control-label control-label-as-title" for="purchase_id">
-                        {{'purchase.purchase_id' | translate}}
+                      <label class="control-label control-label-as-title" for="repurchase_id">
+                        {{'repurchase.repurchase_id' | translate}}
                       </label>
                       <i class="bar"></i>
                     </div>
@@ -49,9 +49,9 @@
                     <div class="input-group">
                       <div class="control-label-adjust"></div>
                       <label class="control-label control-label-as-title">
-                        {{'purchase.collection' | translate}}
+                        {{'repurchase.collection' | translate}}
                       </label>
-                      <kuantic-checkbox
+                      <kuantic-checkbox-input
                         v-for="(collection, id) in collections"
                         :key="id"
                         :label="collection.title"
@@ -68,9 +68,9 @@
                     <div class="input-group">
                       <div class="control-label-adjust"></div>
                       <label class="control-label control-label-as-title">
-                        {{'purchase.product_type' | translate}}
+                        {{'repurchase.product_type' | translate}}
                       </label>
-                      <kuantic-checkbox
+                      <kuantic-checkbox-input
                         v-for="(productType, id) in productTypes"
                         :key="id"
                         :label="productType.title"
@@ -87,9 +87,9 @@
                     <div class="input-group">
                       <div class="control-label-adjust"></div>
                       <label class="control-label control-label-as-title">
-                        {{'purchase.price_range' | translate}}
+                        {{'repurchase.price_range' | translate}}
                       </label>
-                      <kuantic-checkbox
+                      <kuantic-checkbox-input
                         v-for="(priceRange, id) in priceRanges"
                         :key="id"
                         :label="setPriceRangeLabel(priceRange)"
@@ -112,7 +112,7 @@
                         v-validate="'positive_number'"
                         />
                       <label class="control-label" for="planned_budget">
-                        {{'purchase.planned_budget' | translate}}
+                        {{'repurchase.planned_budget' | translate}}
                       </label>
                       <i class="bar"></i>
                       <small v-show="veeErrors.has('planned_budget')" class="help text-danger">
@@ -134,7 +134,7 @@
                         v-validate="'ge_zeros'"
                         />
                       <label class="control-label" for="executed_budget">
-                        {{'purchase.executed_budget' | translate}}
+                        {{'repurchase.executed_budget' | translate}}
                       </label>
                       <i class="bar"></i>
                       <small v-show="veeErrors.has('executed_budget')" class="help text-danger">
@@ -149,7 +149,7 @@
             <div class="va-row">
               <div class="flex sm6 lg6 xl3">
                 <button class="btn btn-primary">
-                  {{'purchase.compute' | translate}}
+                  {{'repurchase.compute' | translate}}
                 </button>
               </div>
             </div>
@@ -160,24 +160,24 @@
     </div>
 
    <!-- PLANNED BUDGET -->
-    <div v-if="purchase &&
-              Object.keys(purchase).length > 0 &&
-              purchase.purchases &&
-              purchase.purchases.planned_items &&
-              Object.keys(purchase.purchases.planned_items).length > 0">
+    <div v-if="repurchase &&
+              Object.keys(repurchase).length > 0 &&
+              repurchase.repurchases &&
+              repurchase.repurchases.planned_items &&
+              Object.keys(repurchase.repurchases.planned_items).length > 0">
       <div class="va-row">
         <div class="flex md12 xs12">
-          <kuantic-widget :headerText="$t('purchase.planned_budget_filter_result')">
+          <kuantic-widget :headerText="$t('repurchase.planned_budget_filter_result')">
             <div>
               <div class="va-row">
                 <kuantic-data-table
                   :apiUrl="apiUrl"
                   :apiMode="apiMode"
-                  :data="purchase.purchases.planned_items"
+                  :data="repurchase.repurchases.planned_items"
                   :itemsPerPage="itemsPerPage"
                   :defaultPerPage="defaultItemsPerPage"
                   :tableFields="plannedTableFields"
-                  :filterInputLabel="$t('purchase.filter_label')"
+                  :filterInputLabel="$t('repurchase.filter_label')"
                   :sortFunctions="plannedSortFunctions"
                   :queryParams="queryParams">
                   <spring-spinner
@@ -191,37 +191,37 @@
               <div class="va-row">
                 <div class="flex sm6 lg6 xl3">
                   <button class="btn btn-primary dropdown-toggle theme-toggle" type="button">
-                    {{'purchase.download' | translate}}
+                    {{'repurchase.download' | translate}}
                     <i class="ion-ios-arrow-down arrow-down"></i>
                     <kuantic-dropdown position="bottom">
                       <template>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.planned_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.planned_items,
+                                                  repurchase.params.repurchase_id,
                                                   'csv')">
-                          {{'purchase.download_csv' | translate}}
+                          {{'repurchase.download_csv' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.planned_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.planned_items,
+                                                  repurchase.params.repurchase_id,
                                                   'xls')">
-                          {{'purchase.download_xls' | translate}}
+                          {{'repurchase.download_xls' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.planned_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.planned_items,
+                                                  repurchase.params.repurchase_id,
                                                   'json')">
-                          {{'purchase.download_json' | translate}}
+                          {{'repurchase.download_json' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.planned_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.planned_items,
+                                                  repurchase.params.repurchase_id,
                                                   'txt')">
-                          {{'purchase.download_txt' | translate}}
+                          {{'repurchase.download_txt' | translate}}
                         </a>
                       </template>
                     </kuantic-dropdown>
@@ -236,10 +236,10 @@
 
 
     <div class="va-row"
-         v-if="purchasePlannedBudgetGroupedByCollectionProductType && purchasePlannedBudgetGroupedByCollectionProductType.length > 0">
-      <template v-for="(collectionProductType, id) in purchasePlannedBudgetGroupedByCollectionProductType">
+         v-if="repurchasePlannedBudgetGroupedByCollectionProductType && repurchasePlannedBudgetGroupedByCollectionProductType.length > 0">
+      <template v-for="(collectionProductType, id) in repurchasePlannedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_suggested') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="$t('repurchase.repurchase_suggested') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
             <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
@@ -248,31 +248,31 @@
 
     <div class="va-row">
       <div class="flex md6 xs12"
-           v-if="purchasePlannedBudgetGroupedByProductType && purchasePlannedBudgetGroupedByProductType.length > 0">
-        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_suggested')">
-          <kuantic-chart :data="setByProductTypeChartData(purchasePlannedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.PLANNED)" type="donut"/>
+           v-if="repurchasePlannedBudgetGroupedByProductType && repurchasePlannedBudgetGroupedByProductType.length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('repurchase.header_by_product_type_summary_suggested')">
+          <kuantic-chart :data="setByProductTypeChartData(repurchasePlannedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.PLANNED)" type="donut"/>
         </kuantic-widget>
       </div>
     </div>
 
     <!-- EXECUTED BUDGET -->
-    <div v-if="purchase &&
-              Object.keys(purchase).length > 0 &&
-              purchase.purchases &&
-              purchase.purchases.executed_items &&
-              Object.keys(purchase.purchases.executed_items).length > 0">
+    <div v-if="repurchase &&
+              Object.keys(repurchase).length > 0 &&
+              repurchase.repurchases &&
+              repurchase.repurchases.executed_items &&
+              Object.keys(repurchase.repurchases.executed_items).length > 0">
       <div class="va-row">
         <div class="flex md12 xs12">
-          <kuantic-widget :headerText="$t('purchase.executed_budget_filter_result')">
+          <kuantic-widget :headerText="$t('repurchase.executed_budget_filter_result')">
             <div>
               <div class="va-row">
                 <kuantic-data-table
                   :apiUrl="apiUrl"
                   :apiMode="apiMode"
-                  :data="purchase.purchases.executed_items"
+                  :data="repurchase.repurchases.executed_items"
                   :tableFields="executedTableFields"
                   :defaultPerPage="defaultItemsPerPage"
-                  :filterInputLabel="$t('purchase.filter_label')"
+                  :filterInputLabel="$t('repurchase.filter_label')"
                   :sortFunctions="executedSortFunctions"
                   :queryParams="queryParams">
                   <spring-spinner
@@ -286,37 +286,37 @@
               <div class="va-row">
                 <div class="flex sm6 lg6 xl3">
                   <button class="btn btn-primary dropdown-toggle theme-toggle" type="button">
-                    {{'purchase.download' | translate}}
+                    {{'repurchase.download' | translate}}
                     <i class="ion-ios-arrow-down arrow-down"></i>
                     <kuantic-dropdown position="bottom">
                       <template>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.executed_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.executed_items,
+                                                  repurchase.params.repurchase_id,
                                                   'csv')">
-                          {{'purchase.download_csv' | translate}}
+                          {{'repurchase.download_csv' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.executed_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.executed_items,
+                                                  repurchase.params.repurchase_id,
                                                   'xls')">
-                          {{'purchase.download_xls' | translate}}
+                          {{'repurchase.download_xls' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.executed_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.executed_items,
+                                                  repurchase.params.repurchase_id,
                                                   'json')">
-                          {{'purchase.download_json' | translate}}
+                          {{'repurchase.download_json' | translate}}
                         </a>
                         <a  class="dropdown-item"
                             href="#"
-                            @click="handleExport (purchase.purchases.executed_items,
-                                                  purchase.params.purchase_id,
+                            @click="handleExport (repurchase.repurchases.executed_items,
+                                                  repurchase.params.repurchase_id,
                                                   'txt')">
-                          {{'purchase.download_txt' | translate}}
+                          {{'repurchase.download_txt' | translate}}
                         </a>
                       </template>
                     </kuantic-dropdown>
@@ -330,9 +330,9 @@
     </div>
 
     <div class="va-row">
-      <template v-for="(collectionProductType, id) in purchaseExecutedBudgetGroupedByCollectionProductType">
+      <template v-for="(collectionProductType, id) in repurchaseExecutedBudgetGroupedByCollectionProductType">
         <div :key="id" class="flex md6 xs12">
-          <kuantic-widget class="chart-widget" :headerText="$t('purchase.purchase_todo') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
+          <kuantic-widget class="chart-widget" :headerText="$t('repurchase.repurchase_todo') +': '+ collectionProductType.product_type_title+' > '+collectionProductType.collection_title">
             <kuantic-chart :data="setByCollectionProductTypeChartData(collectionProductType)" type="vertical-bar"/>
           </kuantic-widget>
         </div>
@@ -341,9 +341,9 @@
 
     <div class="va-row">
       <div class="flex md6 xs12"
-           v-if="purchaseExecutedBudgetGroupedByProductType  && Object.keys(purchaseExecutedBudgetGroupedByProductType).length > 0">
-        <kuantic-widget class="chart-widget" :headerText="$t('purchase.header_by_product_type_summary_todo')">
-          <kuantic-chart :data="setByProductTypeChartData(purchaseExecutedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.EXECUTED)" type="donut"/>
+           v-if="repurchaseExecutedBudgetGroupedByProductType  && Object.keys(repurchaseExecutedBudgetGroupedByProductType).length > 0">
+        <kuantic-widget class="chart-widget" :headerText="$t('repurchase.header_by_product_type_summary_todo')">
+          <kuantic-chart :data="setByProductTypeChartData(repurchaseExecutedBudgetGroupedByProductType, $root.CONSTANT.BUDGET.TYPE.EXECUTED)" type="donut"/>
         </kuantic-widget>
       </div>
     </div>
@@ -369,7 +369,7 @@ import setAuthToken from 'utils/authToken'
 import exportFromJSON from 'export-from-json'
 
 export default {
-  name: 'purchase',
+  name: 'repurchase',
   components: {
     SpringSpinner
   },
@@ -386,16 +386,16 @@ export default {
       return isValid
     },
     executed_items () {
-      return this.purchase.purchases.executed_items
+      return this.repurchase.repurchases.executed_items
     },
     planned_items () {
-      return this.purchase.purchases.planned_items
+      return this.repurchase.repurchases.planned_items
     }
   },
   data () {
     return {
-      purchaseId: null,
-      purchaseTitle: null,
+      repurchaseId: null,
+      repurchaseTitle: null,
       collections: [],
       productTypes: [],
       priceRanges: [],
@@ -414,7 +414,7 @@ export default {
       },
       apiUrl: 'https://vuetable.ratiw.net/api/users',
       apiMode: false,
-      purchase: {},
+      repurchase: {},
       itemsPerPage: ItemsPerPage.itemsPerPage,
       defaultItemsPerPage: 6,
       plannedTableFields: PlannedFields.tableFields,
@@ -422,21 +422,21 @@ export default {
       executedTableFields: ExecutedFields.tableFields,
       executedSortFunctions: ExecutedFields.sortFunctions,
       queryParams: QueryParams,
-      purchasePlannedBudgetGroupedByCollectionProductType: [],
-      purchaseExecutedBudgetGroupedByCollectionProductType: [],
-      purchasePlannedBudgetGroupedByProductType: [],
-      purchaseExecutedBudgetGroupedByProductType: [],
+      repurchasePlannedBudgetGroupedByCollectionProductType: [],
+      repurchaseExecutedBudgetGroupedByCollectionProductType: [],
+      repurchasePlannedBudgetGroupedByProductType: [],
+      repurchaseExecutedBudgetGroupedByProductType: [],
     }
   },
   watch: {
-    purchase: function (newPurchase) {
-      this.purchaseTitle = newPurchase.params.purchase_title
-      this.purchaseId = newPurchase.params.purchase_id
-      // this.checkedCollections = newPurchase.params.collections
-      // this.checkedProductTypes = newPurchase.params.product_types
-      // this.checkedPriceRanges = newPurchase.params.price_ranges
-      // this.plannedBudget = newPurchase.params.planned_budget
-      // this.executedBudget = newPurchase.params.executed_budget
+    repurchase: function (newRepurchase) {
+      this.repurchaseTitle = newRepurchase.params.repurchase_title
+      this.repurchaseId = newRepurchase.params.repurchase_id
+      // this.checkedCollections = newRepurchase.params.collections
+      // this.checkedProductTypes = newRepurchase.params.product_types
+      // this.checkedPriceRanges = newRepurchase.params.price_ranges
+      // this.plannedBudget = newRepurchase.params.planned_budget
+      // this.executedBudget = newRepurchase.params.executed_budget
     }
   },
   methods: {
@@ -452,13 +452,13 @@ export default {
       let endAt = priceRange.end_at
       let label = ''
       if (startAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
-        label = this.$t('purchase.all_prices')
+        label = this.$t('repurchase.all_prices')
       }
       if (startAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
-        label = this.$t('purchase.start') + ' ' + startAt + ' ' + this.$t('purchase.end') + ' ' + endAt
+        label = this.$t('repurchase.start') + ' ' + startAt + ' ' + this.$t('repurchase.end') + ' ' + endAt
       }
       if (startAt !== this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL && endAt === this.$root.CONSTANT.PRICE.MAX_RANGE.LABEL) {
-        label = this.$t('purchase.beyond') + ' ' + startAt
+        label = this.$t('repurchase.beyond') + ' ' + startAt
       }
       return label
     },
@@ -480,10 +480,10 @@ export default {
 
       return val
     },
-    setPurchaseParams () {
+    setRepurchaseParams () {
       let param = {
-        purchase_id: null,
-        purchase_title: null,
+        repurchase_id: null,
+        repurchase_title: null,
         collections: [],
         product_types: [],
         price_ranges: [],
@@ -491,11 +491,11 @@ export default {
         executed_budget: null,
       }
 
-      if (this.purchaseId) {
-        param.purchase_id = this.purchaseId
+      if (this.repurchaseId) {
+        param.repurchase_id = this.repurchaseId
       }
-      if (this.purchaseTitle) {
-        param.purchase_title = this.purchaseTitle
+      if (this.repurchaseTitle) {
+        param.repurchase_title = this.repurchaseTitle
       }
 
       if (this.checkedCollections && this.checkedCollections.length > 0) {
@@ -557,9 +557,9 @@ export default {
       let unmasked = value.replace(/[^\d^\-\.\,\s]+/g, '').replace('.', '').replace(',', '.').trim()
       return unmasked
     },
-    handlePurchaseInit () {
+    handleRepurchaseInit () {
       this.errors = []
-      axios.get('/api/admin/intelligence/init')
+      axios.get('/api/admin/purchase/init')
       .then((res) => {
         if (res.data.errors) {
           for (const error of res.data.errors) {
@@ -575,15 +575,15 @@ export default {
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
-    handlePurchaseSubmit () {
+    handleRepurchaseSubmit () {
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {
-          let param = this.setPurchaseParams()
-          axios.get('/api/admin/intelligence/purchase',
+          let param = this.setRepurchaseParams()
+          axios.get('/api/admin/purchase/repurchase',
             { params: {
-                purchase_id: param.purchase_id,
-                purchase_title: param.purchase_title,
+                repurchase_id: param.repurchase_id,
+                repurchase_title: param.repurchase_title,
                 collections: JSON.stringify(param.collections),
                 product_types: JSON.stringify(param.product_types),
                 price_ranges: JSON.stringify(param.price_ranges),
@@ -601,12 +601,12 @@ export default {
                 }
               } else {
                 this.$nextTick(() => {
-                  this.purchase = {}
-                  this.purchase = res.data.purchase
-                  this.purchasePlannedBudgetGroupedByCollectionProductType = res.data.purchasePlannedBudgetGroupedByCollectionProductType
-                  this.purchaseExecutedBudgetGroupedByCollectionProductType = res.data.purchaseExecutedBudgetGroupedByCollectionProductType
-                  this.purchasePlannedBudgetGroupedByProductType = res.data.purchasePlannedBudgetGroupedByProductType
-                  this.purchaseExecutedBudgetGroupedByProductType = res.data.purchaseExecutedBudgetGroupedByProductType
+                  this.repurchase = {}
+                  this.repurchase = res.data.repurchase
+                  this.repurchasePlannedBudgetGroupedByCollectionProductType = res.data.repurchasePlannedBudgetGroupedByCollectionProductType
+                  this.repurchaseExecutedBudgetGroupedByCollectionProductType = res.data.repurchaseExecutedBudgetGroupedByCollectionProductType
+                  this.repurchasePlannedBudgetGroupedByProductType = res.data.repurchasePlannedBudgetGroupedByProductType
+                  this.repurchaseExecutedBudgetGroupedByProductType = res.data.repurchaseExecutedBudgetGroupedByProductType
                 })
               }
             })
@@ -614,31 +614,31 @@ export default {
       })
       setTimeout(() => { this.errors = [] }, 1500)
     },
-    setByCollectionProductTypeChartData (purchaseByCollectionProductType) {
-      if (!purchaseByCollectionProductType) return
-      if (purchaseByCollectionProductType.length <= 0) return
+    setByCollectionProductTypeChartData (repurchaseByCollectionProductType) {
+      if (!repurchaseByCollectionProductType) return
+      if (repurchaseByCollectionProductType.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette
       let backgroundColor = _.sample(_.omit(palette, ['transparent','success','white']));
 
       let labels = []
-      labels.push(this.$t('purchase.inventory_actual'))
-      labels.push(this.$t('purchase.inventory_optimal'))
-      labels.push(this.$t('purchase.purchase_suggested'))
-      labels.push(this.$t('purchase.purchase_todo'))
+      labels.push(this.$t('repurchase.inventory_actual'))
+      labels.push(this.$t('repurchase.inventory_optimal'))
+      labels.push(this.$t('repurchase.repurchase_suggested'))
+      labels.push(this.$t('repurchase.repurchase_todo'))
 
       let data = []
-      data.push(purchaseByCollectionProductType.inventory_quantity)
-      data.push(purchaseByCollectionProductType.inventory_optimal)
-      data.push(purchaseByCollectionProductType.purchase_planned_quantity_to_buy)
-      data.push(purchaseByCollectionProductType.purchase_executed_quantity_to_buy)
+      data.push(repurchaseByCollectionProductType.inventory_quantity)
+      data.push(repurchaseByCollectionProductType.inventory_optimal)
+      data.push(repurchaseByCollectionProductType.repurchase_planned_quantity_to_buy)
+      data.push(repurchaseByCollectionProductType.repurchase_executed_quantity_to_buy)
 
       let chartData = {
         labels: labels,
         datasets: [
           {
-            label: purchaseByCollectionProductType.product_type_title,
+            label: repurchaseByCollectionProductType.product_type_title,
             backgroundColor: backgroundColor,
             borderColor: palette.transparent,
             data: data,
@@ -648,9 +648,9 @@ export default {
 
       return chartData
     },
-    setByProductTypeChartData (purchaseByProductType, budgetType) {
-      if (!purchaseByProductType || !budgetType) return
-      if (purchaseByProductType.length <= 0) return
+    setByProductTypeChartData (repurchaseByProductType, budgetType) {
+      if (!repurchaseByProductType || !budgetType) return
+      if (repurchaseByProductType.length <= 0) return
 
       // Define ramdom background color
       let palette = store.getters.palette
@@ -658,17 +658,17 @@ export default {
 
       let labels = []
       let data = []
-      for (let i in purchaseByProductType) {
-        let item = purchaseByProductType[i]
+      for (let i in repurchaseByProductType) {
+        let item = repurchaseByProductType[i]
         let label = item.product_type_title
         labels.push(label)
 
         let qty = 0;
         if (budgetType === this.$root.CONSTANT.BUDGET.TYPE.PLANNED) {
-          qty = item.purchase_planned_quantity_to_buy
+          qty = item.repurchase_planned_quantity_to_buy
         }
         if (budgetType === this.$root.CONSTANT.BUDGET.TYPE.EXECUTED) {
-          qty = item.purchase_executed_quantity_to_buy
+          qty = item.repurchase_executed_quantity_to_buy
         }
         data.push(qty)
 
@@ -697,11 +697,11 @@ export default {
     },
   },
   mounted () {
-    console.log('Purchase mounted.')
+    console.log('Repurchase mounted.')
   },
   created () {
     this.$nextTick(() => {
-      this.handlePurchaseInit ()
+      this.handleRepurchaseInit ()
     })
   },
 }

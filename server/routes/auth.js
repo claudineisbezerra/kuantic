@@ -27,11 +27,9 @@ router.post('/signup', [checkRegistrationFields], (req, res) => {
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
             errors.push({ param: 'email', msg: res.$t('email_error_EXISTS') });
-
             if (user.username === req.body.username) {
                 errors.push({ param: 'username', msg: res.$t('username_error_EXISTS') });
             }
-
             res.send({
                 errors: createErrorObject(errors)
             }).end();
@@ -39,24 +37,25 @@ router.post('/signup', [checkRegistrationFields], (req, res) => {
             /** Assign Gravatar */
             const avatar = gravatar.url(req.body.email, { s: '220', r: 'pg', d: 'identicon' });
             const newUser = new User({
-                handle: req.body.handle,
                 username: req.body.username,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name,
+                handle: req.body.handle,
                 email: req.body.email,
                 password: req.body.password,
-                image: avatar
+                image: avatar,
+                has_agreed_to_terms: req.body.has_agreed_to_terms
             });
 
             newUser
                 .save()
                 .then(userData => {
                     const user = _.omit(userData.toObject(), ['password']);
-                    const token = jwt.sign(user, process.env.JWT_SECRET, {
-                        expiresIn: 18000
-                    });
+                    const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 18000 });
                     res.status(200).send({ auth: true, token: `Bearer ${token}`, user });
                 })
-                .catch(err => {
-                    res.send({ err, error: res.$t('auth_generic_error') });
+                .catch(errors => {
+                    res.send({ errors, error: res.$t('auth_generic_error') });
                 });
         }
     });
@@ -71,15 +70,11 @@ router.post('/signup', [checkRegistrationFields], (req, res) => {
  */
 router.post('/login', checkLoginFields, async (req, res) => {
     const user = await User.findOne({ email: req.body.email }).select('-password');
-
     if (!user) {
-        return res.status(404).send({
-            error: res.$t('userName_error_NOTFOUND')
-        });
+        return res.status(404).send({ error: res.$t('userName_error_NOTFOUND') });
     }
 
     const token = jwt.sign(user.toObject(), process.env.JWT_SECRET, { expiresIn: 18000 });
-
     res.status(200).send({ auth: true, token: `Bearer ${token}`, user });
 });
 

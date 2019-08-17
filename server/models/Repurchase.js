@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const uidGenerator = require('node-unique-id-generator');
 const Schema = mongoose.Schema;
 
-const PurchaseSchema = new Schema(
+const RepurchaseSchema = new Schema(
     {
         params: {
-            purchase_id: {
+            repurchase_id: {
                 type: String,
                 unique: true,
                 required: true,
@@ -14,7 +14,7 @@ const PurchaseSchema = new Schema(
                     return uidGenerator.generateUniqueId();
                 }
             },
-            purchase_title: {
+            repurchase_title: {
                 type: String,
                 trim: true,
                 default: null
@@ -50,7 +50,7 @@ const PurchaseSchema = new Schema(
                 default: null
             }
         },
-        purchases: {
+        repurchases: {
             planned_items: [
                 {
                     product_id: {
@@ -148,22 +148,22 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    purchase_planned_quantity_to_buy: {
+                    repurchase_planned_quantity_to_buy: {
                         type: String,
                         trim: true,
                         default: 0
                     },
-                    purchase_planned_value_to_buy: {
+                    repurchase_planned_value_to_buy: {
                         type: String,
                         trim: true,
                         default: 0.0
                     },
-                    purchase_executed_quantity_to_buy: {
+                    repurchase_executed_quantity_to_buy: {
                         type: String,
                         trim: true,
                         default: 0
                     },
-                    purchase_executed_value_to_buy: {
+                    repurchase_executed_value_to_buy: {
                         type: String,
                         trim: true,
                         default: 0.0
@@ -267,22 +267,22 @@ const PurchaseSchema = new Schema(
                         trim: true,
                         default: null
                     },
-                    purchase_planned_quantity_to_buy: {
+                    repurchase_planned_quantity_to_buy: {
                         type: String,
                         trim: true,
                         default: 0
                     },
-                    purchase_planned_value_to_buy: {
+                    repurchase_planned_value_to_buy: {
                         type: String,
                         trim: true,
                         default: 0.0
                     },
-                    purchase_executed_quantity_to_buy: {
+                    repurchase_executed_quantity_to_buy: {
                         type: String,
                         trim: true,
                         default: 0
                     },
-                    purchase_executed_value_to_buy: {
+                    repurchase_executed_value_to_buy: {
                         type: String,
                         trim: true,
                         default: 0.0
@@ -299,10 +299,10 @@ const PurchaseSchema = new Schema(
     }
 );
 
-PurchaseSchema.set('collection', 'purchases');
-PurchaseSchema.methods.getPurchaseId = function() {
+RepurchaseSchema.set('collection', 'repurchases');
+RepurchaseSchema.methods.getRepurchaseId = function() {
     return uidGenerator.generateUniqueId();
 };
 
-const Purchase = mongoose.model('Purchase', PurchaseSchema);
-module.exports = { Purchase };
+const Repurchase = mongoose.model('Repurchase', RepurchaseSchema);
+module.exports = { Repurchase };

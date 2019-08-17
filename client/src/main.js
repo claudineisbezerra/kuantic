@@ -106,7 +106,7 @@ axios.interceptors.response.use(
     return response
   },
   function (error) {
-    if (err.response.status === 401) {
+    if (error.response.status === 401) {
       localStorage.removeItem('authToken')
       store.dispatch('app/toggleAuthState', false)
       router.push({

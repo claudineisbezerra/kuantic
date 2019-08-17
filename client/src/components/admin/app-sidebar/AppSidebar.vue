@@ -9,16 +9,39 @@
           <span>{{ $t('menu.dashboard') }}</span>
         </span>
       </sidebar-link>
+
       <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
-          <span>{{ $t('menu.intelligence') }}</span>
+          <span>{{ $t('menu.planning') }}</span>
         </span>
         <sidebar-link
-          :to="{ name: 'purchase' }">
+          :to="{ name: 'sales-projection' }">
           <span slot="title">
-            <span>{{ $t('menu.purchase') }}</span>
+            <span>{{ $t('menu.salesProjection') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+
+      <sidebar-link-group>
+        <span slot="title">
+          <span class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
+          <span>{{ $t('menu.purchase') }}</span>
+        </span>
+        <sidebar-link :to="{ name: 'best-sellers' }">
+          <span slot="title">
+            <span>{{ $t('menu.bestSellers') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link :to="{ name: 'product-grids' }">
+          <span slot="title">
+            <span>{{ $t('menu.productGrids') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link :to="{ name: 'repurchase' }">
+          <span slot="title">
+            <span>{{ $t('menu.repurchase') }}</span>
           </span>
         </sidebar-link>
       </sidebar-link-group>
@@ -46,43 +69,73 @@
             <span>{{ $t('menu.stockPricing') }}</span>
           </span>
         </sidebar-link>
+        <sidebar-link :to="{ name: 'competition-by-product' }">
+          <span slot="title">
+            <span>{{ $t('menu.competitionByProduct') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link :to="{ name: 'competition-by-portfolio' }">
+          <span slot="title">
+            <span>{{ $t('menu.competitionByPortfolio') }}</span>
+          </span>
+        </sidebar-link>
       </sidebar-link-group>
       <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
-          <span>{{ $t('menu.reports') }}</span>
+          <span>{{ $t('menu.marketing') }}</span>
         </span>
         <sidebar-link
-          :to="{ name: 'best-sellers' }">
+          :to="{ name: 'google-analytics' }">
           <span slot="title">
-            <span>{{ $t('menu.bestSellers') }}</span>
+            <span>{{ $t('menu.googleAnalytics') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'facebook-twitter' }">
+          <span slot="title">
+            <span>{{ $t('menu.facebookTwitter') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link
+          :to="{ name: 'remarketing' }">
+          <span slot="title">
+            <span>{{ $t('menu.remarketing') }}</span>
           </span>
         </sidebar-link>
       </sidebar-link-group>
-
       <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
           <span>{{ $t('menu.settings') }}</span>
         </span>
-        <sidebar-link
-          :to="{ name: 'configurations' }">
+        <sidebar-link :to="{ name: 'configurations' }">
           <span slot="title">
             <span>{{ $t('menu.configurations') }}</span>
           </span>
         </sidebar-link>
-        <sidebar-link
-          :to="{ name: 'dailyindicators' }">
+        <sidebar-link :to="{ name: 'dailyindicators' }">
           <span slot="title">
             <span>{{ $t('menu.dailyindicators') }}</span>
           </span>
         </sidebar-link>
-        <sidebar-link
-          :to="{ name: 'summaryindicators' }">
+        <sidebar-link :to="{ name: 'summaryindicators' }">
           <span slot="title">
             <span>{{ $t('menu.summaryindicators') }}</span>
+          </span>
+        </sidebar-link>
+      </sidebar-link-group>
+      <sidebar-link-group>
+        <span slot="title">
+          <span
+            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-auth"></span>
+          <span>{{ $t('menu.profile') }}</span>
+        </span>
+        <sidebar-link :to="{ name: 'my-profile' }">
+          <span slot="title">
+            <span>{{ $t('menu.myProfile') }}</span>
           </span>
         </sidebar-link>
       </sidebar-link-group>
@@ -98,7 +151,7 @@
 
 
 
-      <sidebar-link-group>
+      <!-- <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
@@ -180,14 +233,6 @@
             <span>{{ $t('menu.colorPickers') }}</span>
           </span>
         </sidebar-link>
-        <!-- NOTE Dropdowns are not presentation ready yet. See https://github.com/claudineisbezerra/kuantic/issues/438 -->
-        <!--<sidebar-link-->
-          <!--:to="{ name: 'dropdowns' }"-->
-        <!--&gt;-->
-          <!--<span slot="title">-->
-            <!--<span>{{ $t('menu.dropdowns') }}</span>-->
-          <!--</span>-->
-        <!--</sidebar-link>-->
         <sidebar-link
           :to="{ name: 'filters' }">
           <span slot="title">
@@ -266,28 +311,6 @@
       <sidebar-link-group>
         <span slot="title">
           <span
-            class="sidebar-menu-item-icon kuantic-icon kuantic-icon-auth"></span>
-          <span>{{ $t('menu.auth') }}</span>
-        </span>
-        <sidebar-link
-          :to="{ name: 'login' }"
-          target="_blank"
-          :isChildLink="true">
-          <span slot="title">
-            <span>{{ $t('menu.login') }}</span>
-          </span>
-        </sidebar-link>
-        <sidebar-link
-          :to="{ name: 'signup' }"
-          target="_blank">
-          <span slot="title">
-            <span>{{ $t('menu.signUp') }}</span>
-          </span>
-        </sidebar-link>
-      </sidebar-link-group>
-      <sidebar-link-group>
-        <span slot="title">
-          <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-maps"></span>
           <span>{{ $t('menu.maps') }}</span>
         </span>
@@ -334,23 +357,10 @@
             <span>{{ $t('404 Pages') }}</span>
           </span>
         </sidebar-link>
-      </sidebar-link-group>
-      <!-- <sidebar-link
-        :to="{ name: 'settings' }">
-        <span slot="title">
-          <span class="sidebar-menu-item-icon kuantic-icon kuantic-icon-settings"></span>
-          <span>{{ $t('menu.settings') }}</span>
-        </span>
-      </sidebar-link> -->
-      <!-- <sidebar-link
-        :to="{ name: 'about' }">
-        <span slot="title">
-          <span class="sidebar-menu-item-icon">
-            <i class="fa fa-question icon-left input-icon"/>
-          </span>
-          <span>{{ $t('menu.about') }}</span>
-        </span>
-      </sidebar-link> -->
+      </sidebar-link-group> -->
+
+
+
     </template>
   </kuantic-sidebar>
 </template>

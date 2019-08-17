@@ -91,7 +91,6 @@ export default {
         if (result) {
           axios.post('/api/auth/login',
             { email: this.email, password: this.password }
-            // { params: { lang: this.$i18n.locale } }
           )
             .then((res) => {
               if (res.data.errors) {
@@ -104,12 +103,10 @@ export default {
                 localStorage.setItem('authToken', res.data.token)
                 this.$store.dispatch('app/toggleAuthState', true)
                 this.$store.dispatch('app/saveUserData', res.data.user)
-
                 setAuthToken(res.data.token)
 
                 this.$router.push({
-                  name: 'profile',
-                  params: { handle: res.data.user.handle }
+                  name: 'dashboard'
                 })
               }
             })
