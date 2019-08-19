@@ -168,7 +168,7 @@ router.get('/repurchase', passport.authenticate('jwt', { session: false }), asyn
         if (params.repurchase_id) {
             filter = { 'params.repurchase_id': params.repurchase_id };
         }
-        let update = computeRerepurchase(params, summaryProductVariantIndicators);
+        let update = computeRepurchase(params, summaryProductVariantIndicators);
         let options = { upsert: true, new: true, setDefaultsOnInsert: true };
         let repurchase = await Repurchase.findOneAndUpdate(filter, update, options);
 
@@ -621,7 +621,7 @@ const groupBySumProductType = objParam => {
  * @param summaryProductVariantIndicators List of object as of search result
  * @returns {repurchase} Repurchase object model
  */
-const computeRerepurchase = (params, summaryProductVariantIndicators) => {
+const computeRepurchase = (params, summaryProductVariantIndicators) => {
     if (!params || !summaryProductVariantIndicators) return;
 
     // Execute Planned Budget

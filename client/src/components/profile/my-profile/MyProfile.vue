@@ -4,29 +4,36 @@
       <div class="va-row">
         <div class="flex md3">
           <kuantic-widget :headerText="$t('profile.profileCard')" class="profile-card-widget">
-            <kuantic-profile-card :name="'Veronique Lee'"
+            <kuantic-profile-card :name="user.username"
+                                  :location="user.location"
+                                  :photoSource="user.image"
+                                  :social="{
+                                    twitter: user.social.twitter,
+                                    facebook: user.social.facebook,
+                                    instagram: user.social.instagram}">
+            </kuantic-profile-card>
+            <!-- <kuantic-profile-card :name="'Veronique Lee'"
                                   :location="'Malaga, Spain'"
                                   photoSource="https://i.imgur.com/NLrdqsk.png"
                                   :social="{twitter: 'twitter.com', facebook: 'facebook.com',
                                     instagram: 'instagram.com'}">
-            </kuantic-profile-card>
+            </kuantic-profile-card> -->
           </kuantic-widget>
         </div>
         <div class="flex md9">
           <kuantic-widget :headerText="'profile.form.title' | translate">
             <form>
               <div class="va-row">
-
                 <div class="flex xs6">
                   <fieldset>
                     <div class="form-group with-icon-right">
                       <div class="input-group">
-                        <input v-model="clearableText"
+                        <input v-model="user.first_name"
                               id="firstName"
                               name="firstName"
                               required/>
                         <i class="fa fa-times icon-right input-icon pointer"
-                          @click="clear('clearableText')"></i>
+                          @click="clear('user.first_name')"></i>
                         <label class="control-label" for="firstName" role="button">
                           {{'profile.field.firstName' | translate}}
                         </label>
@@ -39,12 +46,12 @@
                   <fieldset>
                     <div class="form-group with-icon-right">
                       <div class="input-group">
-                        <input v-model="clearableText"
+                        <input v-model="user.last_name"
                               id="lastName"
                               name="lastName"
                               required/>
                         <i class="fa fa-times icon-right input-icon pointer"
-                          @click="clear('clearableText')"></i>
+                          @click="clear('user.last_name')"></i>
                         <label class="control-label" for="lastName" role="button">
                           {{'profile.field.lastName' | translate}}
                         </label>
@@ -62,7 +69,7 @@
                         <input
                           id="email"
                           name="email"
-                          v-model="email"
+                          v-model="user.email"
                           v-validate="'required|email'"
                           />
                         <i
@@ -88,8 +95,7 @@
                         <input
                           id="phone"
                           name="phone"
-                          v-model="phone"
-                          v-validate="'required|phone'"
+                          v-model="user.phone"
                           />
                         <i
                           class="fa fa-exclamation-triangle error-icon icon-right input-icon"></i>
@@ -106,31 +112,19 @@
                     </div>
                   </fieldset>
                 </div>
-                <!-- <div class="flex xs6">
-                  <fieldset>
-                    <div class="form-group">
-                      <div class="input-group">
-                        <input id="simple-input" required/>
-                        <label class="control-label" for="simple-input">
-                          {{'profile.field.company' | translate}}</label>
-                          <i class="bar"></i>
-                      </div>
-                    </div>
-                  </fieldset>
-                </div> -->
 
                 <div class="flex xs4">
                   <fieldset>
                     <div class="form-group with-icon-right">
                       <div class="input-group">
-                        <input v-model="clearableText"
+                        <input v-model="user.default_address.zipCode"
                               id="postalCode"
                               name="postalCode"
                               required/>
                         <i class="fa fa-times icon-right input-icon pointer"
-                          @click="clear('clearableText')"></i>
+                          @click="clear('user.default_address.zipCode')"></i>
                         <label class="control-label" for="postalCode" role="button">
-                          {{'profile.field.postalCode' | translate}}
+                          {{'profile.field.zipCode' | translate}}
                         </label>
                         <i class="bar"></i>
                       </div>
@@ -141,12 +135,12 @@
                   <fieldset>
                     <div class="form-group with-icon-right">
                       <div class="input-group">
-                        <input v-model="clearableText"
-                              id="address"
-                              name="address"
-                              required/>
+                        <input v-model="user.default_address.address"
+                               id="address"
+                               name="address"
+                               required/>
                         <i class="fa fa-times icon-right input-icon pointer"
-                          @click="clear('clearableText')"></i>
+                          @click="clear('user.default_address.address')"></i>
                         <label class="control-label" for="address" role="button">
                           {{'profile.field.address' | translate}}
                         </label>
@@ -160,7 +154,7 @@
                   <fieldset>
                     <kuantic-simple-select
                       :label="'profile.field.country' | translate"
-                      v-model="chosenCountry"
+                      v-model="user.default_address.country"
                       v-bind:options="countriesList"
                     />
                   </fieldset>
@@ -168,8 +162,8 @@
                 <div class="flex xs4">
                   <fieldset>
                     <kuantic-simple-select
-                      :label="'profile.field.state' | translate"
-                      v-model="chosenState"
+                      :label="'profile.field.province' | translate"
+                      v-model="user.default_address.province"
                       v-bind:options="statesList"
                     />
                   </fieldset>
@@ -178,19 +172,109 @@
                   <fieldset>
                     <kuantic-simple-select
                       :label="'profile.field.city' | translate"
-                      v-model="chosenCity"
+                      v-model="user.default_address.city"
                       v-bind:options="citiesList"
                     />
                   </fieldset>
                 </div>
+              </div>
 
+              <div class="va-row">
+                <div class="flex xs6">
+                  <fieldset>
+                    <div class="form-group with-icon-right">
+                      <div class="input-group">
+                        <input v-model="user.social.facebook.url"
+                              id="facebook"
+                              name="facebook"
+                              required/>
+                        <i class="fa fa-times icon-right input-icon pointer"
+                          @click="clear('user.social.facebook.url')"></i>
+                        <label class="control-label" for="facebook" role="button">
+                          {{'profile.field.facebook' | translate}}
+                        </label>
+                        <i class="bar"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="va-row">
+                <div class="flex xs6">
+                  <fieldset>
+                    <div class="form-group with-icon-right">
+                      <div class="input-group">
+                        <input v-model="user.social.instagram.url"
+                              id="instagram"
+                              name="instagram"
+                              required/>
+                        <i class="fa fa-times icon-right input-icon pointer"
+                          @click="clear('user.social.instagram.url')"></i>
+                        <label class="control-label" for="instagram" role="button">
+                          {{'profile.field.instagram' | translate}}
+                        </label>
+                        <i class="bar"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="va-row">
+                <div class="flex xs6">
+                  <fieldset>
+                    <div class="form-group with-icon-right">
+                      <div class="input-group">
+                        <input v-model="user.social.twitter.url"
+                              id="twitter"
+                              name="twitter"
+                              required/>
+                        <i class="fa fa-times icon-right input-icon pointer"
+                          @click="clear('user.social.twitter.url')"></i>
+                        <label class="control-label" for="twitter" role="button">
+                          {{'profile.field.twitter' | translate}}
+                        </label>
+                        <i class="bar"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="va-row">
+                <div class="flex xs6">
+                  <fieldset>
+                    <div class="form-group with-icon-right">
+                      <div class="input-group">
+                        <input v-model="user.company"
+                              id="company"
+                              name="company"
+                              required/>
+                        <i class="fa fa-times icon-right input-icon pointer"
+                          @click="clear('user.company')"></i>
+                        <label class="control-label" for="company" role="button">
+                          {{'profile.field.company' | translate}}
+                        </label>
+                        <i class="bar"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="va-row">
                 <div class="flex xs12">
                   <fieldset>
-                    <div class="form-group">
+                    <div class="form-group with-icon-right">
                       <div class="input-group">
-                        <textarea type="text" id="aboutMe"
-                                  required></textarea>
-                        <label class="control-label" for="aboutMe">
+                        <textarea v-model="user.about_me"
+                                  id="aboutMe"
+                                  name="aboutMe"
+                                  required/>
+                        <i class="fa fa-times icon-right input-icon pointer"
+                          @click="clear('user.about_me')"></i>
+                        <label class="control-label" for="aboutMe" role="button">
                           {{'profile.field.aboutMe' | translate}}
                         </label>
                         <i class="bar"></i>
@@ -289,17 +373,38 @@ export default {
       this[field] = ''
     },
     getUserProfile(user) {
-      return user
-    },
+      if (!user) return
+      console.log('getUserProfile user:', user)
+      this.$validator.validateAll().then((result) => {
+        console.log('getUserProfile validation result:', result)
+        if (result) {
+          axios.get('/api/profile/:handle', user )
+            .then((res) => {
+              console.log('getUserProfile response:', res)
+              if (res.data.errors) {
+                for (const error of res.data.errors) {
+                  const [key] = Object.keys(error)
+                  const [value] = Object.values(error)
+                  this.errors.push({ key, value })
+                }
+              } else {
+                this.$nextTick(() => {
+                  this.user = res.data.user
+                })
+              }
+            })
+        }
+      })
+      setTimeout(() => { this.errors = [] }, 1500)
+    }
   },
   mounted () {
     console.log('MyProfile mounted. Do not erase this mounted () function.')
   },
   created () {
     this.$nextTick(() => {
-      console.log('MyProfile user:', this.user)
       if (this.user) {
-        this.getUserProfile(this.user);
+        // this.getUserProfile(this.user);
       }
     })
   },

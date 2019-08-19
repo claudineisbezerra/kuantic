@@ -18,7 +18,6 @@
         </template>
       </kuantic-dropdown>
     </template>
-
     <template v-else>
       <span class="profile-dropdown__avatar-container">
         <span class="i-profile-badge"></span>
@@ -98,9 +97,6 @@ export default {
       localStorage.clear()
       this.$store.dispatch('app/toggleAuthState', false)
     }
-    console.log('ProfileDropdown authToken: ', localStorage.getItem('authToken') )
-    console.log('ProfileDropdown isAuthorized: ', this.isAuthorized )
-    console.log('ProfileDropdown user: ', this.user )
   }
 
 }

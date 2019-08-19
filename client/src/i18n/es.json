@@ -59,6 +59,7 @@
     "username": "Nombre de usuario",
     "email": "Email",
     "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
     "loginWith": "Iniciar con",
     "password": "Contraseña",
     "signup": "Registrar",
@@ -249,6 +250,7 @@
     "icons": "Iconos",
     "cards": "Cards",
     "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
     "maps": "Mapas",
     "modals": "Modals",
     "notifications": "Notificaciones",
@@ -351,9 +353,12 @@
       "lastName": "Apellido",
       "address": "Dirección",
       "country": "País",
-      "state": "Estado",
+      "province": "Estado",
       "city": "Ciudad",
-      "postalCode": "Código postal",
+      "zipCode": "Código postal",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
       "aboutMe": "Sobre mi"
     },
     "profileCard": "Perfil"
@@ -471,10 +476,10 @@
   },
   "user": {
     "language": "Cambiar Idioma",
-    "login": "Login",
-    "signup": "Sign Up",
-    "myProfile": "Mi Perfil",
-    "logout": "Cerrar Sesión"
+    "login": "Iniciar sesión",
+    "logout": "Cerrar Sesión",
+    "signup": "Regístrate",
+    "myProfile": "Mi Perfil"
   },
   "validate": {
     "ge_zeros": "Valor debe ser igual o mayor que ceros",

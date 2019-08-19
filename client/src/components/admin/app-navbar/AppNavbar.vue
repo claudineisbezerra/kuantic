@@ -1,9 +1,6 @@
 <template>
   <kuantic-navbar>
     <header-selector slot="selector" :isOpen.sync="valueProxy"/>
-    <!-- <span slot="logo">
-      <icon-kletter/>
-    </span> -->
     <span slot="logo">
       <kuantic-icon-kuantic/>
     </span>

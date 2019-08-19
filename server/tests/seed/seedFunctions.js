@@ -71,11 +71,17 @@ const populateData = async () => {
     for (let user of userSeedData) {
         const userData = await new User({
             handle: slugify(user.username),
+            email: user.email,
+            phone: user.phone,
+            password: user.password,
             username: user.username,
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email,
-            password: user.password,
+            location: user.location,
+            social: user.social,
+            default_address: user.default_address,
+            company: user.company,
+            about_me: user.about_me,
             image: gravatar.url(user.email, { s: '220', r: 'pg', d: 'identicon' }),
             has_agreed_to_terms: user.has_agreed_to_terms
         }).save();

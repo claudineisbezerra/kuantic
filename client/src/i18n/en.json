@@ -59,6 +59,7 @@
     "username": "User name",
     "email": "Email",
     "login": "Login",
+    "logout": "Logout",
     "loginWith": "Login with",
     "password": "Password",
     "signup": "Sign Up",
@@ -273,6 +274,7 @@
     "cards": "Cards",
     "spinners": "Spinners",
     "login": "Login",
+    "logout": "Logout",
     "maps": "Maps",
     "pages": "Pages",
     "modals": "Modals",
@@ -381,10 +383,13 @@
       "lastName": "Last name",
       "address": "Address",
       "country": "Country",
-      "state": "State",
+      "province": "State",
       "city": "City",
-      "postalCode": "Postal code",
-      "aboutMe": "About me"
+      "zipCode": "Postal code",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "aboutMe": "Sobre mim"
     },
     "profileCard": "Profile"
   },
@@ -502,8 +507,8 @@
   "user": {
     "language": "Change Language",
     "login": "Login",
-    "signup": "Sign Up",
     "logout": "Logout",
+    "signup": "Sign Up",
     "myProfile": "My Profile"
   },
   "validate": {

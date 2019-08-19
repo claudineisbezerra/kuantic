@@ -103,7 +103,7 @@
                       <i class="fa fa-times icon-right input-icon pointer"
                         @click="clear('clearableText')"></i>
                       <label class="control-label" for="postalCode" role="button">
-                        {{'profile.field.postalCode' | translate}}
+                        {{'profile.field.zipCode' | translate}}
                       </label>
                       <i class="bar"></i>
                     </div>
@@ -141,7 +141,7 @@
               <div class="flex xs4">
                 <fieldset>
                   <kuantic-simple-select
-                    :label="'profile.field.state' | translate"
+                    :label="'profile.field.province' | translate"
                     v-model="chosenState"
                     v-bind:options="statesList"
                   />

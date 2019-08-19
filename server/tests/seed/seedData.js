@@ -4,17 +4,43 @@ module.exports = {
     userSeedData: [
         {
             email: 'teste1@email.com.br',
-            username: 'Teste1 Username',
-            first_name: 'Teste1',
-            last_name: 'Username',
+            phone: '+5511999998888',
+            username: 'Veronique Lamar',
+            first_name: 'Veronique',
+            last_name: 'Lamar',
             password: 'just4now',
+            location: 'São Paulo, Brasil',
+            social: {
+                facebook: {
+                    url: 'facebook.com/veroniquelamar'
+                },
+                instagram: {
+                    url: 'instagram.com/@veroniquelamar'
+                },
+                twitter: {
+                    url: 'twitter.com/@veroniquelamar'
+                }
+            },
+            default_address: {
+                address: 'Rua Macedônia, 430 Quadra 14 Casa 02',
+                city: 'São Paulo',
+                province: 'São Paulo',
+                province_code: 'SP',
+                country: 'Brasil',
+                country_code: 'BR',
+                zipCode: '1234-000',
+                latitude: '0123456789',
+                longitude: '0123456789'
+            },
+            company: 'ZeroHum Assessoria',
+            about_me: 'Adoro filhotes e contexto',
             has_agreed_to_terms: true
         },
         {
             email: 'teste2@email.com.br',
-            username: 'Teste2 Username',
-            first_name: 'Teste2',
-            last_name: 'Username',
+            username: 'Cristina Da Paz',
+            first_name: 'Cristina',
+            last_name: 'Da Paz',
             password: 'just4now',
             has_agreed_to_terms: true
         }

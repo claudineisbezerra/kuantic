@@ -8,23 +8,26 @@ const UserSchema = new Schema(
         username: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            default: null
         },
         first_name: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            default: null
         },
         last_name: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            default: null
         },
         handle: {
             type: String,
             required: true,
             trim: true,
-            unique: true
+            default: null
         },
         email: {
             type: String,
@@ -34,7 +37,8 @@ const UserSchema = new Schema(
         },
         phone: {
             type: String,
-            trim: true
+            trim: true,
+            default: null
         },
         password: {
             type: String,
@@ -42,79 +46,132 @@ const UserSchema = new Schema(
         },
         image: {
             type: String,
+            trim: true,
             default: null
         },
         location: {
             type: String,
+            trim: true,
             default: null
         },
         social: {
-            id: {
-                type: String,
-                default: null
+            facebook: {
+                id: {
+                    type: String,
+                    default: null
+                },
+                url: {
+                    type: String,
+                    default: null
+                },
+                image: {
+                    type: String,
+                    default: null
+                },
+                email: {
+                    type: String,
+                    default: null
+                }
             },
-            image: {
-                type: String,
-                default: null
+            instagram: {
+                id: {
+                    type: String,
+                    default: null
+                },
+                url: {
+                    type: String,
+                    default: null
+                },
+                image: {
+                    type: String,
+                    default: null
+                },
+                email: {
+                    type: String,
+                    default: null
+                }
             },
-            email: {
-                type: String,
-                default: null
+            twitter: {
+                id: {
+                    type: String,
+                    default: null
+                },
+                url: {
+                    type: String,
+                    default: null
+                },
+                image: {
+                    type: String,
+                    default: null
+                },
+                email: {
+                    type: String,
+                    trim: true,
+                    default: null
+                }
             }
         },
         default_address: {
-            address1: {
+            address: {
                 type: String,
-                trim: true
-            },
-            address2: {
-                type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             city: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             province: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             province_code: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             country: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             country_code: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
-            zip: {
+            zipCode: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             latitude: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             },
             longitude: {
                 type: String,
-                trim: true
+                trim: true,
+                default: null
             }
         },
         addresses: {
             type: Schema.Types.Mixed,
-            trim: true
+            trim: true,
+            default: null
         },
         company: {
             type: Object,
-            trim: true
+            trim: true,
+            default: null
         },
-        about: {
+        about_me: {
             type: String,
-            trim: true
+            trim: true,
+            default: null
         },
         has_agreed_to_terms: {
             type: Boolean,

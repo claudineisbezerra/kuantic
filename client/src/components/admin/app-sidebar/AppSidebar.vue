@@ -45,6 +45,7 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
+
       <sidebar-link-group>
         <span slot="title">
           <span
@@ -80,6 +81,7 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
+
       <sidebar-link-group>
         <span slot="title">
           <span
@@ -105,6 +107,7 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
+
       <sidebar-link-group>
         <span slot="title">
           <span
@@ -127,18 +130,37 @@
           </span>
         </sidebar-link>
       </sidebar-link-group>
+
       <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-auth"></span>
           <span>{{ $t('menu.profile') }}</span>
         </span>
-        <sidebar-link :to="{ name: 'my-profile' }">
-          <span slot="title">
-            <span>{{ $t('menu.myProfile') }}</span>
-          </span>
-        </sidebar-link>
+        <template v-if="isAuthorized && user && Object.keys(user).length > 0">
+          <template v-for="option in options">
+            <template v-if="option.isSignedInLink">
+              <sidebar-link :key="option.name" :to="{ name: option.redirectTo }">
+                <span slot="title">
+                  <span>{{ $t(`menu.${option.name}`) }}</span>
+                </span>
+              </sidebar-link>
+            </template>
+          </template>
+        </template>
+        <template v-else>
+          <template v-for="option in options">
+            <template v-if="!option.isSignedInLink">
+              <sidebar-link :key="option.name" :to="{ name: option.redirectTo }">
+                <span slot="title">
+                  <span>{{ $t(`menu.${option.name}`) }}</span>
+                </span>
+              </sidebar-link>
+            </template>
+          </template>
+        </template>
       </sidebar-link-group>
+
       <sidebar-link
         :to="{ name: 'about' }">
         <span slot="title">
@@ -148,8 +170,6 @@
           <span>{{ $t('menu.about') }}</span>
         </span>
       </sidebar-link>
-
-
 
       <!-- <sidebar-link-group>
         <span slot="title">
@@ -359,14 +379,13 @@
         </sidebar-link>
       </sidebar-link-group> -->
 
-
-
     </template>
   </kuantic-sidebar>
 </template>
 
 <script>
 
+import { mapActions, mapGetters } from 'vuex'
 import KuanticSidebar
   from '../../../kuantic-theme/kuantic-components/kuantic-sidebar/KuanticSidebar'
 import SidebarLink from './components/SidebarLink'
@@ -384,6 +403,37 @@ export default {
       type: Boolean,
       required: true,
     },
+    options: {
+      type: Array,
+      default: () => [
+        {
+          name: 'myProfile',
+          redirectTo: 'my-profile',
+          isSignedInLink: true
+        },
+        {
+          name: 'login',
+          redirectTo: 'login',
+          isSignedInLink: false
+        },
+        {
+          name: 'signup',
+          redirectTo: 'signup',
+          isSignedInLink: false
+        },
+        {
+          name: 'logout',
+          redirectTo: 'login',
+          isSignedInLink: true
+        },
+      ],
+    },
+  },
+  computed: {
+    ...mapGetters(['getUserData', 'isAuthorized']),
+    user () {
+      return this.getUserData
+    }
   },
 }
 

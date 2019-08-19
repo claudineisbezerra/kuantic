@@ -59,6 +59,7 @@
     "username": "Nome do usuário",
     "email": "Email",
     "login": "Entrar",
+    "logout": "Sair",
     "loginWith": "Acessar com",
     "password": "Senha",
     "signup": "Registrar",
@@ -257,6 +258,7 @@
     "cards": "Cards",
     "spinners": "Spinners",
     "login": "Entrar",
+    "logout": "Sair",
     "maps": "Mapas",
     "modals": "Modals",
     "notifications": "Notificações",
@@ -361,9 +363,12 @@
       "lastName": "Sobrenome",
       "address": "Endereço",
       "country": "País",
-      "state": "Estado",
+      "province": "Estado",
       "city": "Cidade",
-      "postalCode": "CEP",
+      "zipCode": "CEP",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
       "aboutMe": "Sobre mim"
     },
     "profileCard": "Perfil"
@@ -483,8 +488,8 @@
     "language": "Trocar Linguagem",
     "myProfile": "Meu Perfil",
     "login": "Entrar",
-    "signup": "Registrar",
-    "logout": "Sair"
+    "logout": "Sair",
+    "signup": "Registrar"
   },
   "validate": {
     "ge_zeros": "O valor deve ser maior ou igual a zeros",
