@@ -17,10 +17,13 @@ describe('POST /auth', () => {
 
     it('should signup a user and return a token', async done => {
         const response = await request.post('/api/auth/signup').send({
-            handle: slugify('newUser100'),
+            handle: slugify('newUser 100'),
             email: 'newUser@gmail.com',
-            username: 'newUser100',
-            password: 'newUserTest'
+            username: 'newUser 100',
+            first_name: 'newUser',
+            last_name: '100',
+            password: 'newUserTest',
+            has_agreed_to_terms: true
         });
 
         await expect(response.status).toEqual(200);

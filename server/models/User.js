@@ -118,7 +118,8 @@ const UserSchema = new Schema(
         },
         has_agreed_to_terms: {
             type: Boolean,
-            required: true
+            required: true,
+            default: true
         }
     },
     {

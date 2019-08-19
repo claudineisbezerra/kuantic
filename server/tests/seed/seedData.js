@@ -4,28 +4,19 @@ module.exports = {
     userSeedData: [
         {
             email: 'teste1@email.com.br',
-            username: 'teste1',
-            password: 'just4now'
+            username: 'Teste1 Username',
+            first_name: 'Teste1',
+            last_name: 'Username',
+            password: 'just4now',
+            has_agreed_to_terms: true
         },
         {
             email: 'teste2@email.com.br',
-            username: 'teste2',
-            password: 'just4now'
-        },
-        {
-            email: 'teste3@email.com.br',
-            username: 'teste3',
-            password: 'just4now'
-        },
-        {
-            email: 'teste4@email.com.br',
-            username: 'teste4',
-            password: 'just4now'
-        },
-        {
-            email: 'teste5@email.com.br',
-            username: 'teste5',
-            password: 'just4now'
+            username: 'Teste2 Username',
+            first_name: 'Teste2',
+            last_name: 'Username',
+            password: 'just4now',
+            has_agreed_to_terms: true
         }
     ],
     roomSeedData: [

@@ -72,9 +72,12 @@ const populateData = async () => {
         const userData = await new User({
             handle: slugify(user.username),
             username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
             email: user.email,
             password: user.password,
-            image: gravatar.url(user.email, { s: '220', r: 'pg', d: 'identicon' })
+            image: gravatar.url(user.email, { s: '220', r: 'pg', d: 'identicon' }),
+            has_agreed_to_terms: user.has_agreed_to_terms
         }).save();
         userId = userData._id;
     }

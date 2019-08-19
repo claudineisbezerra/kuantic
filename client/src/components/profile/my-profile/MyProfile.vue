@@ -293,7 +293,7 @@ export default {
     },
   },
   mounted () {
-    console.log('Profile mounted. Do not erase this mounted () function.')
+    console.log('MyProfile mounted. Do not erase this mounted () function.')
   },
   created () {
     this.$nextTick(() => {
