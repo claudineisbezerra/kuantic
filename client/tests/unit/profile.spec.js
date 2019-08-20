@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import Profile from '@/components/profile/my-profile/MyProfile.vue'
 
-describe('Profile.vue', () => {
+describe('MyProfile.vue', () => {
   it('Should have a mounted lifecycle hook', () => {
     expect(typeof Profile.mounted).toBe('function')
   })
