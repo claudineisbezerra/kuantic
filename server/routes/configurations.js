@@ -23,6 +23,7 @@ router.get('/getConfigs', passport.authenticate('jwt', { session: false }), asyn
     } else {
         return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
     }
+
     return res.status(200).json(results);
 });
 
@@ -138,7 +139,6 @@ router.delete(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
-            console.log('to be created...');
             return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
         } catch (error) {
             return res.status(500).json(error);
@@ -190,7 +190,6 @@ router.delete(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
-            console.log('to be created...');
             return res.status(404).json({ error: res.$t('configurations_error_NOTFOUND') });
         } catch (error) {
             return res.status(500).json(error);

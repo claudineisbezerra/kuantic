@@ -71,7 +71,6 @@ export default {
     },
     composeSummaryIndicators () {
       this.errors = []
-      console.log('composeSummaryIndicators...')
       axios.get('/api/admin/indicator/composeSummaryIndicators')
       .then((res) => {
         if (res.data.errors) {
@@ -81,15 +80,11 @@ export default {
             this.errors.push({ key, value })
           }
         } else {
-          console.log('composeSummaryIndicators res.data.indicator:', res.data.indicator)
           this.indicators = res.data.indicators
         }
       })
       setTimeout(() => { this.errors = [] }, 1500)
     }
-  },
-  mounted () {
-    console.log('Indicator mounted.')
   },
   created () {
     this.$nextTick(() => {

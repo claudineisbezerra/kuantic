@@ -16,7 +16,7 @@ flatpickr.setDefaults({dateFormat : 'd-m-Y'});
 import VueFlatpickrComponent from 'vue-flatpickr-component'
 
 export default {
-  name: 'kuantic-date-picker',
+  name: 'kuantic-date-picker-ptbr',
   components: {
     VueFlatpickrComponent,
   },
@@ -44,7 +44,6 @@ export default {
     },
     defaultConfig () {
       return {
-        // allowInput: true, // false triggers `readonly` on input, which disables label animation.
         nextArrow: '<span aria-hidden="true" class="ion ion-ios-arrow-forward"></span>',
         prevArrow: '<span aria-hidden="true" class="ion ion-ios-arrow-back"></span>',
       }

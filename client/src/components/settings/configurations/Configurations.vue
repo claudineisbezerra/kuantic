@@ -34,18 +34,14 @@
         <kuantic-widget :headerText="$t('settings.calculation_params_title')">
           <!-- date_of_calculation -->
           <div class="va-row">
-            <!-- <div class="flex">
-              <badge-column rowIndex="1"/>
-            </div> -->
             <div class="flex md2">
               <div class="form-group">
                 <div class="input-group">
                   <input  name="title"
                           readonly="readonly"
                           v-model="configurations.calculation.date_of_calculation.title"
-                          @change="updateDateOfCalculation(configurations.calculation.date_of_calculation)"
+                          @change="updateDaysOfCalculation(configurations.calculation.date_of_calculation.title)"
                           />
-                  <!-- <i class="bar"></i> -->
                 </div>
               </div>
             </div>
@@ -53,7 +49,7 @@
             <div class="flex md2">
               <div class="form-group">
                 <div class="input-group">
-                  <kuantic-date-picker
+                  <kuantic-date-picker-ptbr
                     name="date_of_calculation"
                     v-model="configurations.calculation.date_of_calculation.at_date"
                   />
@@ -68,18 +64,14 @@
 
           <!-- days_of_calculation -->
           <div class="va-row">
-            <!-- <div class="flex">
-              <badge-column rowIndex="1"/>
-            </div> -->
             <div class="flex md2">
               <div class="form-group">
                 <div class="input-group">
                   <input  name="title"
                           readonly="readonly"
                           v-model="configurations.calculation.days_of_calculation.title"
-                          @change="updateDaysOfCalculation(configurations.calculation.days_of_calculation)"
+                          @change="updateDaysOfCalculation(configurations.calculation.days_of_calculation.title)"
                           />
-                  <!-- <i class="bar"></i> -->
                 </div>
               </div>
             </div>
@@ -87,7 +79,7 @@
             <!-- <div class="flex md2">
               <div class="form-group">
                 <div class="input-group">
-                  <kuantic-date-picker
+                  <kuantic-date-picker-ptbr
                     name="start_date"
                     v-model="configurations.calculation.days_of_calculation.start_date"
                     @on-change="updateDaysOfCalculation(configurations.calculation.days_of_calculation)"
@@ -103,7 +95,7 @@
             <!-- <div class="flex md2">
               <div class="form-group">
                 <div class="input-group">
-                  <kuantic-date-picker
+                  <kuantic-date-picker-ptbr
                     name="end_date"
                     v-model="configurations.calculation.days_of_calculation.end_date"
                     @on-change="updateDaysOfCalculation(configurations.calculation.days_of_calculation)"
@@ -211,7 +203,7 @@ export default {
   watch: {
     'configurations.calculation.date_of_calculation.at_date': function (newValue, oldValue) {
       // workaround to solve vue-flatpickr-component event problems
-      if (oldValue && oldValue !== 'undefined' && newValue !== oldValue) {
+      if (oldValue !== 'undefined' && newValue !== oldValue) {
         this.updateDateOfCalculation(newValue)
       }
     }
@@ -331,7 +323,6 @@ export default {
       } else {
         at_date = new Date();
       }
-
       this.errors = []
       this.$validator.validateAll().then((result) => {
         if (result) {

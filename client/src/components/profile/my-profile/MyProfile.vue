@@ -374,13 +374,10 @@ export default {
     },
     getUserProfile(user) {
       if (!user) return
-      console.log('getUserProfile user:', user)
       this.$validator.validateAll().then((result) => {
-        console.log('getUserProfile validation result:', result)
         if (result) {
           axios.get('/api/profile/:handle', user )
             .then((res) => {
-              console.log('getUserProfile response:', res)
               if (res.data.errors) {
                 for (const error of res.data.errors) {
                   const [key] = Object.keys(error)
@@ -397,9 +394,6 @@ export default {
       })
       setTimeout(() => { this.errors = [] }, 1500)
     }
-  },
-  mounted () {
-    console.log('MyProfile mounted. Do not erase this mounted () function.')
   },
   created () {
     this.$nextTick(() => {

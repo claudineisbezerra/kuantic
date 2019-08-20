@@ -696,9 +696,6 @@ export default {
       exportFromJSON({ data, fileName, exportType })
     },
   },
-  mounted () {
-    console.log('Repurchase mounted.')
-  },
   created () {
     this.$nextTick(() => {
       this.handleRepurchaseInit ()

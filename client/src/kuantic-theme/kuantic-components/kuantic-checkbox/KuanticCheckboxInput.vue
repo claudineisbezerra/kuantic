@@ -138,17 +138,13 @@ export default {
     toggleSelection () {
       if (!this.disabled) {
         this.checkedProxy = !this.checkedProxy
-        console.log('toggleSelection checkedProxy', this.checkedProxy)
         let value = [].concat(this.value) // copy so we dont mutate property directly
-        console.log('toggleSelection val', this.val)
-        console.log('toggleSelection value', this.value)
 
         if (!this.checkedProxy && value.includes(this.val)) {
           value.splice(value.indexOf(this.val), 1)
         } else {
           value.push(this.val)
         }
-        console.log('toggleSelection EMITTED value', this.value)
         this.$emit('input', value) // emit the new value.
       }
     },

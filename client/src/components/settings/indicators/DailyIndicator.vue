@@ -86,9 +86,6 @@ export default {
       setTimeout(() => { this.errors = [] }, 1500)
     }
   },
-  mounted () {
-    console.log('Indicator mounted.')
-  },
   created () {
     this.$nextTick(() => {
       this.composeDailyIndicators ()

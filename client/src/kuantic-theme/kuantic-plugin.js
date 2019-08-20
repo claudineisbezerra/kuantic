@@ -44,6 +44,8 @@ import TreeCategory
 import TreeNode from './kuantic-components/kuantic-tree-view/KuanticTreeNode'
 import DatePicker
   from './kuantic-components/kuantic-date-picker/KuanticDatePicker'
+import DatePickerPtbr
+  from './kuantic-components/kuantic-date-picker/KuanticDatePickerPtbr'
 import Card from './kuantic-components/kuantic-card/KuanticCard'
 import FileUpload
   from './kuantic-components/kuantic-file-upload/KuanticFileUpload'
@@ -115,6 +117,7 @@ const KuanticPlugin = {
       FileUpload,
       KuanticDropdown,
       DatePicker,
+      DatePickerPtbr,
       Card,
       Tag,
       TagGroup,

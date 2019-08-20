@@ -73,13 +73,6 @@ export default {
       isFocused: false
     }
   },
-  created() {
-    console.log('create props value:', this.value)
-    console.log('create props id:', this.id)
-    console.log('create props name:', this.name)
-    console.log('create props valueProxy:', this.valueProxy)
-    console.log()
-  },
   computed: {
     computedClass () {
       return {
@@ -134,11 +127,6 @@ export default {
       if (!this.disabled) {
         this.valueProxy = !this.valueProxy
       }
-      console.log('toggle props value:', this.value)
-      console.log('toggle props id:', this.id)
-      console.log('toggle props name:', this.name)
-      console.log('toggle props valueProxy:', this.valueProxy)
-      console.log()
     },
   },
 }
