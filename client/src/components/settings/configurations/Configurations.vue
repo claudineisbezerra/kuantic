@@ -203,7 +203,7 @@ export default {
   watch: {
     'configurations.calculation.date_of_calculation.at_date': function (newValue, oldValue) {
       // workaround to solve vue-flatpickr-component event problems
-      if (oldValue !== 'undefined' && newValue !== oldValue) {
+      if (oldValue && oldValue !== 'undefined' && newValue !== oldValue) {
         this.updateDateOfCalculation(newValue)
       }
     }
