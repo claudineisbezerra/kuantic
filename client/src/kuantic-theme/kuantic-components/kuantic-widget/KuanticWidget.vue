@@ -63,6 +63,12 @@ export default {
     box-shadow: $widget-danger-shadow;
   }
 
+  &.brand-warning {
+    background-color: $brand-warning;
+    color: $white;
+    box-shadow: $widget-danger-shadow;
+  }
+
   &.info-widget {
     border-top: $info-widget-border;
 
@@ -72,6 +78,10 @@ export default {
 
     &.brand-danger {
       border-top-color: $brand-danger;
+    }
+
+    &.brand-warning {
+      border-top-color: $brand-warning;
     }
   }
 

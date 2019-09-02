@@ -9,7 +9,7 @@
       <kuantic-widget class="business-posts">
         <kuantic-social-news
           class="kuantic-social-news" :news="news"
-          :url="'http://instagram.com/smartapant'"
+          :url="'https://www.instagram.com/kuantic/'"
         />
       </kuantic-widget>
     </div>
@@ -25,17 +25,17 @@ export default {
       posts: [
         {
           name: 'Irina Myatelskaya',
-          text: 'joined the network',
+          text: 'Fez o pedido de maior valor',
           photoURL: 'https://i.imgur.com/VuTDC8u.png',
         },
         {
           name: 'Andrei Hrabouski',
-          text: 'has just started a live video',
+          text: 'e mais 08 efetuaram o pagamento',
           photoURL: 'https://i.imgur.com/W3mGrmW.png',
         },
         {
           name: 'Evan You',
-          text: 'joined the network',
+          text: 'é novo na loja',
           photoURL: 'https://i.imgur.com/D7DOGBH.jpg',
         },
       ],

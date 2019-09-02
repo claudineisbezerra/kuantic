@@ -137,12 +137,39 @@ export default new Router({
               },
             },
             {
+              path: 'abc-curve',
+              name: 'abc-curve',
+              component: lazyLoading('purchase/abc-curve/AbcCurve'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/abc-curve',
+              },
+            },
+            {
+              path: 'nos-list',
+              name: 'nos-list',
+              component: lazyLoading('purchase/nos-list/NosList'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/nos-list',
+              },
+            },
+            {
               path: 'product-grids',
               name: 'product-grids',
               component: lazyLoading('purchase/product-grids/ProductGrids'),
               meta: {
                 requiresAuth: false,
                 wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/product-grids',
+              },
+            },
+            {
+              path: 'monthly-budget',
+              name: 'monthly-budget',
+              component: lazyLoading('purchase/monthly-budget/MonthlyBudget'),
+              meta: {
+                requiresAuth: false,
+                wikiLink: 'https://github.com/claudineisbezerra/kuantic/wiki/monthly-budget',
               },
             },
             {

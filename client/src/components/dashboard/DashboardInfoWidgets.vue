@@ -1,58 +1,62 @@
 <template>
   <div class="va-row dashboard-info-widgets">
+
     <div class="flex md6 xl3 xs12">
       <kuantic-widget class="info-widget">
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number">
               <i class="ion ion-md-arrow-up text-primary stats-icon"></i>
-              59
+              300
             </div>
-            <div class="stats-title">{{'dashboard.elements' | translate}}</div>
+            <div class="stats-title">{{'dashboard.startedOrders' | translate}}</div>
           </div>
         </div>
       </kuantic-widget>
     </div>
+
     <div class="flex md6 xl3 xs12">
       <kuantic-widget class="info-widget">
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number">
               <i class="ion ion-md-arrow-down text-danger stats-icon"></i>
-              12
+              200
             </div>
-            <div class="stats-title">{{'dashboard.versions' | translate}}</div>
+            <div class="stats-title">{{'dashboard.abandonedOrders' | translate}}</div>
           </div>
         </div>
       </kuantic-widget>
     </div>
+
     <div class="flex md6 xl3 xs12">
-      <kuantic-widget class="info-widget brand-danger">
+      <kuantic-widget class="info-widget brand-warning">
         <div class="info-widget-inner">
           <div class="info-widget-inner has-chart">
             <div class="stats">
               <div class="stats-number">
-                425
+                100
               </div>
-              <div class="stats-title">Commits</div>
+              <div class="stats-title">{{'dashboard.conversionRate' | translate}}</div>
             </div>
             <div class="chart-container">
-              <kuantic-progress-bar type="circle" :value="70" theme="White"
-                                    backgroundTheme="Danger"/>
+              <kuantic-progress-bar type="circle" :value="34" theme="White"
+                                    backgroundTheme="Warning"/>
             </div>
           </div>
         </div>
       </kuantic-widget>
     </div>
+
     <div class="flex md6 xl3 xs12">
       <kuantic-widget class="info-widget brand-info">
         <div class="info-widget-inner">
           <div class="stats">
             <div class="stats-number">
-              <i class="ion ion-md-people stats-icon icon-wide"></i>
-              5
+              <i class="ion ion-md-shirt stats-icon icon-wide"></i>
+              450
             </div>
-            <div class="stats-title">{{'dashboard.teamMembers' | translate}}
+            <div class="stats-title">{{'dashboard.numOfItems' | translate}}
             </div>
           </div>
         </div>

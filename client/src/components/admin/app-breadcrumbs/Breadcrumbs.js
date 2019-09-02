@@ -29,8 +29,20 @@ export const breadcrumbs = {
           displayName: 'menu.bestSellers',
         },
         {
+          name: 'abc-curve',
+          displayName: 'menu.abcCurve',
+        },
+        {
+          name: 'nos-list',
+          displayName: 'menu.nosList',
+        },
+        {
           name: 'product-grids',
           displayName: 'menu.productGrids',
+        },
+        {
+          name: 'monthly-budget',
+          displayName: 'menu.monthlyBudget',
         },
         {
           name: 'competition-by-portfolio',

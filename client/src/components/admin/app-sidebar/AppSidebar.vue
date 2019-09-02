@@ -34,9 +34,24 @@
             <span>{{ $t('menu.bestSellers') }}</span>
           </span>
         </sidebar-link>
+        <sidebar-link :to="{ name: 'abc-curve' }">
+          <span slot="title">
+            <span>{{ $t('menu.abcCurve') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link :to="{ name: 'nos-list' }">
+          <span slot="title">
+            <span>{{ $t('menu.nosList') }}</span>
+          </span>
+        </sidebar-link>
         <sidebar-link :to="{ name: 'product-grids' }">
           <span slot="title">
             <span>{{ $t('menu.productGrids') }}</span>
+          </span>
+        </sidebar-link>
+        <sidebar-link :to="{ name: 'monthly-budget' }">
+          <span slot="title">
+            <span>{{ $t('menu.monthlyBudget') }}</span>
           </span>
         </sidebar-link>
         <sidebar-link :to="{ name: 'repurchase' }">
@@ -171,7 +186,7 @@
         </span>
       </sidebar-link>
 
-      <!-- <sidebar-link-group>
+      <sidebar-link-group>
         <span slot="title">
           <span
             class="sidebar-menu-item-icon kuantic-icon kuantic-icon-statistics"></span>
@@ -377,7 +392,7 @@
             <span>{{ $t('404 Pages') }}</span>
           </span>
         </sidebar-link>
-      </sidebar-link-group> -->
+      </sidebar-link-group>
 
     </template>
   </kuantic-sidebar>

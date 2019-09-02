@@ -1,9 +1,9 @@
 <template>
   <div class="kuantic-social-news">
     <div class="d-flex justify--space-between align--center kuantic-social-news__text-with-button">
-      <span class="text">That what users have posted about your business.</span>
+      <span class="text">Isto é o que os usuários postaram sobre sua empresa.</span>
       <a :href="url" target="_blank">
-        <button class="btn btn-micro btn-primary">VIEW</button>
+        <button class="btn btn-micro btn-primary">VEJA</button>
       </a>
     </div>
     <div class="d-flex justify--space-around kuantic-social-news__photo-list">

@@ -5,13 +5,10 @@
       <div class="md12 flex">
         <kuantic-widget>
           <div class="vue-lists">
-            <h4>Grade de produtos</h4>
+            <h4>Mais vendidos</h4>
             <div class="typo-articles">
               <p>
-                Uma grade IDEAL para composição da variedade de produtos a venda é
-                um ótimo auxílio para realizar compras mais racionais.
-                <br>
-                Nossa grade IDEAL será baseada nos produtos que apresentam melhor potencial de vendas.
+                Planejamento dos orçamentos mensais para recompras.
               </p>
             </div>
           </div>
@@ -25,7 +22,7 @@
 import KuanticFuturePage from '../../pages/404-pages/KuanticFuturePage.vue'
 
 export default {
-  name: 'product-grids',
+  name: 'monthly-budget',
   components: {
     KuanticFuturePage
   },
